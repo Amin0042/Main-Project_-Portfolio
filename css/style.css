@@ -3,6 +3,15 @@
   margin: 0;
   box-sizing: border-box;
 }
+:root {
+  --primary-red-colour: #5a0f14;
+  --secondary-red-colour: #7a1c22;
+  --primary-black-colour: #0a0a0b;
+  --secondary-black-colour: #1a1a1d;
+  --primary-gold-colour: #c6a85a;
+  --secondary-gold-colour: #8f7a3e;
+  --primary-ivory-colour: #e8e4d8;
+}
 body {
   background-color: beige;
 }
