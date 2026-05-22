@@ -11,7 +11,23 @@
   --primary-gold-colour: #c6a85a;
   --secondary-gold-colour: #8f7a3e;
   --primary-ivory-colour: #e8e4d8;
+  --font-family: "inter", "cinzel", "Playfair Display", "sans-serif";
+  --fw-medium: 700;
+  --fw-small: 500;
+  --fw-large: 900;
+  --h1-size: 1.5rem;
+  --h2-size: 1.25rem;
+  --h3-size: 1.125rem;
+  --normal-font-size: 0.93rem;
+  --small-font-size: 0.81rem;
 }
 body {
   background-color: beige;
+  font-family: var(--font-family);
+}
+h1,
+h2,
+h3 {
+  font-family: "cinzel";
+  font-weight: var(--fw-medium);
 }
