@@ -4,6 +4,8 @@
   box-sizing: border-box;
 }
 :root {
+  --bs-body-bg: #1a1a1d;
+  --bs-body-color: #8f7a3e;
   --primary-red-colour: #5a0f14;
   --secondary-red-colour: #7a1c22;
   --primary-black-colour: #0a0a0b;
@@ -22,12 +24,45 @@
   --small-font-size: 0.81rem;
 }
 body {
-  background-color: beige;
+  background-color: var(--secondary-black-colour);
   font-family: var(--font-family);
+  color: var(--secondary-gold-colour);
+  border: 2px solid;
 }
 h1,
 h2,
 h3 {
   font-family: "cinzel";
   font-weight: var(--fw-medium);
+  color: var(--primary-gold-colour);
 }
+a {
+  color: var(--primary-gold-colour) !important;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+li {
+  list-style: none;
+}
+/*==================== REUSABLE CSS CLASSES ====================*/
+/* .navbar,
+.navbar * {
+  background-color: var(--secondary-black-colour);
+} */
+.icon {
+  width: 10%;
+}
+.section {
+  margin: 0;
+  padding: 2rem;
+  border-top: 2px solid;
+}
+/*==================== Nav ====================*/
+
+.nav-link {
+  text-transform: uppercase;
+}
+.nav-item .active {
+  text-decoration: underline;
+}
+/*==================== Hero ====================*/
