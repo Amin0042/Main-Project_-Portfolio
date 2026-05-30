@@ -28,6 +28,10 @@ body {
   font-family: var(--font-family);
   color: var(--secondary-gold-colour);
   border: 2px solid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100vw;
 }
 h1,
 h2,
@@ -35,22 +39,44 @@ h3 {
   font-family: "cinzel";
   font-weight: var(--fw-medium);
   color: var(--primary-gold-colour);
+  text-align: center;
 }
 a {
   color: var(--primary-gold-colour) !important;
   text-decoration: none;
   text-transform: uppercase;
 }
+ul {
+  margin: 0;
+  padding: 0;
+}
 li {
   list-style: none;
+}
+button {
+  background-color: var(--secondary-black-colour);
+  border: 2px var(--primary-gold-colour) double;
+  padding: 0.5rem 1rem;
 }
 /*==================== REUSABLE CSS CLASSES ====================*/
 /* .navbar,
 .navbar * {
   background-color: var(--secondary-black-colour);
 } */
+.underline {
+  display: flex;
+  width: 50%;
+  margin: auto;
+  gap: 10px;
+  align-items: center;
+}
+.line {
+  background-color: #c6a85a;
+  height: 2px;
+  width: 50%;
+}
 .icon {
-  width: 10%;
+  width: 20%;
 }
 .section {
   margin: 0;
@@ -66,3 +92,28 @@ li {
   text-decoration: underline;
 }
 /*==================== Hero ====================*/
+
+/*==================== Footer ====================*/
+.footer {
+  display: flex;
+  gap: 2rem;
+  text-align: center;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.footer-navigation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
