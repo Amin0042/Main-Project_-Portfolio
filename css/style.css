@@ -82,6 +82,7 @@ button {
   margin: 0;
   padding: 2rem;
   border-top: 2px solid;
+  text-align: center;
 }
 /*==================== Nav ====================*/
 
@@ -96,15 +97,20 @@ button {
 /*==================== Footer ====================*/
 .footer {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   text-align: center;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
+  margin: 0.2rem 4rem;
 }
 .footer-title {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  img {
+    width: 100px;
+  }
 }
 .footer-navigation {
   display: flex;
@@ -116,4 +122,11 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.footer .line {
+  height: 200px;
+  width: 2px;
+}
+.footer ul > * {
+  padding: 5px;
 }
