@@ -11,7 +11,7 @@
   --primary-black-colour: #0a0a0b;
   --secondary-black-colour: #1a1a1d;
   --primary-gold-colour: #c6a85a;
-  --secondary-gold-colour: #8f7a3e;
+  --secondary-gold-colour: #d2a425;
   --primary-ivory-colour: #e8e4d8;
   --font-family: "inter", "cinzel", "Playfair Display", "sans-serif";
   --fw-medium: 700;
@@ -93,6 +93,39 @@ button {
   text-decoration: underline;
 }
 /*==================== Hero ====================*/
+.hero {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url("../Assets/Background-Image/Hero\ BG.png") no-repeat center center /
+      cover;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/*==================== About ====================*/
+.about-hero {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    url("../Assets/Background-Image/About\ Page\ \(1\).png") no-repeat center
+      center / cover;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+
+  width: 100vw;
+}
+.about-container {
+  text-align: left !important;
+  max-width: 700px;
+  h2 {
+    text-align: left !important;
+  }
+}
 
 /*==================== Footer ====================*/
 .footer {
