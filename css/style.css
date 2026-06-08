@@ -40,6 +40,8 @@ h3 {
   font-weight: var(--fw-medium);
   color: var(--primary-gold-colour);
   text-align: center;
+  text-decoration-line: underline;
+  line-height: 3rem;
 }
 a {
   color: var(--primary-gold-colour) !important;
@@ -126,7 +128,78 @@ button {
     text-align: left !important;
   }
 }
+.about-background {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6rem;
+}
+.background {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  gap: 2rem;
+  margin: 0rem 3rem;
+}
+.background-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  img {
+    width: 30%;
+    background-color: #0a0a0b;
+    border: 2px var(--primary-gold-colour) double;
+  }
+}
+.about-craft {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+.craft-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  img {
+    width: 40%;
+    background-color: #0a0a0b;
+    border: 2px var(--primary-gold-colour) double;
+  }
+  gap: 3rem;
+  align-content: center;
+  justify-content: center;
+}
+.craft-info {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  flex-direction: column;
+}
+/*==================== Archive ====================*/
+.archive-container {
+  text-align: left !important;
+  max-width: 700px;
+  h2 {
+    text-align: left !important;
+  }
+}
+.archive-hero {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    url("../Assets/Background-Image/Archive\ Four\ BG.png") no-repeat center
+      center / cover;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
 
+  width: 100vw;
+}
 /*==================== Footer ====================*/
 .footer {
   display: flex;
