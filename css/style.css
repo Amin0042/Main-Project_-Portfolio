@@ -200,6 +200,28 @@ button {
 
   width: 100vw;
 }
+.archive-personal {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  align-items: start;
+  margin: 0rem 4rem;
+  background-color: #000001;
+  text-align: left;
+  padding-top: 3rem;
+}
+.header-left {
+  text-align: left;
+}
+.archive-img {
+  width: 100%;
+}
+.carousel-link {
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.3);
+    transition: ease-in 0.3s;
+  }
+}
 /*==================== Footer ====================*/
 .footer {
   display: flex;
