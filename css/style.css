@@ -98,8 +98,8 @@ button {
 .hero {
   background:
     linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url("../Assets/Background-Image/Hero\ BG.png") no-repeat center center /
-      cover;
+    url("../Assets/Background-Image/Main\ Homepage\ Final\ correct\ Version\ .png")
+      no-repeat center center / cover;
   min-height: 80vh;
   display: flex;
   flex-direction: column;
@@ -111,8 +111,8 @@ button {
 .about-hero {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Background-Image/About\ Page\ \(1\).png") no-repeat center
-      center / cover;
+    url("../Assets/Background-Image/About\ Page\ -Kaveh\ Ahangar\ .png")
+      no-repeat center center / cover;
   min-height: 80vh;
   display: flex;
   flex-direction: column;
