@@ -222,6 +222,30 @@ button {
     transition: ease-in 0.3s;
   }
 }
+/*==================== Notes ====================*/
+.notes-post {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-items: center;
+  text-align: left;
+  height: 500px;
+  gap: 2rem;
+}
+.post-img {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    url("../Assets/Background-Image/Archive\ Four\ BG.png") no-repeat center
+      center / cover;
+  height: 100%;
+  h4 {
+    margin: 3rem 0.5rem;
+  }
+}
+.post-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
 /*==================== Footer ====================*/
 .footer {
   display: flex;
