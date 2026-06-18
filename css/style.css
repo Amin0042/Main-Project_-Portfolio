@@ -233,7 +233,6 @@ button {
   flex-direction: column;
   justify-content: center;
   align-items: start;
-
   width: 100vw;
 }
 .notes-post {
@@ -258,6 +257,52 @@ button {
   display: flex;
   flex-direction: column;
   gap: 3rem;
+}
+/*==================== Contact ====================*/
+
+.contact-hero {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    url("../Assets/Background-Image/Best\ for\ Contact\ Page\ .png") no-repeat
+      center center / cover;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  width: 100vw;
+}
+.contacts {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.contact-container {
+  width: 50%;
+  text-align: left;
+}
+.contacts-grid {
+  display: grid;
+  margin: 1rem 3rem;
+  grid-template-columns: 1fr 1fr;
+  width: 75%;
+}
+.contact-social {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+}
+.contact-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.contact-form {
+  color: var(--secondary-gold-colour);
+  text-align: left;
+  --bs-border-color: var(--primary-gold-colour);
 }
 /*==================== Footer ====================*/
 .footer {
