@@ -304,6 +304,64 @@ button {
   text-align: left;
   --bs-border-color: var(--primary-gold-colour);
 }
+/*==================== Personal Vault ====================*/
+.personal-hero {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    url("../Assets/Background-Image/Personal\ Vault\ Examples\ \ \(3\).png")
+      no-repeat center center / cover;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  width: 100vw;
+}
+.traditional-intro {
+  text-align: left;
+}
+.traditional-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+.traditional-item {
+  width: 100%;
+  > * {
+    width: 100%;
+  }
+}
+/*==================== Motion Vault ====================*/
+.motion-hero {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    url("../Assets/Background-Image/Best\ for\ Motion\ BG\ Example\ .png")
+      no-repeat center center / cover;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  width: 100vw;
+}
+.effects-card {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-items: center;
+  gap: 1rem;
+}
+.effects-card-img {
+  width: 100%;
+  img {
+    aspect-ratio: 9/16;
+    object-fit: cover;
+    width: 100%;
+  }
+}
+.effects-card-info {
+}
 /*==================== Footer ====================*/
 .footer {
   display: flex;
