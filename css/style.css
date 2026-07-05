@@ -59,6 +59,7 @@ button {
   background-color: var(--secondary-black-colour);
   border: 2px var(--primary-gold-colour) double;
   padding: 0.5rem 1rem;
+  color: var(--secondary-gold-colour);
 }
 /*==================== REUSABLE CSS CLASSES ====================*/
 /* .navbar,
@@ -361,7 +362,23 @@ button {
   }
 }
 .effects-card-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  justify-content: start;
+  align-items: start;
 }
+/*==================== Afftereffects Vault ====================*/
+
+.gallery-item {
+}
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  align-items: center;
+}
+
 /*==================== Footer ====================*/
 .footer {
   display: flex;
