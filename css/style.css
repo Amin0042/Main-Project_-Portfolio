@@ -347,6 +347,9 @@ button {
   align-items: start;
   width: 100vw;
 }
+.motion-hero h2 {
+  text-align: left;
+}
 .effects-card {
   display: grid;
   grid-template-columns: 1fr 3fr;
