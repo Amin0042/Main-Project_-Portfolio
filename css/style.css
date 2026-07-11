@@ -396,7 +396,7 @@ button {
   display: flex;
   gap: 1rem;
   text-align: center;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   width: 100%;
   margin: 0.2rem 4rem;
@@ -405,25 +405,52 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.75rem;
+  text-align: center;
   img {
     width: 100px;
   }
 }
+.footer-title a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-title h3 {
+  margin: 0;
+}
+
 .footer-navigation {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  text-align: center;
 }
 .footer-contact {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  text-align: center;
 }
 .footer .line {
   height: 200px;
   width: 2px;
 }
+.footer-navigation h4,
+.footer-contact h4 {
+  margin: 0 0 0.75rem;
+}
+
+.footer-navigation ul,
+.footer-contact ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .footer ul > * {
   padding: 5px;
 }
