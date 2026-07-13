@@ -96,29 +96,51 @@ button {
   text-decoration: underline;
 }
 /*==================== Hero ====================*/
-.hero {
+.hero-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
     url("../Assets/Background-Image/Home\ Page\ Final\ Version\ .png") no-repeat
       center center / cover;
+  min-height: 80vh;
+}
+.hero {
   min-height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-
+/*==================== Manifesto ====================*/
+.manifesto-popup {
+  position: fixed;
+  display: hidden;
+  opacity: 0;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.popup-container {
+  position: relative;
+  background-color: var(--secondary-black-colour);
+  padding: 2rem;
+  min-height: 30vh;
+}
 /*==================== About ====================*/
-.about-hero {
+.about-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
     url("../Assets/Background-Image/About\ Page\ Final\ Version\ .png")
       no-repeat center center / cover;
   min-height: 80vh;
+}
+.about-hero {
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: start;
+  align-items: center;
 
   width: 100vw;
 }
@@ -181,6 +203,13 @@ button {
   flex-direction: column;
 }
 /*==================== Archive ====================*/
+.archive-image {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    url("../Assets/Background-Image/Archive\ Four\ BG.png") no-repeat center
+      center / cover;
+  min-height: 80vh;
+}
 .archive-container {
   text-align: left !important;
   max-width: 700px;
@@ -189,15 +218,11 @@ button {
   }
 }
 .archive-hero {
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Background-Image/Archive\ Four\ BG.png") no-repeat center
-      center / cover;
   min-height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: start;
+  align-items: center;
 
   width: 100vw;
 }
@@ -224,16 +249,19 @@ button {
   }
 }
 /*==================== Notes ====================*/
-.notes-hero {
+.notes-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
     url("../Assets/Background-Image/Notes\ Best\ Final\ example\ .png")
       no-repeat center center / cover;
   min-height: 80vh;
+}
+.notes-hero {
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: start;
+  align-items: center;
   width: 100vw;
 }
 .notes-post {
@@ -269,17 +297,19 @@ button {
   }
 }
 /*==================== Contact ====================*/
-
-.contact-hero {
+.contact-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
     url("../Assets/Background-Image/Best\ for\ Contact\ Page\ .png") no-repeat
       center center / cover;
   min-height: 80vh;
+}
+.contact-hero {
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: start;
+  align-items: center;
   width: 100vw;
 }
 .contacts {
@@ -315,16 +345,19 @@ button {
   --bs-border-color: var(--primary-gold-colour);
 }
 /*==================== Personal Vault ====================*/
-.personal-hero {
+.personal-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
     url("../Assets/Background-Image/Personal\ Vault\ Examples\ \ \(3\).png")
       no-repeat center center / cover;
   min-height: 80vh;
+}
+.personal-hero {
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: start;
+  align-items: center;
   width: 100vw;
 }
 .traditional-intro {
@@ -344,20 +377,20 @@ button {
   }
 }
 /*==================== Motion Vault ====================*/
-.motion-hero {
+.motion-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
     url("../Assets/Background-Image/Best\ for\ Motion\ BG\ Example\ .png")
       no-repeat center center / cover;
   min-height: 80vh;
+}
+.motion-hero {
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: start;
+  align-items: center;
   width: 100vw;
-}
-.motion-hero h2 {
-  text-align: left;
 }
 .effects-card {
   display: grid;
@@ -390,7 +423,22 @@ button {
   gap: 2rem;
   align-items: center;
 }
-
+/*==================== Inspiration Vault ====================*/
+.inspiration-image {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    url("../Assets/Background-Image/Inspirations\ Vault\ BG\ .png") no-repeat
+      center center / cover;
+  min-height: 80vh;
+}
+.inspiration-hero {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+}
 /*==================== Footer ====================*/
 .footer {
   display: flex;
