@@ -1,9 +1,23 @@
+const openButton = document.querySelector(".manifesto-open");
+const closeButton = document.querySelector(".popup-close");
+const popup = document.querySelector(".manifesto-popup");
+
+if (openButton) {
+  openButton.addEventListener("click", function () {
+    popup.classList.add("show");
+  });
+
+  closeButton.addEventListener("click", function () {
+    popup.classList.remove("show");
+  });
+}
+
 const carousels = document.querySelectorAll(".carousel");
 
 carousels.forEach(function (carousel) {
   const track = carousel.querySelector(".carousel-track");
   const carouselWindow = carousel.querySelector(".car-window");
-  const items = carousel.querySelectorAll(".carousel-item");
+  const items = carousel.querySelectorAll(".car-item");
 
   const nextButton = carousel.querySelector(".next-btn");
   const previousButton = carousel.querySelector(".previous-btn");
@@ -16,7 +30,7 @@ carousels.forEach(function (carousel) {
     if (!firstItem) {
       return {
         distance: 0,
-        maximumSlide: 0
+        maximumSlide: 0,
       };
     }
 
@@ -29,19 +43,14 @@ carousels.forEach(function (carousel) {
 
     const visibleItems = Math.max(
       1,
-      Math.floor(
-        (carouselWindow.clientWidth + gap) / distance
-      )
+      Math.floor((carouselWindow.clientWidth + gap) / distance),
     );
 
-    const maximumSlide = Math.max(
-      0,
-      items.length - visibleItems
-    );
+    const maximumSlide = Math.max(0, items.length - visibleItems);
 
     return {
       distance,
-      maximumSlide
+      maximumSlide,
     };
   }
 
@@ -50,8 +59,7 @@ carousels.forEach(function (carousel) {
 
     currentSlide = Math.min(currentSlide, maximumSlide);
 
-    track.style.transform =
-      `translateX(-${currentSlide * distance}px)`;
+    track.style.transform = `translateX(-${currentSlide * distance}px)`;
 
     previousButton.disabled = currentSlide === 0;
     nextButton.disabled = currentSlide === maximumSlide;

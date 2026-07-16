@@ -113,19 +113,41 @@ button {
 /*==================== Manifesto ====================*/
 .manifesto-popup {
   position: fixed;
-  display: hidden;
-  opacity: 0;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  background-color: rgba(0, 0, 0, 0.4);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition: opacity 0.3s ease;
 }
+
+.manifesto-popup.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
 .popup-container {
   position: relative;
   background-color: var(--secondary-black-colour);
   padding: 2rem;
   min-height: 30vh;
+  width: min(700px, 90%);
+  border: 2px solid var(--primary-gold-colour);
+}
+
+.popup-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }
 /*==================== About ====================*/
 .about-image {
@@ -444,6 +466,7 @@ button {
 
 .carousel {
   margin-bottom: 5rem;
+  width: 100%;
 }
 
 .carousel-content {
@@ -453,7 +476,8 @@ button {
 }
 
 .car-window {
-  width: 700px;
+  width: 70%;
+  margin: 0 auto;
   max-width: 100%;
   overflow: hidden;
 }
@@ -470,7 +494,7 @@ button {
 Every item must keep its intended size.
 JavaScript selects this shared class.
 */
-.carousel-item {
+.car-item {
   flex-shrink: 0;
 }
 
