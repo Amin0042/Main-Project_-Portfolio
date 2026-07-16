@@ -12,6 +12,9 @@
   --secondary-black-colour: #1a1a1d;
   --primary-gold-colour: #c6a85a;
   --secondary-gold-colour: #d2a425;
+  --secondary-gold-colour: #d2a425;
+  --bs-navbar-color: #d2a425;
+  --bs-navbar-icon-color: #d2a425;
   --primary-ivory-colour: #e8e4d8;
   --font-family: "inter", "cinzel", "Playfair Display", "sans-serif";
   --fw-medium: 700;
@@ -66,6 +69,9 @@ button {
 .navbar * {
   background-color: var(--secondary-black-colour);
 } */
+.navbar-toggler-icon .navbar-toggler {
+  color: var(--secondary-gold-colour);
+}
 .underline {
   display: flex;
   width: 50%;
@@ -623,4 +629,29 @@ button:disabled {
 
 .footer ul > * {
   padding: 5px;
+}
+/*==================== Mobile View ====================*/
+
+@media (max-width: 750px) {
+  .hero-image {
+    display: none;
+  }
+  .carousel-content {
+    gap: 0.1rem;
+  }
+  .linear-item {
+    height: 400px;
+    flex-basis: 300px;
+  }
+  .footer,
+  .footer-title,
+  .footer-navigation,
+  .footer-contact {
+    flex-direction: column;
+    align-items: center;
+  }
+  .footer .line {
+    width: 200px;
+    height: 2px;
+  }
 }
