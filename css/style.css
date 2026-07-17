@@ -173,10 +173,10 @@ button {
   width: 100vw;
 }
 .about-container {
-  text-align: left !important;
+  text-align: center !important;
   max-width: 700px;
   h2 {
-    text-align: left !important;
+    text-align: center !important;
   }
 }
 .about-background {
@@ -239,10 +239,10 @@ button {
   min-height: 80vh;
 }
 .archive-container {
-  text-align: left !important;
+  text-align: center !important;
   max-width: 700px;
   h2 {
-    text-align: left !important;
+    text-align: center !important;
   }
 }
 .archive-hero {
