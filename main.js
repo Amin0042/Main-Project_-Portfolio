@@ -67,7 +67,10 @@ imageModal.modal.addEventListener("click", function (event) {
 });
 
 document.addEventListener("keydown", function (event) {
-  if (event.key === "Escape" && imageModal.modal.classList.contains("is-open")) {
+  if (
+    event.key === "Escape" &&
+    imageModal.modal.classList.contains("is-open")
+  ) {
     closeImageModal();
   }
 });

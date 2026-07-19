@@ -497,9 +497,8 @@ button {
   align-items: center;
   gap: clamp(1rem, 1.8vw, 2rem);
   will-change: transform;
-  transition:
-    transform var(--carousel-transition-duration)
-      var(--carousel-transition-curve);
+  transition: transform var(--carousel-transition-duration)
+    var(--carousel-transition-curve);
 }
 
 .carousel-track.is-moving {
@@ -635,8 +634,7 @@ button:disabled {
   padding: 1rem;
   border: 1px solid rgba(210, 164, 37, 0.45);
   border-radius: 24px;
-  background:
-    linear-gradient(rgba(18, 16, 18, 0.96), rgba(8, 8, 9, 0.98));
+  background: linear-gradient(rgba(18, 16, 18, 0.96), rgba(8, 8, 9, 0.98));
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
 }
 
