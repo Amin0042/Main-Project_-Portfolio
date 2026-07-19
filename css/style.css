@@ -476,15 +476,17 @@ button {
 }
 
 .carousel-content {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 1rem;
+  width: min(1100px, 100%);
+  margin: 0 auto;
 }
 
 .car-window {
-  width: 70%;
-  margin: 0 auto;
-  max-width: 100%;
+  width: 100%;
+  min-width: 0;
   overflow: hidden;
 }
 
@@ -507,8 +509,8 @@ JavaScript selects this shared class.
 /* Linear carousel */
 
 .linear-item {
-  flex-basis: 200px;
-  height: 200px;
+  flex: 0 0 clamp(220px, 24vw, 320px);
+  aspect-ratio: 3 / 4;
 }
 
 .linear-item img {
@@ -558,7 +560,6 @@ button:disabled {
 
 @media (max-width: 800px) {
   .carousel-content {
-    display: grid;
     grid-template-columns: auto 1fr auto;
   }
 
@@ -637,11 +638,23 @@ button:disabled {
     display: none;
   }
   .carousel-content {
-    gap: 0.1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "window window"
+      "previous next";
+    gap: 0.75rem;
+  }
+  .car-window {
+    grid-area: window;
+  }
+  .previous-btn {
+    grid-area: previous;
+  }
+  .next-btn {
+    grid-area: next;
   }
   .linear-item {
-    height: 400px;
-    flex-basis: 300px;
+    flex-basis: min(78vw, 320px);
   }
   .footer,
   .footer-title,
