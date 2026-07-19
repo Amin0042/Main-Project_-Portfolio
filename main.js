@@ -84,6 +84,16 @@ carousels.forEach(function (carousel) {
   const previewImages = carousel.querySelectorAll(".car-item img");
 
   let currentSlide = 0;
+  let motionTimer;
+
+  function markCarouselMoving() {
+    track.classList.add("is-moving");
+    clearTimeout(motionTimer);
+
+    motionTimer = setTimeout(function () {
+      track.classList.remove("is-moving");
+    }, 560);
+  }
 
   function getMeasurements() {
     const firstItem = items[0];
@@ -115,31 +125,42 @@ carousels.forEach(function (carousel) {
     };
   }
 
-  function updateCarousel() {
+  function updateCarousel(shouldAnimate = false) {
     const { distance, maximumSlide } = getMeasurements();
 
     currentSlide = Math.min(currentSlide, maximumSlide);
 
     track.style.transform = `translateX(-${currentSlide * distance}px)`;
 
-    previousButton.disabled = currentSlide === 0;
-    nextButton.disabled = currentSlide === maximumSlide;
+    if (shouldAnimate) {
+      markCarouselMoving();
+    }
+
+    const hasMultipleSlides = maximumSlide > 0;
+    previousButton.disabled = !hasMultipleSlides;
+    nextButton.disabled = !hasMultipleSlides;
   }
 
   nextButton.addEventListener("click", function () {
     const { maximumSlide } = getMeasurements();
 
-    if (currentSlide < maximumSlide) {
-      currentSlide++;
-      updateCarousel();
+    if (maximumSlide === 0) {
+      return;
     }
+
+    currentSlide = currentSlide >= maximumSlide ? 0 : currentSlide + 1;
+    updateCarousel(true);
   });
 
   previousButton.addEventListener("click", function () {
-    if (currentSlide > 0) {
-      currentSlide--;
-      updateCarousel();
+    const { maximumSlide } = getMeasurements();
+
+    if (maximumSlide === 0) {
+      return;
     }
+
+    currentSlide = currentSlide <= 0 ? maximumSlide : currentSlide - 1;
+    updateCarousel(true);
   });
 
   previewImages.forEach(function (image) {

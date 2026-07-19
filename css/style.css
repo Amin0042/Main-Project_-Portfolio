@@ -25,6 +25,8 @@
   --h3-size: 1.125rem;
   --normal-font-size: 0.93rem;
   --small-font-size: 0.81rem;
+  --carousel-transition-duration: 520ms;
+  --carousel-transition-curve: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 body {
   background-color: var(--secondary-black-colour);
@@ -494,8 +496,20 @@ button {
   display: flex;
   align-items: center;
   gap: clamp(1rem, 1.8vw, 2rem);
+  will-change: transform;
+  transition:
+    transform var(--carousel-transition-duration)
+      var(--carousel-transition-curve);
+}
 
-  transition: transform 300ms ease;
+.carousel-track.is-moving {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-track {
+    transition: none;
+  }
 }
 
 /*
@@ -547,6 +561,37 @@ JavaScript selects this shared class.
   object-fit: cover;
   display: block;
   border-radius: 8px;
+}
+
+/* Personal Vault carousel alignment */
+#traditional-vault .traditional-intro,
+#digital-vault .traditional-intro,
+#cyborg-vault .traditional-intro {
+  max-width: 900px;
+  margin: 0 auto 1.5rem;
+  text-align: center;
+}
+
+#traditional-vault .carousel-content,
+#digital-vault .carousel-content,
+#cyborg-vault .carousel-content {
+  width: min(1100px, calc(100vw - 4rem));
+  margin: 0 auto;
+  align-items: center;
+}
+
+#traditional-vault .car-window,
+#digital-vault .car-window,
+#cyborg-vault .car-window {
+  display: flex;
+  justify-content: center;
+}
+
+#traditional-vault .grid-window,
+#digital-vault .grid-window,
+#cyborg-vault .grid-window {
+  width: min(700px, 100%);
+  margin: 0 auto;
 }
 
 button {
