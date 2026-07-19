@@ -480,7 +480,7 @@ button {
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 1rem;
-  width: min(1100px, 100%);
+  width: min(1600px, calc(100vw - 4rem));
   margin: 0 auto;
 }
 
@@ -493,7 +493,7 @@ button {
 .carousel-track {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: clamp(1rem, 1.8vw, 2rem);
 
   transition: transform 300ms ease;
 }
@@ -509,7 +509,7 @@ JavaScript selects this shared class.
 /* Linear carousel */
 
 .linear-item {
-  flex: 0 0 clamp(220px, 24vw, 320px);
+  flex: 0 0 clamp(170px, 16vw, 240px);
   aspect-ratio: 3 / 4;
 }
 
@@ -519,6 +519,10 @@ JavaScript selects this shared class.
   object-fit: cover;
   display: block;
   border-radius: 10px;
+}
+
+.car-item img.previewable-image {
+  cursor: zoom-in;
 }
 
 /* Grid carousel */
@@ -556,6 +560,76 @@ button {
 button:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+.image-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(5, 5, 6, 0.88);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.image-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.image-modal-dialog {
+  position: relative;
+  width: min(1100px, 100%);
+  max-height: calc(100vh - 4rem);
+  padding: 1rem;
+  border: 1px solid rgba(210, 164, 37, 0.45);
+  border-radius: 24px;
+  background:
+    linear-gradient(rgba(18, 16, 18, 0.96), rgba(8, 8, 9, 0.98));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.image-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgba(210, 164, 37, 0.65);
+  border-radius: 999px;
+  background: rgba(12, 12, 13, 0.82);
+  color: var(--primary-ivory-colour);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.image-modal-figure {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.image-modal-image {
+  width: 100%;
+  max-height: calc(100vh - 10rem);
+  object-fit: contain;
+  display: block;
+  border-radius: 16px;
+}
+
+.image-modal-caption {
+  text-align: center;
+  color: var(--primary-ivory-colour);
+}
+
+body.modal-open {
+  overflow: hidden;
 }
 
 @media (max-width: 800px) {
@@ -655,6 +729,18 @@ button:disabled {
   }
   .linear-item {
     flex-basis: min(78vw, 320px);
+  }
+  .image-modal {
+    padding: 1rem;
+  }
+  .image-modal-dialog {
+    width: 100%;
+    max-height: calc(100vh - 2rem);
+    padding: 0.85rem;
+    border-radius: 18px;
+  }
+  .image-modal-image {
+    max-height: calc(100vh - 7rem);
   }
   .footer,
   .footer-title,
