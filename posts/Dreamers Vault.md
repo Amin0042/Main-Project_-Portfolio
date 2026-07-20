@@ -1,0 +1,5 @@
+آنان که یک تنه، امواج اقیانوس ها را نه تنها مهار میکنند بلکه بر آن سوار میشوند و حماسه ای ازلی و بی تکرار را رقم میزنند، همانا یگانه رویا پردازان قصه ی ما هستند! آنها فارغ از هر گونه دسته بندی ساخته ی دست انسانهای بدون قدرت “رویاپردازی” و “تن پرور”٫ نه تنها با تمام وجود عناوین ساختگی را یکی یک پس میزنند بلکه قلمرویی از مفاهیمی نوین را در میان سیلاب های هولناک اقیانوس ها، بر پا میکنند و قصه هایی نوین برای از بر کردن در گوش تک تک ما انسان های شنوا زمزمه میکنند. اینجا مجمع رویاپردازانیست که با نوایشان زندگی مرا احاطه نموده اند.
+
+Those who, alone, not only master the waves of the ocean but dare to ride them, giving rise to an eternal and unrepeatable epic, are the true dreamers of our story.
+Untouched by the countless classifications devised by those who lack the power to dream and surrender instead to complacency, they reject every fabricated title placed before them. In the midst of the ocean's terrifying torrents, they establish realms founded upon entirely new ideas, whispering new stories into the ears of all who are willing to listen.
+This is the gathering place of the dreamers whose voices have surrounded—and profoundly shaped—my life.
