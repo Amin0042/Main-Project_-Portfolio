@@ -59,7 +59,8 @@ function syncNavbarActiveState() {
 
     if (linkHash) {
       if (linkHash === "#manifesto") {
-        const isManifestoPage = currentPath === "/" && currentHash === "#manifesto";
+        const isManifestoPage =
+          currentPath === "/" && currentHash === "#manifesto";
 
         if (isManifestoPage) {
           activeLink = link;
