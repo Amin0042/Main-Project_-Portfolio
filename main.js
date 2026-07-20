@@ -12,6 +12,94 @@ if (openButton) {
   });
 }
 
+function normalizePathname(pathname) {
+  if (!pathname) {
+    return "/";
+  }
+
+  const normalized = pathname.replace(/\/index\.html$/i, "/");
+
+  if (normalized.length > 1 && normalized.endsWith("/")) {
+    return normalized.slice(0, -1);
+  }
+
+  return normalized || "/";
+}
+
+function syncNavbarActiveState() {
+  const navLinks = document.querySelectorAll(".navbar .nav-link");
+
+  if (!navLinks.length) {
+    return;
+  }
+
+  const currentPath = normalizePathname(window.location.pathname);
+  const currentHash = window.location.hash;
+  let activeLink = null;
+
+  navLinks.forEach(function (link) {
+    link.classList.remove("active");
+    link.removeAttribute("aria-current");
+
+    const href = link.getAttribute("href");
+    const rawHref = (href || "").trim();
+
+    if (!rawHref) {
+      return;
+    }
+
+    // Ignore placeholder hash links so they cannot steal active state from real pages.
+    if (rawHref === "#") {
+      return;
+    }
+
+    const url = new URL(rawHref, window.location.origin);
+    const linkPath = normalizePathname(url.pathname);
+    const linkHash = url.hash;
+
+    if (linkHash) {
+      if (linkHash === "#manifesto") {
+        const isManifestoPage = currentPath === "/" && currentHash === "#manifesto";
+
+        if (isManifestoPage) {
+          activeLink = link;
+        }
+      } else if (linkPath === currentPath && linkHash === currentHash) {
+        activeLink = link;
+      }
+
+      return;
+    }
+
+    if (linkPath === currentPath) {
+      activeLink = link;
+    }
+  });
+
+  if (!activeLink) {
+    activeLink = document.querySelector('.navbar .nav-link[href="/"]');
+  }
+
+  if (activeLink) {
+    activeLink.classList.add("active");
+    activeLink.setAttribute("aria-current", "page");
+  }
+
+  navLinks.forEach(function (link) {
+    link.addEventListener("click", function () {
+      navLinks.forEach(function (item) {
+        item.classList.remove("active");
+        item.removeAttribute("aria-current");
+      });
+
+      link.classList.add("active");
+      link.setAttribute("aria-current", "page");
+    });
+  });
+}
+
+syncNavbarActiveState();
+
 function createImageModal() {
   const modal = document.createElement("div");
   modal.className = "image-modal";
