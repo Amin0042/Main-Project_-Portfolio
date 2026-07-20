@@ -74,7 +74,10 @@ document.addEventListener("keydown", function (event) {
     closeImageModal();
   }
 
-  if (event.key === "Escape" && notesPanel.panel.classList.contains("is-open")) {
+  if (
+    event.key === "Escape" &&
+    notesPanel.panel.classList.contains("is-open")
+  ) {
     closeNotesPanel();
   }
 });
