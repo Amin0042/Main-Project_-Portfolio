@@ -311,7 +311,11 @@ button a,
   grid-template-columns: 1fr 3fr;
   align-items: center;
   text-align: left;
-  height: 500px;
+  min-height: 500px;
+  gap: 2rem;
+}
+#notes-list {
+  display: grid;
   gap: 2rem;
 }
 .post-img {
@@ -328,6 +332,119 @@ button a,
   display: flex;
   flex-direction: column;
   gap: 3rem;
+}
+.notes-panel-open {
+  overflow: hidden;
+}
+
+.notes-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 2500;
+  background: rgba(5, 5, 6, 0.34);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 240ms ease;
+}
+
+.notes-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.notes-panel-shell {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 6rem 2rem 3rem;
+  background:
+    linear-gradient(180deg, rgba(12, 12, 13, 0.98), rgba(18, 16, 16, 0.98)),
+    var(--secondary-black-colour);
+  border-left: 2px solid rgba(210, 164, 37, 0.55);
+  transform: translateX(100%);
+  transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.notes-panel.is-open .notes-panel-shell {
+  transform: translateX(0);
+}
+
+.notes-panel-close {
+  position: sticky;
+  top: 0;
+  margin-left: auto;
+  display: block;
+  z-index: 1;
+}
+
+.notes-panel-header,
+.notes-panel-content {
+  width: min(900px, 100%);
+  margin: 0 auto;
+}
+
+.notes-panel-header {
+  padding-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.notes-panel-date {
+  color: var(--secondary-gold-colour);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.notes-panel-title {
+  text-align: left;
+  text-decoration: none;
+}
+
+.notes-panel-content {
+  color: var(--primary-ivory-colour);
+  line-height: 1.8;
+}
+
+.notes-panel-content :is(h1, h2, h3, h4) {
+  text-align: left;
+  text-decoration: none;
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+
+.notes-panel-content p,
+.notes-panel-content ul,
+.notes-panel-content ol,
+.notes-panel-content blockquote {
+  margin-bottom: 1rem;
+}
+
+.notes-panel-content ul,
+.notes-panel-content ol {
+  padding-left: 1.5rem;
+}
+
+.notes-panel-content li {
+  list-style: disc;
+}
+
+.notes-panel-content ol li {
+  list-style: decimal;
+}
+
+@media (max-width: 700px) {
+  .notes-post {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .notes-panel-shell {
+    padding: 5rem 1.25rem 2rem;
+  }
 }
 .notion-frame {
   width: 100%;

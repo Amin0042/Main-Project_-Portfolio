@@ -73,6 +73,10 @@ document.addEventListener("keydown", function (event) {
   ) {
     closeImageModal();
   }
+
+  if (event.key === "Escape" && notesPanel.panel.classList.contains("is-open")) {
+    closeNotesPanel();
+  }
 });
 
 const carousels = document.querySelectorAll(".carousel");
@@ -195,3 +199,160 @@ carousels.forEach(function (carousel) {
 
   updateCarousel();
 });
+
+function formatPostDate(value) {
+  const fallback = value || "";
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return fallback;
+  }
+
+  return parsed.toLocaleDateString("en-CA", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function createNotesPostElement(post) {
+  const article = document.createElement("article");
+  article.className = "notes-post";
+
+  article.innerHTML = `
+    <div class="post-img">
+      <h4 class="post-date">${formatPostDate(post.date)}</h4>
+    </div>
+    <div class="post-info">
+      <h3 class="post-title">${post.title || "Untitled Note"}</h3>
+      <p class="info-body">${post.summary || ""}</p>
+      <button class="btn info-btn" type="button">Read More</button>
+    </div>
+  `;
+
+  return article;
+}
+
+function createNotesPanel() {
+  const panel = document.createElement("aside");
+  panel.className = "notes-panel";
+  panel.setAttribute("aria-hidden", "true");
+
+  panel.innerHTML = `
+    <div class="notes-panel-shell" role="dialog" aria-modal="true" aria-label="Blog post">
+      <button class="notes-panel-close" type="button" aria-label="Close blog post">Close</button>
+      <div class="notes-panel-header">
+        <p class="notes-panel-date"></p>
+        <h2 class="notes-panel-title"></h2>
+      </div>
+      <article class="notes-panel-content"></article>
+    </div>
+  `;
+
+  document.body.appendChild(panel);
+
+  return {
+    panel,
+    closeButton: panel.querySelector(".notes-panel-close"),
+    date: panel.querySelector(".notes-panel-date"),
+    title: panel.querySelector(".notes-panel-title"),
+    content: panel.querySelector(".notes-panel-content"),
+  };
+}
+
+const notesPanel = createNotesPanel();
+
+function closeNotesPanel() {
+  notesPanel.panel.classList.remove("is-open");
+  notesPanel.panel.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("notes-panel-open");
+}
+
+function openNotesPanel(post, html) {
+  notesPanel.date.textContent = formatPostDate(post.date);
+  notesPanel.title.textContent = post.title || "Untitled Note";
+  notesPanel.content.innerHTML = html;
+  notesPanel.panel.classList.add("is-open");
+  notesPanel.panel.setAttribute("aria-hidden", "false");
+  document.body.classList.add("notes-panel-open");
+}
+
+notesPanel.closeButton.addEventListener("click", closeNotesPanel);
+
+notesPanel.panel.addEventListener("click", function (event) {
+  if (event.target === notesPanel.panel) {
+    closeNotesPanel();
+  }
+});
+
+async function loadNotesMarkdownPosts() {
+  const notesList = document.querySelector("#notes-list");
+
+  if (!notesList) {
+    return;
+  }
+
+  if (typeof marked === "undefined") {
+    notesList.innerHTML = "<p>Markdown renderer is not available.</p>";
+    return;
+  }
+
+  try {
+    const response = await fetch("../posts/index.json");
+
+    if (!response.ok) {
+      throw new Error(`Failed to load posts index (${response.status})`);
+    }
+
+    const posts = await response.json();
+
+    if (!Array.isArray(posts) || posts.length === 0) {
+      notesList.innerHTML = "<p>No posts available yet.</p>";
+      return;
+    }
+
+    notesList.innerHTML = "";
+    const postCache = new Map();
+
+    posts.forEach(function (post) {
+      const article = createNotesPostElement(post);
+      const button = article.querySelector(".info-btn");
+
+      button.addEventListener("click", async function () {
+        button.disabled = true;
+        button.textContent = "Loading...";
+
+        try {
+          let renderedHtml = postCache.get(post.file);
+
+          if (!renderedHtml) {
+            const postResponse = await fetch(`../posts/${post.file}`);
+
+            if (!postResponse.ok) {
+              throw new Error(`Failed to load post (${postResponse.status})`);
+            }
+
+            const markdown = await postResponse.text();
+            renderedHtml = marked.parse(markdown);
+            postCache.set(post.file, renderedHtml);
+          }
+
+          openNotesPanel(post, renderedHtml);
+        } catch (error) {
+          openNotesPanel(post, "<p>Unable to load this post right now.</p>");
+        } finally {
+          button.disabled = false;
+          button.textContent = "Read More";
+        }
+      });
+
+      notesList.appendChild(article);
+    });
+  } catch (error) {
+    notesList.innerHTML =
+      "<p>Unable to load notes. If you are opening files directly, run a local server first.</p>";
+  }
+}
+
+loadNotesMarkdownPosts();

@@ -1,0 +1,5 @@
+امواج اقیانوس، همان رویاهایست که از اعماق نیستی برمیخیزند و در انتهای دالان های قلب اش ته نشین میشوند. امواج اقیانوس یا همان رویاها، شاید همان فاصله ی مردیست تنها بر روی قایقی که در ناکجای جهان به گل نشسته است، از موطن درحال فروپاشی اش. وطنی که هر روز دست نیافتنی تر بنظر میاید. رویاها همان یگانه فرصت و روزنه های نورانی ای هستند که شباهنگام او را در آغوش میکشند تا باری دگر آزادانه و بدون ترس در وطنش، بر خاک مقدس موطنی ورشکسته ولی بشدت کهن اش، قدم بگذارد.
+
+The waves of the ocean are the dreams that rise from the depths of nothingness and come to rest at the end of the corridors of the heart.
+The waves of the ocean—those dreams—are perhaps the distance that separates a solitary man, stranded upon a boat in the middle of nowhere, from his homeland as it slowly falls into ruin; a homeland that grows more unattainable with each passing day.
+Dreams are the only sanctuary, the only shafts of light that embrace him each night, allowing him once more to walk freely and without fear upon the sacred soil of his homeland—a homeland broken, yet immeasurably ancient.
