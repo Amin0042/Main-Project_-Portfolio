@@ -307,31 +307,86 @@ button a,
   width: 100vw;
 }
 .notes-post {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   text-align: left;
-  min-height: 500px;
-  gap: 2rem;
+  min-height: 100%;
+  gap: 1.15rem;
+  padding: 1.4rem;
+  border: 1px solid rgba(210, 164, 37, 0.72);
+  background: linear-gradient(180deg, rgba(17, 16, 16, 0.94), rgba(9, 9, 10, 0.97));
+  box-shadow:
+    inset 0 0 0 1px rgba(210, 164, 37, 0.16),
+    inset 0 0 0 8px rgba(10, 10, 11, 0.35),
+    0 14px 26px rgba(0, 0, 0, 0.22);
 }
+
 #notes-list {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 2rem;
+  align-items: stretch;
+  grid-auto-rows: 1fr;
 }
 .post-img {
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Background-Image/Notes\ Best\ Final\ example\ .png")
-      no-repeat center center / cover;
-  height: 100%;
-  h4 {
-    margin: 3rem 0.5rem;
-  }
+  border: 0;
+  background: transparent;
+  min-height: auto;
+  width: 100%;
+  max-width: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+}
+
+.post-date {
+  margin: 0;
+  text-align: left;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+  font-weight: 550;
+  letter-spacing: 0.1em;
+  line-height: 1.35;
+  color: rgba(210, 164, 37, 0.92);
 }
 .post-info {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  align-items: flex-start;
+  gap: 0.8rem;
+  width: 100%;
+  flex: 1;
+}
+
+.notes-post .post-title {
+  text-align: left;
+  text-decoration: none;
+  line-height: 1.25;
+  font-size: clamp(1.22rem, 1.45vw, 1.55rem);
+  letter-spacing: 0.012em;
+  font-weight: 700;
+  color: var(--primary-gold-colour);
+  margin: 0;
+}
+
+.notes-post .info-body {
+  color: rgba(232, 228, 216, 0.95);
+  line-height: 1.62;
+  font-size: 0.93rem;
+  margin: 0;
+  max-width: 64ch;
+}
+
+.notes-post .info-btn {
+  width: auto;
+  min-width: 0;
+  margin-top: auto;
+  padding: 0.52rem 0.95rem;
+  border-width: 1px;
+  letter-spacing: 0.05em;
+  border-radius: 0;
 }
 .notes-panel-open {
   overflow: hidden;
@@ -436,10 +491,23 @@ button a,
   list-style: decimal;
 }
 
+@media (max-width: 1100px) {
+  #notes-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 700px) {
-  .notes-post {
+  #notes-list {
     grid-template-columns: 1fr;
+  }
+
+  .notes-post {
     min-height: auto;
+  }
+
+  .post-img {
+    max-width: 100%;
   }
 
   .notes-panel-shell {

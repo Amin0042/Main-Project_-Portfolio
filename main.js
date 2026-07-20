@@ -264,6 +264,41 @@ function createNotesPanel() {
   };
 }
 
+function normalizeNotesGridPosts(posts, targetCount) {
+  if (!Array.isArray(posts) || posts.length === 0) {
+    return [];
+  }
+
+  if (posts.length >= targetCount) {
+    return posts.slice(0, targetCount);
+  }
+
+  const normalized = posts.slice();
+  let index = 0;
+
+  while (normalized.length < targetCount) {
+    normalized.push({ ...posts[index % posts.length] });
+    index += 1;
+  }
+
+  return normalized;
+}
+
+function sortNotesNewestFirst(posts) {
+  return [...posts].sort(function (a, b) {
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    const safeA = Number.isNaN(dateA) ? -Infinity : dateA;
+    const safeB = Number.isNaN(dateB) ? -Infinity : dateB;
+
+    if (safeA !== safeB) {
+      return safeB - safeA;
+    }
+
+    return String(a.title || "").localeCompare(String(b.title || ""));
+  });
+}
+
 const notesPanel = createNotesPanel();
 
 function closeNotesPanel() {
@@ -315,10 +350,13 @@ async function loadNotesMarkdownPosts() {
       return;
     }
 
+    const sortedPosts = sortNotesNewestFirst(posts);
+    const displayPosts = normalizeNotesGridPosts(sortedPosts, 9);
+
     notesList.innerHTML = "";
     const postCache = new Map();
 
-    posts.forEach(function (post) {
+    displayPosts.forEach(function (post) {
       const article = createNotesPostElement(post);
       const button = article.querySelector(".info-btn");
 
