@@ -1205,7 +1205,14 @@ body.modal-open {
 /*==================== Mobile View ====================*/
 
 @media (max-width: 750px) {
-  .hero-image {
+  .hero-image,
+  .about-image,
+  .archive-image,
+  .notes-image,
+  .contact-image,
+  .personal-image,
+  .motion-image,
+  .inspiration-image {
     display: none;
   }
   .carousel-content {
@@ -1260,5 +1267,43 @@ body.modal-open {
   .contact-icon {
     grid-template-columns: 1fr;
     width: 100%;
+  }
+  .background {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+  }
+  .about-craft {
+    grid-template-columns: 1fr;
+    align-items: center;
+    justify-content: center;
+  }
+  .craft-grid {
+    img {
+      margin: 0 auto;
+    }
+    grid-template-columns: 1fr;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    grid-template-rows: repeat(3, 1fr);
+  }
+  .craft-info {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .archive-personal {
+    text-align: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    margin: 0rem;
+    background-color: #000001;
+    padding-top: 3rem;
+  }
+  .header-left {
+    text-align: center;
   }
 }
