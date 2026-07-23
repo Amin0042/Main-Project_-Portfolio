@@ -253,7 +253,7 @@ button a,
 .hero-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url("../Assets/Webp/WebP\ Background\ images/Home Page  Final\ Version\ .webp")
+    url("../Assets/Webp/WebP Background images/Home Page Final Version _result.webp")
       no-repeat center center / cover;
   width: 100%;
   min-height: 80vh;
@@ -308,7 +308,7 @@ button a,
 .about-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Background-Image/About\ Page\ Final\ Version\ .png")
+    url("../Assets/Webp/WebP Background images/About Page Background Image_result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
@@ -383,8 +383,8 @@ button a,
 .archive-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Background-Image/Archive\ Four\ BG.png") no-repeat center
-      center / cover;
+    url("../Assets/Webp/WebP Background images/Archive Four BG_result.webp")
+      no-repeat center center / cover;
   min-height: 80vh;
 }
 .archive-container {
@@ -429,7 +429,7 @@ button a,
 .notes-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Background-Image/Notes\ Best\ Final\ example\ .png")
+    url("../Assets/Webp/WebP Background images/Notes example _result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
@@ -666,8 +666,8 @@ button a,
 .contact-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Background-Image/Best\ for\ Contact\ Page\ .png") no-repeat
-      center center / cover;
+    url("../Assets/Webp/WebP Background images/Best for Contact Page _result.webp")
+      no-repeat center center / cover;
   min-height: 80vh;
 }
 .contact-hero {
@@ -777,7 +777,7 @@ button a,
 .personal-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Background-Image/Personal\ Vault\ Examples\ \ \(3\).png")
+    url("../Assets/Webp/WebP Background images/Best for Personal Vault _result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
@@ -809,7 +809,7 @@ button a,
 .motion-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Background-Image/Best\ for\ Motion\ BG\ Example\ .png")
+    url("../Assets/Webp/WebP Background images/Best for Motion BG Example _result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
@@ -844,8 +844,22 @@ button a,
   justify-content: start;
   align-items: start;
 }
+/*==================== Cyborg Vault ====================*/
+.cyborg-image {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    url("../Assets/Webp/WebP Background images/Cyborg Vault _result.webp")
+      no-repeat center center / cover;
+  min-height: 80vh;
+}
 /*==================== Afftereffects Vault ====================*/
-
+.aftereffects-image {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    url("../Assets/Webp/WebP Background images/Aftereffects Vault _result.webp")
+      no-repeat center center / cover;
+  min-height: 80vh;
+}
 .gallery-item {
   width: 100%;
   min-width: 0;
@@ -892,8 +906,8 @@ button a,
 .inspiration-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Background-Image/Inspirations\ Vault\ BG\ .png") no-repeat
-      center center / cover;
+    url("../Assets/Webp/WebP Background images/Inspirations Vault BG _result.webp")
+      no-repeat center center / cover;
   min-height: 80vh;
 }
 .inspiration-hero {
