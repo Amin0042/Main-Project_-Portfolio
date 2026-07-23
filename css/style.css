@@ -253,8 +253,8 @@ button a,
 .hero-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url("../Assets/Background-Image/Home\ Page\ Final\ Version\ .png") no-repeat
-      center center / cover;
+    url("../Assets/Webp/WebP\ Background\ images/Home Page  Final\ Version\ .webp")
+      no-repeat center center / cover;
   width: 100%;
   min-height: 80vh;
 }
