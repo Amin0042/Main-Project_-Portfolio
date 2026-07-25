@@ -429,7 +429,14 @@ button a,
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 0.9rem;
+  width: min(100%, 260px);
+  aspect-ratio: 1 / 1;
+  padding: 1.1rem;
+  border: 1.5px solid rgba(210, 164, 37, 0.95);
+  border-radius: 0;
+  background: rgba(10, 10, 11, 0.35);
   text-decoration: none;
   color: var(--primary-gold-colour);
   font-family: var(--heading-font);
@@ -448,12 +455,14 @@ button a,
   justify-content: center;
 }
 .archive-category-link img {
-  width: min(100%, 260px);
-  height: auto;
-  border: 1px solid rgba(210, 164, 37, 0.45);
-  border-radius: 1rem;
-  padding: 0.5rem;
-  background: rgba(10, 10, 11, 0.72);
+  width: 70%;
+  max-width: 170px;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
 }
 
 @media screen and (max-width: 1000px) {
