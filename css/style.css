@@ -1104,6 +1104,7 @@ button:disabled {
   border-radius: 24px;
   background: linear-gradient(rgba(18, 16, 18, 0.96), rgba(8, 8, 9, 0.98));
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  overflow-y: auto;
 }
 
 .image-modal-close {
@@ -1124,19 +1125,38 @@ button:disabled {
   display: grid;
   gap: 0.75rem;
   margin: 0;
+  align-content: start;
 }
 
 .image-modal-image {
   width: 100%;
-  max-height: calc(100vh - 10rem);
+  max-height: min(62vh, 820px);
   object-fit: contain;
   display: block;
   border-radius: 16px;
 }
 
 .image-modal-caption {
+  display: grid;
+  gap: 0.65rem;
   text-align: center;
   color: var(--primary-ivory-colour);
+}
+
+.image-modal-title {
+  margin: 0;
+  font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+  letter-spacing: 0.03em;
+}
+
+.image-modal-description {
+  margin: 0;
+  color: rgba(244, 238, 222, 0.9);
+  line-height: 1.7;
+  max-width: 75ch;
+  width: min(75ch, 100%);
+  overflow-wrap: anywhere;
+  justify-self: center;
 }
 
 body.modal-open {

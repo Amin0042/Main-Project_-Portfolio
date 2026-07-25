@@ -111,7 +111,10 @@ function createImageModal() {
       <button class="image-modal-close" type="button" aria-label="Close image preview">X</button>
       <figure class="image-modal-figure">
         <img class="image-modal-image" alt="" />
-        <figcaption class="image-modal-caption"></figcaption>
+        <figcaption class="image-modal-caption">
+          <h3 class="image-modal-title"></h3>
+          <p class="image-modal-description"></p>
+        </figcaption>
       </figure>
     </div>
   `;
@@ -122,12 +125,16 @@ function createImageModal() {
     modal,
     dialog: modal.querySelector(".image-modal-dialog"),
     image: modal.querySelector(".image-modal-image"),
-    caption: modal.querySelector(".image-modal-caption"),
+    title: modal.querySelector(".image-modal-title"),
+    description: modal.querySelector(".image-modal-description"),
     closeButton: modal.querySelector(".image-modal-close"),
   };
 }
 
 const imageModal = createImageModal();
+
+const defaultImageModalDescription =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
 function closeImageModal() {
   imageModal.modal.classList.remove("is-open");
@@ -135,13 +142,18 @@ function closeImageModal() {
   document.body.classList.remove("modal-open");
   imageModal.image.removeAttribute("src");
   imageModal.image.alt = "";
-  imageModal.caption.textContent = "";
+  imageModal.title.textContent = "";
+  imageModal.description.textContent = "";
 }
 
 function openImageModal(image) {
+  const imageTitle = image.alt || "Artwork preview";
+  const imageDescription = image.dataset.description || defaultImageModalDescription;
+
   imageModal.image.src = image.currentSrc || image.src;
-  imageModal.image.alt = image.alt || "Artwork preview";
-  imageModal.caption.textContent = image.alt || "";
+  imageModal.image.alt = imageTitle;
+  imageModal.title.textContent = imageTitle;
+  imageModal.description.textContent = imageDescription;
   imageModal.modal.classList.add("is-open");
   imageModal.modal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
