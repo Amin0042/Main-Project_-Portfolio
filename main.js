@@ -148,7 +148,8 @@ function closeImageModal() {
 
 function openImageModal(image) {
   const imageTitle = image.alt || "Artwork preview";
-  const imageDescription = image.dataset.description || defaultImageModalDescription;
+  const imageDescription =
+    image.dataset.description || defaultImageModalDescription;
 
   imageModal.image.src = image.currentSrc || image.src;
   imageModal.image.alt = imageTitle;
