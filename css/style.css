@@ -522,28 +522,28 @@ button a,
 .typography-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.2)),
-    url("../Assets/Webp/WebP Background images/Notes example _result.webp")
+    url("../Assets/Webp/WebP Background images/Typography Background .webp")
       no-repeat center center / cover;
 }
 
 .graphic-design-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.2)),
-    url("../Assets/Webp/WebP Background images/Archive Four BG_result.webp")
+    url("../Assets/Webp/WebP Background images/Graphic Design Background .webp")
       no-repeat center center / cover;
 }
 
 .motion-graphics-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.2)),
-    url("../Assets/Webp/WebP Background images/Best for Motion BG Example _result.webp")
+    url("../Assets/Webp/WebP Background images/Motion Graphics Background .webp")
       no-repeat center center / cover;
 }
 
 .computer-graphics-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.2)),
-    url("../Assets/Webp/WebP Background images/Best for Motion BG Example _result.webp")
+    url("../Assets/Webp/WebP Background images/Computer Graphics Background .webp")
       no-repeat center center / cover;
 }
 
