@@ -425,6 +425,145 @@ button a,
     transition: ease-in 0.3s;
   }
 }
+.archive-category-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  text-decoration: none;
+  color: var(--primary-gold-colour);
+  font-family: var(--heading-font);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.archive-category-link img {
+  width: min(100%, 260px);
+  height: auto;
+  border: 1px solid rgba(210, 164, 37, 0.45);
+  border-radius: 1rem;
+  padding: 0.5rem;
+  background: rgba(10, 10, 11, 0.72);
+}
+.archive-detail-page {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.5rem;
+}
+.archive-detail-shell {
+  max-width: 720px;
+  width: 100%;
+  padding: 3rem;
+  border: 1px solid rgba(210, 164, 37, 0.45);
+  background: linear-gradient(145deg, rgba(10, 10, 11, 0.96), rgba(18, 18, 22, 0.95));
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+.archive-detail-label {
+  margin-bottom: 0.75rem;
+  color: var(--primary-gold-colour);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 0.82rem;
+}
+.archive-back-link {
+  display: inline-block;
+  margin-top: 1.25rem;
+  color: var(--primary-gold-colour);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(210, 164, 37, 0.4);
+}
+.archive-back-link:hover {
+  color: #fff;
+}
+
+.category-image {
+  min-height: 56vh;
+}
+
+.typography-image {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.2)),
+    url("../Assets/Webp/WebP Background images/Notes example _result.webp")
+      no-repeat center center / cover;
+}
+
+.graphic-design-image {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.2)),
+    url("../Assets/Webp/WebP Background images/Archive Four BG_result.webp")
+      no-repeat center center / cover;
+}
+
+.motion-graphics-image {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.2)),
+    url("../Assets/Webp/WebP Background images/Best for Motion BG Example _result.webp")
+      no-repeat center center / cover;
+}
+
+.category-hero {
+  min-height: 30vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.category-hero-shell {
+  max-width: 680px;
+}
+
+.category-projects {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  width: min(1100px, calc(100% - 4rem));
+  margin: 0 auto;
+}
+
+.category-project {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  border: 1px solid rgba(210, 164, 37, 0.45);
+  background: linear-gradient(
+    180deg,
+    rgba(17, 16, 16, 0.94),
+    rgba(9, 9, 10, 0.97)
+  );
+  padding: 1.5rem;
+}
+
+.category-project-copy {
+  text-align: left;
+}
+
+.category-project-copy h3 {
+  text-align: left;
+  text-decoration: none;
+  line-height: 1.7;
+  margin-bottom: 0.6rem;
+}
+
+.category-project-copy p {
+  margin-bottom: 1rem;
+}
+
+.category-project-media {
+  display: flex;
+  justify-content: center;
+}
+
+.category-project-media img {
+  width: min(100%, 250px);
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 1px solid rgba(210, 164, 37, 0.65);
+  background-color: rgba(255, 255, 255, 0.05);
+}
 /*==================== Notes ====================*/
 .notes-image {
   background:
@@ -1337,6 +1476,17 @@ body.modal-open {
     background-color: #000001;
     padding-top: 3rem;
   }
+
+  .category-project {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .category-project-copy,
+  .category-project-copy h3 {
+    text-align: center;
+  }
+
   .header-left {
     text-align: center;
   }
