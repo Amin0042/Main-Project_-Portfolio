@@ -20,11 +20,12 @@
   --fw-medium: 700;
   --fw-small: 500;
   --fw-large: 900;
-  --h1-size: 1.5rem;
-  --h2-size: 1.25rem;
-  --h3-size: 1.125rem;
-  --normal-font-size: 0.93rem;
-  --small-font-size: 0.81rem;
+  --normal-font-size: 1.75rem;
+  --h1-size: calc(var(--normal-font-size) * 2);
+  --h2-size: calc(var(--normal-font-size) * 1.5);
+  --h3-size: calc(var(--normal-font-size) * 1.25);
+  --h4-size: calc(var(--normal-font-size) * 1.125);
+  --small-font-size: calc(var(--normal-font-size) * 0.81);
   --carousel-transition-duration: 520ms;
   --carousel-transition-curve: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -37,6 +38,7 @@ body {
   flex-direction: column;
   align-items: center;
   max-width: 100vw;
+  font-size: var(--normal-font-size);
 }
 
 header,
@@ -47,7 +49,8 @@ footer,
 }
 h1,
 h2,
-h3 {
+h3,
+h4 {
   font-family: "cinzel";
   font-weight: var(--fw-medium);
   color: var(--primary-gold-colour);
@@ -55,6 +58,19 @@ h3 {
   text-decoration-line: underline;
   line-height: 3rem;
 }
+h1 {
+  font-size: var(--h1-size);
+}
+h2 {
+  font-size: var(--h2-size);
+}
+h3 {
+  font-size: var(--h3-size);
+}
+h4 {
+  font-size: var(--h4-size);
+}
+
 a {
   color: var(--primary-gold-colour) !important;
   text-decoration: none;
@@ -623,6 +639,10 @@ button a,
   justify-content: center;
   align-items: center;
   width: 100vw;
+}
+.notes-container {
+  text-align: center;
+  width: 50%;
 }
 .notes-post {
   display: flex;
@@ -1422,6 +1442,13 @@ body.modal-open {
 /*==================== Mobile View ====================*/
 
 @media (max-width: 750px) {
+  body {
+    --normal-font-size: 1.25rem;
+    --h1-size: calc(var(--normal-font-size) * 2);
+    --h2-size: calc(var(--normal-font-size) * 1.5);
+    --h3-size: calc(var(--normal-font-size) * 1.25);
+    --h4-size: calc(var(--normal-font-size) * 1.125);
+  }
   .hero-image,
   .about-image,
   .archive-image,
@@ -1533,5 +1560,22 @@ body.modal-open {
 
   .header-left {
     text-align: center;
+  }
+  .notes-hero {
+    justify-content: center;
+    align-items: center;
+  }
+  .notes-container {
+    width: 100%;
+  }
+  .contact-container {
+    width: 100%;
+    text-align: center;
+  }
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0.75rem;
   }
 }

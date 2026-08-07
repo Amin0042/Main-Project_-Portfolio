@@ -101,6 +101,41 @@ function syncNavbarActiveState() {
 
 syncNavbarActiveState();
 
+function optimizeImageLoading() {
+  const images = document.querySelectorAll("img");
+
+  if (!images.length) {
+    return;
+  }
+
+  const foldThreshold = window.innerHeight * 1.2;
+
+  images.forEach(function (image, index) {
+    if (!image.getAttribute("decoding")) {
+      image.decoding = "async";
+    }
+
+    if (image.closest(".image-modal")) {
+      return;
+    }
+
+    if (image.getAttribute("loading")) {
+      return;
+    }
+
+    const rect = image.getBoundingClientRect();
+    const likelyAboveTheFold = index === 0 || rect.top < foldThreshold;
+
+    image.loading = likelyAboveTheFold ? "eager" : "lazy";
+
+    if (likelyAboveTheFold && !image.getAttribute("fetchpriority")) {
+      image.fetchPriority = "high";
+    }
+  });
+}
+
+optimizeImageLoading();
+
 function createImageModal() {
   const modal = document.createElement("div");
   modal.className = "image-modal";
