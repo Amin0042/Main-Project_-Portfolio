@@ -3,12 +3,72 @@ const closeButton = document.querySelector(".popup-close");
 const popup = document.querySelector(".manifesto-popup");
 
 if (openButton) {
+  const focusableSelector =
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  const lockBodyScroll = function () {
+    document.body.style.overflow = "hidden";
+  };
+
+  const unlockBodyScroll = function () {
+    document.body.style.overflow = "";
+  };
+
+  const closePopup = function () {
+    popup.classList.remove("show");
+    popup.setAttribute("aria-hidden", "true");
+    unlockBodyScroll();
+    openButton.focus();
+  };
+
   openButton.addEventListener("click", function () {
     popup.classList.add("show");
+    popup.setAttribute("aria-hidden", "false");
+    lockBodyScroll();
+    requestAnimationFrame(function () {
+      const dialog = popup.querySelector(".popup-container");
+      if (dialog) {
+        dialog.focus();
+      } else {
+        closeButton.focus();
+      }
+    });
   });
 
-  closeButton.addEventListener("click", function () {
-    popup.classList.remove("show");
+  closeButton.addEventListener("click", closePopup);
+
+  popup.addEventListener("click", function (event) {
+    if (event.target === popup) {
+      closePopup();
+    }
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && popup.classList.contains("show")) {
+      closePopup();
+    }
+
+    if (event.key === "Tab" && popup.classList.contains("show")) {
+      const container = popup.querySelector(".popup-container");
+      const focusableElements = container
+        ? container.querySelectorAll(focusableSelector)
+        : [];
+
+      if (!focusableElements.length) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
   });
 }
 
