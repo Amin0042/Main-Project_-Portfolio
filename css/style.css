@@ -255,7 +255,9 @@ button a:focus-visible,
   letter-spacing: 0.08em;
   line-height: 1.2;
   white-space: nowrap;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .navbar-brand:hover,
@@ -304,7 +306,9 @@ button a:focus-visible,
   padding: 0.56rem 0.68rem !important;
   color: var(--secondary-gold-colour) !important;
   opacity: 1;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .nav-link::after {
@@ -660,7 +664,11 @@ button a:focus-visible,
   align-items: center;
   gap: clamp(2rem, 4vw, 4rem);
   margin: 0 clamp(1.25rem, 4vw, 4rem);
-  background: linear-gradient(180deg, rgba(10, 10, 11, 0.9), rgba(18, 18, 20, 0.96));
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 11, 0.9),
+    rgba(18, 18, 20, 0.96)
+  );
   border: 1px solid rgba(198, 168, 90, 0.18);
   padding: clamp(2rem, 3vw, 3.25rem);
   text-align: left;
@@ -732,7 +740,10 @@ button a:focus-visible,
   font-family: var(--heading-font);
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .archive-category-link:hover,
@@ -1756,7 +1767,10 @@ body.modal-open {
   justify-content: center;
   min-height: 2.5rem;
   padding: 0.5rem 0.75rem;
-  transition: color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .footer-navigation a:hover,
