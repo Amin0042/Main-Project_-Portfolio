@@ -67,6 +67,33 @@ p {
   color: rgba(255, 255, 255, 0.9);
 }
 
+/* Word-by-word hover: main.js wraps each word of every plain paragraph in
+   a .word span so individual words can react on hover, independent of the
+   rest of the sentence. */
+p .word {
+  display: inline-block;
+  cursor: default;
+  transition: color 0.25s ease, text-shadow 0.25s ease, transform 0.2s ease;
+}
+
+p .word:hover,
+p .word:focus-visible {
+  color: var(--secondary-red-colour);
+  text-shadow: 0 0 12px rgba(122, 28, 34, 0.55);
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  p .word {
+    transition: none;
+  }
+
+  p .word:hover,
+  p .word:focus-visible {
+    transform: none;
+  }
+}
+
 h1,
 h2,
 h3,
@@ -599,6 +626,27 @@ button a:focus-visible,
     border: 2px var(--primary-gold-colour) double;
   }
 }
+.education-intro {
+  align-self: flex-start;
+  margin-inline: 0;
+  text-align: left;
+}
+.education-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-self: flex-start;
+  width: 100%;
+  text-align: left;
+  font-size: clamp(1.08rem, 0.76vw + 0.94rem, 1.28rem);
+  color: rgba(255, 255, 255, 0.9);
+}
+.education-list li {
+  list-style: disc;
+  margin-left: 1.2rem;
+  font-size: inherit;
+  color: inherit;
+}
 .about-craft {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -643,11 +691,6 @@ button a:focus-visible,
 
 .archive-container p {
   margin: 0 auto;
-  max-width: 760px;
-  text-align: left;
-  line-height: 1.95;
-  letter-spacing: 0.01em;
-  color: rgba(255, 255, 255, 0.9);
 }
 
 .archive-hero {

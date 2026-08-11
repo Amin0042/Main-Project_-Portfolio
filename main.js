@@ -31,8 +31,84 @@ function initializeContactHints() {
   });
 }
 
+function initializeWordHoverEffect() {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  const WRAPPED_ATTR = "data-word-hover";
+
+  const wrapParagraph = function (p) {
+    // Only fragment plain-text paragraphs. Paragraphs that already contain
+    // elements (links, icons, etc.) are left alone so we never break markup.
+    if (p.hasAttribute(WRAPPED_ATTR) || p.children.length > 0) {
+      return;
+    }
+
+    const text = p.textContent;
+
+    if (!text || !text.trim()) {
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    text.split(/(\s+)/).forEach(function (token) {
+      if (token === "") {
+        return;
+      }
+
+      if (/^\s+$/.test(token)) {
+        fragment.appendChild(document.createTextNode(token));
+        return;
+      }
+
+      const span = document.createElement("span");
+      span.className = "word";
+      span.textContent = token;
+      fragment.appendChild(span);
+    });
+
+    p.textContent = "";
+    p.appendChild(fragment);
+    p.setAttribute(WRAPPED_ATTR, "true");
+  };
+
+  const wrapParagraphsWithin = function (root) {
+    if (!root || typeof root.querySelectorAll !== "function") {
+      return;
+    }
+
+    if (root.tagName === "P") {
+      wrapParagraph(root);
+    }
+
+    root.querySelectorAll("p").forEach(wrapParagraph);
+  };
+
+  // Wrap every paragraph already on the page.
+  wrapParagraphsWithin(document.body);
+
+  // Keep wrapping paragraphs that get added later (notes cards, the notes
+  // popup panel, the manifesto popup, etc.) so the hover effect stays
+  // consistent across the whole site, not just the initial page load.
+  if (typeof MutationObserver !== "undefined") {
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        mutation.addedNodes.forEach(function (node) {
+          if (node.nodeType === 1) {
+            wrapParagraphsWithin(node);
+          }
+        });
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+}
+
 if (typeof module !== "undefined") {
-  module.exports = { initializeContactHints };
+  module.exports = { initializeContactHints, initializeWordHoverEffect };
 }
 
 if (typeof document !== "undefined") {
@@ -41,6 +117,7 @@ if (typeof document !== "undefined") {
   const popup = document.querySelector(".manifesto-popup");
 
   initializeContactHints();
+  initializeWordHoverEffect();
 
   if (openButton) {
     const focusableSelector =
