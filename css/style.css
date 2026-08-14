@@ -31,6 +31,18 @@
   --carousel-transition-duration: 520ms;
   --carousel-transition-curve: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
+body.light {
+  --bs-body-bg: #e8e4d8;
+  --bs-body-color: ;
+  --primary-red-colour: #5a0f14;
+  --secondary-red-colour: #7a1c22;
+  --primary-black-colour: #0a0a0b;
+  --secondary-black-colour: #e8e4d8;
+  --primary-gold-colour: #c6a85a;
+  --secondary-gold-colour: #0a0a0b;
+  --bs-navbar-icon-color: #d2a425;
+  --primary-ivory-colour: ;
+}
 body {
   background-color: var(--secondary-black-colour);
   font-family: var(--font-family);
@@ -73,7 +85,10 @@ p {
 p .word {
   display: inline-block;
   cursor: default;
-  transition: color 0.25s ease, text-shadow 0.25s ease, transform 0.2s ease;
+  transition:
+    color 0.25s ease,
+    text-shadow 0.25s ease,
+    transform 0.2s ease;
 }
 
 p .word:hover,
@@ -224,6 +239,66 @@ button a:focus-visible,
 }
 
 /*==================== Hamburger Menu (Mobile Nav Toggler) ====================*/
+.theme-toggle-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.85rem;
+  height: 2.85rem;
+  min-width: 2.85rem;
+  min-height: 2.85rem;
+  padding: 0;
+  margin-left: auto;
+  border-radius: 50%;
+  border: 1px solid rgba(210, 164, 37, 0.8);
+  background: rgba(198, 168, 90, 0.08);
+  color: var(--secondary-gold-colour);
+  box-shadow: inset 0 0 0 1px rgba(10, 10, 11, 0.28);
+  flex: 0 0 auto;
+}
+
+.theme-toggle-btn:hover,
+.theme-toggle-btn:focus-visible {
+  background: rgba(198, 168, 90, 0.16);
+  border-color: rgba(255, 215, 120, 1);
+  box-shadow:
+    inset 0 0 0 1px rgba(10, 10, 11, 0.35),
+    0 0 0 1px rgba(255, 215, 120, 0.45);
+}
+
+.theme-toggle-icon {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.theme-icon-sun {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.theme-icon-moon {
+  opacity: 0;
+  transform: scale(0.7);
+}
+
+body.light .theme-icon-sun {
+  opacity: 0;
+  transform: scale(0.7);
+}
+
+body.light .theme-icon-moon {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .navbar-toggler {
   min-width: 0;
   min-height: 0;
@@ -328,7 +403,7 @@ button a:focus-visible,
 .navbar {
   width: 100%;
   border-bottom: 1px solid rgba(210, 164, 37, 0.28);
-  background: rgba(10, 10, 11, 0.97);
+  background: var;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
 
@@ -2065,6 +2140,7 @@ body.modal-open {
   .inspiration-image {
     min-height: clamp(200px, 46vh, 380px);
     background-attachment: scroll;
+    object-fit: cover;
   }
   .carousel-content {
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -1,3 +1,75 @@
+function initializeThemeToggle() {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  const navbarContainer = document.querySelector(".navbar .container-fluid");
+
+  if (!navbarContainer || navbarContainer.querySelector(".theme-toggle-btn")) {
+    return;
+  }
+
+  const themeButton = document.createElement("button");
+  themeButton.type = "button";
+  themeButton.className = "theme-toggle-btn";
+  themeButton.setAttribute("aria-label", "Toggle light and dark mode");
+  themeButton.setAttribute("title", "Toggle light and dark mode");
+  themeButton.innerHTML = `
+    <span class="theme-toggle-icon theme-icon-sun" aria-hidden="true">☀</span>
+    <span class="theme-toggle-icon theme-icon-moon" aria-hidden="true">☾</span>
+  `;
+
+  const navToggler = navbarContainer.querySelector(".navbar-toggler");
+
+  if (navToggler) {
+    navbarContainer.insertBefore(themeButton, navToggler);
+  } else {
+    navbarContainer.appendChild(themeButton);
+  }
+
+  const setTheme = function (isLight) {
+    document.body.classList.toggle("light", isLight);
+    themeButton.setAttribute("aria-pressed", String(isLight));
+    themeButton.setAttribute(
+      "aria-label",
+      isLight ? "Switch to dark mode" : "Switch to light mode"
+    );
+    themeButton.title = isLight ? "Switch to dark mode" : "Switch to light mode";
+
+    try {
+      window.localStorage.setItem(
+        "january8th-theme",
+        isLight ? "light" : "dark"
+      );
+    } catch (error) {
+      // Ignore storage access failures (private browsing, disabled cookies, etc.).
+    }
+  };
+
+  let prefersLight = false;
+
+  try {
+    const savedTheme = window.localStorage.getItem("january8th-theme");
+
+    if (savedTheme === "light" || savedTheme === "dark") {
+      prefersLight = savedTheme === "light";
+    } else if (window.matchMedia) {
+      prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+    }
+  } catch (error) {
+    prefersLight = window.matchMedia
+      ? window.matchMedia("(prefers-color-scheme: light)").matches
+      : false;
+  }
+
+  setTheme(prefersLight);
+
+  themeButton.addEventListener("click", function () {
+    const nextTheme = !document.body.classList.contains("light");
+    setTheme(nextTheme);
+  });
+}
+
 function initializeContactHints() {
   if (typeof document === "undefined") {
     return;
@@ -116,6 +188,7 @@ if (typeof document !== "undefined") {
   const closeButton = document.querySelector(".popup-close");
   const popup = document.querySelector(".manifesto-popup");
 
+  initializeThemeToggle();
   initializeContactHints();
   initializeWordHoverEffect();
 
