@@ -19,12 +19,22 @@ function initializeThemeToggle() {
     <span class="theme-toggle-icon theme-icon-moon" aria-hidden="true">☾</span>
   `;
 
-  const navToggler = navbarContainer.querySelector(".navbar-toggler");
-
-  if (navToggler) {
-    navbarContainer.insertBefore(themeButton, navToggler);
+  // Insert as a list item in the navbar menu for desktop
+  const navbarNav = navbarContainer.querySelector(".navbar-nav");
+  
+  if (navbarNav) {
+    const themeToggleItem = document.createElement("li");
+    themeToggleItem.className = "nav-item theme-toggle-item";
+    themeToggleItem.appendChild(themeButton);
+    navbarNav.appendChild(themeToggleItem);
   } else {
-    navbarContainer.appendChild(themeButton);
+    // Fallback for mobile: insert before navbar-toggler
+    const navToggler = navbarContainer.querySelector(".navbar-toggler");
+    if (navToggler) {
+      navbarContainer.insertBefore(themeButton, navToggler);
+    } else {
+      navbarContainer.appendChild(themeButton);
+    }
   }
 
   const setTheme = function (isLight) {
