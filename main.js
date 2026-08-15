@@ -56,6 +56,10 @@ function initializeThemeToggle() {
     }
   };
 
+  // Default to dark mode for first-time visitors (no saved preference) —
+  // the site no longer follows the OS light/dark preference on first load,
+  // it only follows it once a visitor has explicitly chosen light mode
+  // and we remember that choice.
   let prefersLight = false;
 
   try {
@@ -63,13 +67,9 @@ function initializeThemeToggle() {
 
     if (savedTheme === "light" || savedTheme === "dark") {
       prefersLight = savedTheme === "light";
-    } else if (window.matchMedia) {
-      prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
     }
   } catch (error) {
-    prefersLight = window.matchMedia
-      ? window.matchMedia("(prefers-color-scheme: light)").matches
-      : false;
+    prefersLight = false;
   }
 
   setTheme(prefersLight);
@@ -283,6 +283,47 @@ function initializeMagneticFooterLinks() {
   });
 }
 
+function initializeLogoSignatureAnimation() {
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    return;
+  }
+
+  const reduceMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (reduceMotion) {
+    return;
+  }
+
+  // The rose-medallion's sacred "breath" (grow, bloom with holy light,
+  // settle) is driven by CSS on :hover/:focus-visible for pointer users.
+  // Touch devices never fire :hover, so a tap here adds the same
+  // .glyph-spin class the CSS keyframe listens for, and removes it once
+  // the animation finishes so the very next tap can replay it.
+  const marks = document.querySelectorAll(".navbar-brand, .footer-title a");
+
+  marks.forEach(function (mark) {
+    const glyph = mark.querySelector("img");
+
+    if (!glyph) {
+      return;
+    }
+
+    glyph.addEventListener("animationend", function (event) {
+      if (event.animationName === "glyph-awaken") {
+        glyph.classList.remove("glyph-spin");
+      }
+    });
+
+    mark.addEventListener("click", function () {
+      glyph.classList.remove("glyph-spin");
+      void glyph.offsetWidth; // restart the animation even on rapid repeat taps
+      glyph.classList.add("glyph-spin");
+    });
+  });
+}
+
 function initializeWordHoverEffect() {
   if (typeof document === "undefined") {
     return;
@@ -365,6 +406,7 @@ if (typeof module !== "undefined") {
     initializeWordHoverEffect,
     initializeMagneticFooterLinks,
     initializePageTransitions,
+    initializeLogoSignatureAnimation,
   };
 }
 
@@ -378,6 +420,7 @@ if (typeof document !== "undefined") {
   initializeWordHoverEffect();
   initializeMagneticFooterLinks();
   initializePageTransitions();
+  initializeLogoSignatureAnimation();
 
   if (openButton) {
     const focusableSelector =

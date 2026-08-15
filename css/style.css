@@ -14,6 +14,18 @@
   --secondary-gold-colour: #d2a425;
   --bs-navbar-color: #d2a425;
   --bs-navbar-icon-color: #d2a425;
+  /* ---- Gilt bordering system --------------------------------------
+     Three deliberate weights, used consistently everywhere a border
+     appears on the site, so the gold reads as one designed system
+     instead of a scatter of one-off opacities:
+       hairline → dividers between sections/content on the page
+       card     → content cards, image frames, panels, popups, inputs
+       strong   → the navbar and footer only, the page's two anchors,
+                  meant to visibly outrank every other gold line on it
+     -------------------------------------------------------------- */
+  --gold-border-hairline: rgba(210, 164, 37, 0.3);
+  --gold-border-card: rgba(210, 164, 37, 0.5);
+  --gold-border-strong: rgba(210, 164, 37, 0.85);
   --primary-ivory-colour: #e8e4d8;
   --body-copy-colour: rgba(255, 255, 255, 0.9);
   --font-family: "inter", "cinzel", "Playfair Display", "sans-serif";
@@ -175,7 +187,7 @@ body::after {
 body::before {
   left: 0;
   transform-origin: left center;
-  border-right: 1px solid rgba(210, 164, 37, 0.45);
+  border-right: 1px solid var(--gold-border-card);
   box-shadow: 3px 0 26px rgba(0, 0, 0, 0.55);
   animation: chamber-open-left var(--chamber-duration) var(--chamber-ease) both;
 }
@@ -183,7 +195,7 @@ body::before {
 body::after {
   right: 0;
   transform-origin: right center;
-  border-left: 1px solid rgba(210, 164, 37, 0.45);
+  border-left: 1px solid var(--gold-border-card);
   box-shadow: -3px 0 26px rgba(0, 0, 0, 0.55);
   animation: chamber-open-right var(--chamber-duration) var(--chamber-ease) both;
   /* Mirror image of the rose in body::before's first background layer: its
@@ -457,9 +469,14 @@ button,
   border-radius: 0;
   padding: 0.7rem 1rem;
   cursor: pointer;
+  /* The outer ring (on top of the border itself) is what makes the gold
+     edge read clearly against the near-black dark-mode surface without
+     needing a heavier border-width; body.light's near-black gold tokens
+     keep this ring effectively invisible on parchment, so it only shows
+     up where it's needed. */
   box-shadow:
     inset 0 0 0 1px rgba(10, 10, 11, 0.65),
-    0 0 0 1px rgba(210, 164, 37, 0.18);
+    0 0 0 1px rgba(210, 164, 37, 0.35);
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
@@ -683,14 +700,25 @@ body.light .theme-icon-moon {
 .section {
   margin: 0;
   padding: 2rem 2rem 3rem;
-  border-top: 2px solid;
+  border-top: 1px solid var(--gold-border-hairline);
   text-align: center;
+}
+/* #footer is itself a `.section`, so it already inherits the hairline
+   divider above — this override just outranks it: a wider, brighter line
+   plus a soft gold wash bleeding off the edge, so the footer's top and
+   the navbar's bottom below read as the two strong anchors bracketing
+   every page, distinctly stronger than the hairlines dividing content
+   in between. */
+#footer {
+  border-top: 2px solid var(--gold-border-strong);
+  box-shadow: 0 -18px 30px -22px rgba(210, 164, 37, 0.35);
 }
 /*==================== Nav ====================*/
 
 .navbar {
   width: 100%;
-  border-bottom: 1px solid rgba(210, 164, 37, 0.28);
+  border-bottom: 2px solid var(--gold-border-strong);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28), 0 18px 30px -22px rgba(210, 164, 37, 0.35);
   background: var;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
@@ -741,6 +769,89 @@ body.light .theme-icon-moon {
   width: 46px;
   min-width: 46px;
   max-width: none;
+}
+
+/*==================== Signature Logo Animation ====================*/
+/* The January8th glyph is a four-point gothic rose medallion — the same
+   rose-window motif that lights up the page-transition doors elsewhere on
+   the site. It gets one deliberate gesture everywhere it appears (navbar
+   brand, footer mark, nowhere else): a slow devotional breath at rest —
+   the faintest swell and a hint of gold aura, like a votive light left
+   burning — and, whenever a visitor hovers, focuses, or taps it, a single
+   deep inhale: the glyph grows, a halo of holy gold light blooms out
+   around it in soft concentric rings, then both ease back to rest. No
+   spin, no gimmick — the same stillness a relic or an icon in a chapel
+   would be lit with, just given one quiet, reverent pulse of life.
+   border-radius: 50% below doesn't crop the artwork (it's already a
+   circular medallion on a transparent field) — it just makes the glow
+   radiate as a halo instead of hugging the image's square bounding box.
+   main.js's initializeLogoSignatureAnimation adds/removes .glyph-spin so
+   touch devices (no :hover) get the same breath on tap, replayable on
+   every repeat tap. */
+@keyframes glyph-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    border-radius: 50%;
+    filter: drop-shadow(0 0 2px rgba(210, 164, 37, 0.22));
+    box-shadow:
+      0 0 12px 1px rgba(210, 164, 37, 0.14),
+      0 0 26px 5px rgba(210, 164, 37, 0.06);
+  }
+  50% {
+    transform: scale(1.025);
+    border-radius: 50%;
+    filter: drop-shadow(0 0 6px rgba(210, 164, 37, 0.4));
+    box-shadow:
+      0 0 18px 2px rgba(210, 164, 37, 0.22),
+      0 0 36px 8px rgba(210, 164, 37, 0.1);
+  }
+}
+
+@keyframes glyph-awaken {
+  0%,
+  100% {
+    transform: scale(1);
+    border-radius: 50%;
+    filter: drop-shadow(0 0 3px rgba(210, 164, 37, 0.3));
+    box-shadow:
+      0 0 14px 2px rgba(210, 164, 37, 0.18),
+      0 0 30px 6px rgba(210, 164, 37, 0.08);
+  }
+  55% {
+    transform: scale(1.16);
+    border-radius: 50%;
+    filter:
+      drop-shadow(0 0 14px rgba(255, 236, 190, 0.95))
+      drop-shadow(0 0 30px rgba(255, 215, 120, 0.6));
+    box-shadow:
+      0 0 36px 8px rgba(255, 225, 150, 0.55),
+      0 0 78px 22px rgba(210, 164, 37, 0.32),
+      0 0 130px 42px rgba(210, 164, 37, 0.14);
+  }
+}
+
+.navbar-brand .icon,
+.footer-title img {
+  transform-origin: 50% 50%;
+  animation: glyph-breathe 5.5s ease-in-out infinite;
+  will-change: transform, filter, box-shadow;
+}
+
+.navbar-brand:hover .icon,
+.navbar-brand:focus-visible .icon,
+.navbar-brand .icon.glyph-spin,
+.footer-title a:hover img,
+.footer-title a:focus-visible img,
+.footer-title img.glyph-spin {
+  animation: glyph-awaken 1.6s cubic-bezier(0.45, 0, 0.2, 1) 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-brand .icon,
+  .footer-title img {
+    animation: none;
+  }
 }
 
 .navbar-collapse {
@@ -938,7 +1049,7 @@ body.light .nav-link:focus-visible::after {
   background:
     linear-gradient(180deg, rgba(18, 15, 12, 0.98), rgba(12, 12, 12, 0.98)),
     radial-gradient(circle at top, rgba(198, 168, 90, 0.12), transparent 55%);
-  border: 1px solid rgba(198, 168, 90, 0.82);
+  border: 1px solid var(--gold-border-card);
   border-radius: 0;
   box-shadow:
     0 24px 80px rgba(0, 0, 0, 0.62),
@@ -1015,7 +1126,7 @@ body.light .nav-link:focus-visible::after {
   right: 1rem;
   width: 2.8rem;
   height: 2.8rem;
-  border: 1px solid rgba(198, 168, 90, 0.9);
+  border: 1px solid var(--gold-border-card);
   border-radius: 0;
   background: rgba(10, 10, 11, 0.55);
   color: var(--primary-gold-colour);
@@ -1159,7 +1270,7 @@ body.light .popup-close:focus-visible {
   img {
     width: 30%;
     background-color: #0a0a0b;
-    border: 2px var(--primary-gold-colour) double;
+    border: 2px var(--gold-border-card) double;
   }
 }
 .education-intro {
@@ -1195,7 +1306,7 @@ body.light .popup-close:focus-visible {
   img {
     width: 40%;
     background-color: #0a0a0b;
-    border: 2px var(--primary-gold-colour) double;
+    border: 2px var(--gold-border-card) double;
   }
   gap: 3rem;
   align-content: center;
@@ -1248,7 +1359,7 @@ body.light .popup-close:focus-visible {
     rgba(10, 10, 11, 0.9),
     rgba(18, 18, 20, 0.96)
   );
-  border: 1px solid rgba(198, 168, 90, 0.18);
+  border: 1px solid var(--gold-border-card);
   padding: clamp(2rem, 3vw, 3.25rem);
   text-align: left;
 }
@@ -1310,7 +1421,7 @@ body.light .archive-img {
   max-width: 560px;
   height: auto;
   object-fit: cover;
-  border: 1px solid rgba(198, 168, 90, 0.4);
+  border: 1px solid var(--gold-border-card);
   background: rgba(10, 10, 11, 0.5);
 }
 .carousel-link {
@@ -1329,7 +1440,7 @@ body.light .archive-img {
   width: min(100%, 260px);
   aspect-ratio: 1 / 1;
   padding: 1.1rem;
-  border: 1.5px solid rgba(210, 164, 37, 0.95);
+  border: 1.5px solid var(--gold-border-card);
   border-radius: 0;
   background: var(--secondary-black-colour);
   text-decoration: none;
@@ -1346,7 +1457,7 @@ body.light .archive-img {
 .archive-category-link:hover,
 .archive-category-link:focus-visible {
   transform: translateY(-2px);
-  border-color: rgba(255, 215, 120, 0.95);
+  border-color: rgba(255, 215, 120, 1);
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
   outline: none;
 }
@@ -1411,7 +1522,7 @@ body.light .archive-img {
   max-width: 720px;
   width: 100%;
   padding: 3rem;
-  border: 1px solid rgba(210, 164, 37, 0.45);
+  border: 1px solid var(--gold-border-card);
   background: linear-gradient(
     145deg,
     rgba(10, 10, 11, 0.96),
@@ -1432,7 +1543,7 @@ body.light .archive-img {
   margin-top: 1.25rem;
   color: var(--primary-gold-colour);
   text-decoration: none;
-  border-bottom: 1px solid rgba(210, 164, 37, 0.4);
+  border-bottom: 1px solid var(--gold-border-card);
 }
 .archive-back-link:hover {
   color: #fff;
@@ -1495,7 +1606,7 @@ body.light .archive-img {
   grid-template-columns: 2fr 1fr;
   gap: 2rem;
   align-items: center;
-  border: 1px solid rgba(210, 164, 37, 0.45);
+  border: 1px solid var(--gold-border-card);
   background: var(--secondary-black-colour);
   padding: 1.5rem;
 }
@@ -1524,7 +1635,7 @@ body.light .archive-img {
   width: min(100%, 250px);
   aspect-ratio: 1;
   object-fit: cover;
-  border: 1px solid rgba(210, 164, 37, 0.65);
+  border: 1px solid var(--gold-border-card);
   background-color: rgba(255, 255, 255, 0.05);
 }
 /*==================== Notes ====================*/
@@ -1555,7 +1666,7 @@ body.light .archive-img {
   min-height: 100%;
   gap: 1.15rem;
   padding: 1.4rem;
-  border: 1px solid rgba(210, 164, 37, 0.72);
+  border: 1px solid var(--gold-border-card);
   background: linear-gradient(
     180deg,
     rgba(17, 16, 16, 0.94),
@@ -1664,7 +1775,7 @@ body.light .archive-img {
   background:
     linear-gradient(180deg, rgba(12, 12, 13, 0.98), rgba(18, 16, 16, 0.98)),
     var(--secondary-black-colour);
-  border-left: 2px solid rgba(210, 164, 37, 0.55);
+  border-left: 2px solid var(--gold-border-card);
   transform: translateX(100%);
   transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -1903,7 +2014,7 @@ body.light .notes-panel-close:hover {
   gap: 0.75rem;
   min-width: 0;
   padding: 0.9rem 1rem;
-  border: 1px solid rgba(210, 164, 37, 0.35);
+  border: 1px solid var(--gold-border-card);
   background: var(--secondary-black-colour);
   width: 100%;
   justify-content: flex-start;
@@ -1925,7 +2036,7 @@ body.light .notes-panel-close:hover {
   width: 100%;
   color: var(--secondary-gold-colour);
   text-align: left;
-  --bs-border-color: var(--primary-gold-colour);
+  --bs-border-color: var(--gold-border-card);
 }
 
 .contact-form form {
@@ -2033,7 +2144,7 @@ body.light .notes-panel-close:hover {
     object-fit: cover;
     width: 100%;
     display: block;
-    border: 2px solid rgba(210, 164, 37, 0.55);
+    border: 2px solid var(--gold-border-card);
   }
 }
 .effects-card-info {
@@ -2062,7 +2173,7 @@ body.light .notes-panel-close:hover {
 .gallery-item {
   width: 100%;
   min-width: 0;
-  border: 2px solid rgba(210, 164, 37, 0.55);
+  border: 2px solid var(--gold-border-card);
   border-radius: 0;
   overflow: hidden;
   background: linear-gradient(
@@ -2299,7 +2410,7 @@ button:disabled {
   width: min(1100px, 100%);
   max-height: calc(100vh - 4rem);
   padding: 1rem;
-  border: 1px solid rgba(210, 164, 37, 0.45);
+  border: 1px solid var(--gold-border-card);
   border-radius: 24px;
   background: linear-gradient(rgba(18, 16, 18, 0.96), rgba(8, 8, 9, 0.98));
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
@@ -2312,7 +2423,7 @@ button:disabled {
   right: 0.75rem;
   width: 2.75rem;
   height: 2.75rem;
-  border: 1px solid rgba(210, 164, 37, 0.65);
+  border: 1px solid var(--gold-border-card);
   border-radius: 0;
   background: rgba(12, 12, 13, 0.82);
   color: var(--primary-ivory-colour);
@@ -2496,20 +2607,20 @@ body.modal-open {
   border-top-right-radius: 50%;
 }
 /*==================== Artwork Gallery Frame ==================== */
-/* Overrides the arch shape above: every real artwork carousel across the
-   site (Featured Artworks on the homepage, Portfolio Vaults on the archive
-   page, and the Traditional/Digital/Cyborg/Dreams/Dreamers galleries) gets
-   the same sharp-cornered exhibition frame in the secondary gold, with a
-   matted inner border between the frame and the artwork, for one consistent
-   presentation everywhere artwork is shown. */
+/* Every real artwork carousel across the site (Featured Artworks on the
+   homepage, Portfolio Vaults on the archive page, and the
+   Traditional/Digital/Cyborg/Dreams/Dreamers galleries) gets the same
+   exhibition frame: a secondary-gold outline with generous matting between
+   the frame and the artwork. No background fill under that mat — it stays
+   transparent so the page's own dark surface shows through instead of a
+   flat black box, which is what kept reading as cheap "framing" rather
+   than an actual gallery mat. */
 #featured .car-item,
 #portfolio-vaults .car-item {
-  background-color: var(--primary-black-colour);
-  border: 3px solid var(--secondary-gold-colour);
-  padding: clamp(0.55rem, 1.1vw, 0.9rem);
-  box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.55),
-    0 14px 30px rgba(0, 0, 0, 0.45);
+  background-color: transparent;
+  border: 2px solid var(--secondary-gold-colour);
+  padding: clamp(1.1rem, 2.6vw, 2.1rem);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease,
@@ -2518,10 +2629,8 @@ body.modal-open {
 
 #featured .car-item:hover,
 #portfolio-vaults .car-item:hover {
-  border-color: #f0c247;
-  box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.6),
-    0 18px 38px rgba(0, 0, 0, 0.55);
+  border-color: rgba(255, 215, 120, 1);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.45);
   transform: translateY(-3px);
 }
 
@@ -2535,23 +2644,19 @@ body.modal-open {
    Dreamers (Inspiration Vault) use a denser photo-grid per slide instead of
    one image per card, so the same frame is applied straight to each thumbnail. */
 .carousel-track .image-grid img {
-  background-color: var(--primary-black-colour);
-  border: 3px solid var(--secondary-gold-colour);
-  padding: clamp(0.35rem, 0.9vw, 0.6rem);
+  background-color: transparent;
+  border: 2px solid var(--secondary-gold-colour);
+  padding: clamp(0.75rem, 1.8vw, 1.35rem);
   border-radius: 0;
-  box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.55),
-    0 8px 18px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease;
 }
 
 .carousel-track .image-grid img:hover {
-  border-color: #f0c247;
-  box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.6),
-    0 12px 24px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 215, 120, 1);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
 }
 /*==================== Hero Motion (parallax / Ken Burns) ==================== */
 /* A slow, continuous zoom-and-drift plays on every full-bleed hero/gallery
