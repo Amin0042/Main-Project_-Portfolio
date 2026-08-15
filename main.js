@@ -113,6 +113,176 @@ function initializeContactHints() {
   });
 }
 
+function initializePageTransitions() {
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    return;
+  }
+
+  const reduceMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (reduceMotion) {
+    return;
+  }
+
+  // Must match the --chamber-duration value in style.css exactly — this is
+  // how long the doors take to swing shut before we actually change pages.
+  const CHAMBER_DURATION_MS = 650;
+
+  document.addEventListener("click", function (event) {
+    if (event.defaultPrevented || event.button !== 0) {
+      return;
+    }
+
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+
+    const link = event.target.closest("a[href]");
+
+    if (!link) {
+      return;
+    }
+
+    const href = link.getAttribute("href");
+
+    if (
+      !href ||
+      href.startsWith("#") ||
+      href.startsWith("mailto:") ||
+      href.startsWith("tel:")
+    ) {
+      return;
+    }
+
+    if (link.target && link.target !== "_self") {
+      return;
+    }
+
+    if (link.hasAttribute("download")) {
+      return;
+    }
+
+    let destination;
+
+    try {
+      destination = new URL(href, window.location.href);
+    } catch (error) {
+      return;
+    }
+
+    // Different site entirely — let the browser navigate away plainly,
+    // there is no next chamber of this cathedral to reveal.
+    if (destination.origin !== window.location.origin) {
+      return;
+    }
+
+    // A link to an anchor on the page already open is an in-page scroll,
+    // not a move between chambers — leave it alone.
+    if (
+      destination.pathname === window.location.pathname &&
+      destination.hash
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    document.body.classList.add("chamber-exit");
+
+    window.setTimeout(function () {
+      window.location.href = destination.href;
+    }, CHAMBER_DURATION_MS);
+  });
+
+  // A back/forward navigation can restore this exact document from bfcache
+  // with .chamber-exit still applied from the moment it was left — drop it
+  // so the doors are open, not stuck sealed, on the restored page.
+  window.addEventListener("pageshow", function () {
+    document.body.classList.remove("chamber-exit");
+  });
+}
+
+function initializeMagneticFooterLinks() {
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    return;
+  }
+
+  const reduceMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (reduceMotion) {
+    return;
+  }
+
+  const links = document.querySelectorAll(
+    ".footer-navigation a, .footer-contact a, .footer-title a"
+  );
+
+  if (!links.length) {
+    return;
+  }
+
+  // How far a link is allowed to be pulled toward the cursor, in pixels,
+  // and how far outside its own box the pull field still reaches.
+  const maxPull = 10;
+  const catchRadius = 28;
+
+  links.forEach(function (link) {
+    let frame = null;
+
+    const settle = function (x, y, ease) {
+      link.style.transition = ease
+        ? "transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)"
+        : "transform 0.05s linear";
+      link.style.transform = "translate(" + x + "px, " + y + "px)";
+    };
+
+    const onMove = function (event) {
+      if (event.pointerType === "touch") {
+        return;
+      }
+
+      const rect = link.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const dx = event.clientX - centerX;
+      const dy = event.clientY - centerY;
+      const reach = Math.max(rect.width, rect.height) / 2 + catchRadius;
+      const distance = Math.hypot(dx, dy);
+
+      if (distance > reach) {
+        return;
+      }
+
+      // Pull strength fades to 0 at the edge of the catch radius and peaks
+      // at the link's own center, so the tug feels magnetic, not linear.
+      const pull = 1 - distance / reach;
+      const targetX = (dx / reach) * maxPull * pull;
+      const targetY = (dy / reach) * maxPull * pull;
+
+      if (frame) {
+        cancelAnimationFrame(frame);
+      }
+
+      frame = requestAnimationFrame(function () {
+        settle(targetX, targetY, false);
+      });
+    };
+
+    const onLeave = function () {
+      if (frame) {
+        cancelAnimationFrame(frame);
+      }
+      settle(0, 0, true);
+    };
+
+    link.addEventListener("pointermove", onMove);
+    link.addEventListener("pointerleave", onLeave);
+  });
+}
+
 function initializeWordHoverEffect() {
   if (typeof document === "undefined") {
     return;
@@ -190,7 +360,12 @@ function initializeWordHoverEffect() {
 }
 
 if (typeof module !== "undefined") {
-  module.exports = { initializeContactHints, initializeWordHoverEffect };
+  module.exports = {
+    initializeContactHints,
+    initializeWordHoverEffect,
+    initializeMagneticFooterLinks,
+    initializePageTransitions,
+  };
 }
 
 if (typeof document !== "undefined") {
@@ -201,6 +376,8 @@ if (typeof document !== "undefined") {
   initializeThemeToggle();
   initializeContactHints();
   initializeWordHoverEffect();
+  initializeMagneticFooterLinks();
+  initializePageTransitions();
 
   if (openButton) {
     const focusableSelector =

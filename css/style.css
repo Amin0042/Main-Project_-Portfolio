@@ -97,6 +97,166 @@ body.light p .word:focus-visible {
   text-shadow: 0 0 12px rgba(122, 28, 34, 0.3);
 }
 /* ==========================================================================
+   Cathedral chamber page transitions
+   ----------------------------------------------------------------------
+   Two stone "doors" (body::before / body::after) sit fixed over the full
+   viewport. On every page load they swing open outward, as if you have
+   just stepped through into a new chamber; main.js's initializePageTransitions
+   adds .chamber-exit to <body> right before an internal link is followed,
+   which reverses the same keyframes so the doors swing shut over the old
+   chamber before the browser navigates. No extra markup is needed on any
+   page — the doors are pure CSS pseudo-elements, so this one block covers
+   the whole site. 650ms in both directions: slow enough to read as a
+   deliberate, meditative crossing, brisk enough to stay inside the
+   500–800ms window a viewer will tolerate between clicking and reading.
+   ========================================================================== */
+:root {
+  --chamber-duration: 650ms;
+  --chamber-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Dark chamber walls by default. The gilding itself — the tracery and the
+     rose — is held to the site's literal secondary-gold hex rather than the
+     --secondary-gold-colour token, because that token is repurposed to
+     near-black in light mode for text contrast elsewhere; the doors should
+     always read as gold leaf, on stone or on parchment alike. */
+  --chamber-bg-1: var(--primary-black-colour);
+  --chamber-bg-2: var(--secondary-black-colour);
+  --chamber-gilt: #d2a425;
+}
+
+body.light {
+  /* Same doors, lit from the other side: parchment/ivory walls instead of
+     stone, so the gilt tracery reads like illumination on a manuscript
+     page rather than metalwork on a dark nave. Bright gold on pale
+     parchment reads as almost invisible, so the gilt itself deepens to an
+     antique bronze here — still unmistakably "gold family," just burnished
+     rather than lit, the way real gold leaf darkens against vellum instead
+     of stone. */
+  --chamber-bg-1: #efe9d8;
+  --chamber-bg-2: #e2dac2;
+  --chamber-gilt: #7a5210;
+}
+
+body.light::before,
+body.light::after {
+  /* The SVG shapes bake their own low opacity in per-stroke, which reads
+     fine against black but washes out against parchment even with a
+     darker gilt tone — this lifts the whole pattern's presence without
+     having to hand-author a second, higher-opacity copy of every shape. */
+  filter: contrast(1.25) saturate(1.15);
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 50vw;
+  z-index: 100000;
+  pointer-events: none;
+  color: var(--chamber-gilt);
+  background-color: var(--chamber-bg-1);
+  background-repeat: no-repeat, repeat-y, no-repeat;
+  background-size: 88% auto, 128px 256px, 100% 100%;
+  background-position: right center, center top, center;
+  background-image:
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 125 250'><g fill='none' stroke='currentColor' stroke-linecap='round'><line x1='245.0' y1='125.0' x2='255.0' y2='125.0' stroke-width='0.6' opacity='0.35'/><line x1='240.9' y1='156.1' x2='250.6' y2='158.6' stroke-width='0.6' opacity='0.35'/><line x1='228.9' y1='185.0' x2='237.6' y2='190.0' stroke-width='0.6' opacity='0.35'/><line x1='209.9' y1='209.9' x2='216.9' y2='216.9' stroke-width='0.6' opacity='0.35'/><line x1='185.0' y1='228.9' x2='190.0' y2='237.6' stroke-width='0.6' opacity='0.35'/><line x1='156.1' y1='240.9' x2='158.6' y2='250.6' stroke-width='0.6' opacity='0.35'/><line x1='125.0' y1='245.0' x2='125.0' y2='255.0' stroke-width='0.6' opacity='0.35'/><line x1='93.9' y1='240.9' x2='91.4' y2='250.6' stroke-width='0.6' opacity='0.35'/><line x1='65.0' y1='228.9' x2='60.0' y2='237.6' stroke-width='0.6' opacity='0.35'/><line x1='40.1' y1='209.9' x2='33.1' y2='216.9' stroke-width='0.6' opacity='0.35'/><line x1='21.1' y1='185.0' x2='12.4' y2='190.0' stroke-width='0.6' opacity='0.35'/><line x1='9.1' y1='156.1' x2='-0.6' y2='158.6' stroke-width='0.6' opacity='0.35'/><line x1='5.0' y1='125.0' x2='-5.0' y2='125.0' stroke-width='0.6' opacity='0.35'/><line x1='9.1' y1='93.9' x2='-0.6' y2='91.4' stroke-width='0.6' opacity='0.35'/><line x1='21.1' y1='65.0' x2='12.4' y2='60.0' stroke-width='0.6' opacity='0.35'/><line x1='40.1' y1='40.1' x2='33.1' y2='33.1' stroke-width='0.6' opacity='0.35'/><line x1='65.0' y1='21.1' x2='60.0' y2='12.4' stroke-width='0.6' opacity='0.35'/><line x1='93.9' y1='9.1' x2='91.4' y2='-0.6' stroke-width='0.6' opacity='0.35'/><line x1='125.0' y1='5.0' x2='125.0' y2='-5.0' stroke-width='0.6' opacity='0.35'/><line x1='156.1' y1='9.1' x2='158.6' y2='-0.6' stroke-width='0.6' opacity='0.35'/><line x1='185.0' y1='21.1' x2='190.0' y2='12.4' stroke-width='0.6' opacity='0.35'/><line x1='209.9' y1='40.1' x2='216.9' y2='33.1' stroke-width='0.6' opacity='0.35'/><line x1='228.9' y1='65.0' x2='237.6' y2='60.0' stroke-width='0.6' opacity='0.35'/><line x1='240.9' y1='93.9' x2='250.6' y2='91.4' stroke-width='0.6' opacity='0.35'/><circle cx='125' cy='125' r='120' stroke-width='1' opacity='0.5'/><circle cx='125' cy='125' r='95' stroke-width='0.7' opacity='0.35'/><circle cx='125' cy='125' r='70' stroke-width='0.7' stroke-dasharray='2 4' opacity='0.4'/><path d='M159.0,125.0 Q198.0,136.0 237.0,125.0 Q198.0,114.0 159.0,125.0 Z' stroke-width='1' opacity='0.55'/><path d='M154.4,142.0 Q182.7,171.0 222.0,181.0 Q193.7,152.0 154.4,142.0 Z' stroke-width='1' opacity='0.55'/><path d='M142.0,154.4 Q152.0,193.7 181.0,222.0 Q171.0,182.7 142.0,154.4 Z' stroke-width='1' opacity='0.55'/><path d='M125.0,159.0 Q114.0,198.0 125.0,237.0 Q136.0,198.0 125.0,159.0 Z' stroke-width='1' opacity='0.55'/><path d='M108.0,154.4 Q79.0,182.7 69.0,222.0 Q98.0,193.7 108.0,154.4 Z' stroke-width='1' opacity='0.55'/><path d='M95.6,142.0 Q56.3,152.0 28.0,181.0 Q67.3,171.0 95.6,142.0 Z' stroke-width='1' opacity='0.55'/><path d='M91.0,125.0 Q52.0,114.0 13.0,125.0 Q52.0,136.0 91.0,125.0 Z' stroke-width='1' opacity='0.55'/><path d='M95.6,108.0 Q67.3,79.0 28.0,69.0 Q56.3,98.0 95.6,108.0 Z' stroke-width='1' opacity='0.55'/><path d='M108.0,95.6 Q98.0,56.3 69.0,28.0 Q79.0,67.3 108.0,95.6 Z' stroke-width='1' opacity='0.55'/><path d='M125.0,91.0 Q136.0,52.0 125.0,13.0 Q114.0,52.0 125.0,91.0 Z' stroke-width='1' opacity='0.55'/><path d='M142.0,95.6 Q171.0,67.3 181.0,28.0 Q152.0,56.3 142.0,95.6 Z' stroke-width='1' opacity='0.55'/><path d='M154.4,108.0 Q193.7,98.0 222.0,69.0 Q182.7,79.0 154.4,108.0 Z' stroke-width='1' opacity='0.55'/><line x1='157.8' y1='133.8' x2='216.8' y2='149.6' stroke-width='0.5' opacity='0.25'/><line x1='149.0' y1='149.0' x2='192.2' y2='192.2' stroke-width='0.5' opacity='0.25'/><line x1='133.8' y1='157.8' x2='149.6' y2='216.8' stroke-width='0.5' opacity='0.25'/><line x1='116.2' y1='157.8' x2='100.4' y2='216.8' stroke-width='0.5' opacity='0.25'/><line x1='101.0' y1='149.0' x2='57.8' y2='192.2' stroke-width='0.5' opacity='0.25'/><line x1='92.2' y1='133.8' x2='33.2' y2='149.6' stroke-width='0.5' opacity='0.25'/><line x1='92.2' y1='116.2' x2='33.2' y2='100.4' stroke-width='0.5' opacity='0.25'/><line x1='101.0' y1='101.0' x2='57.8' y2='57.8' stroke-width='0.5' opacity='0.25'/><line x1='116.2' y1='92.2' x2='100.4' y2='33.2' stroke-width='0.5' opacity='0.25'/><line x1='133.8' y1='92.2' x2='149.6' y2='33.2' stroke-width='0.5' opacity='0.25'/><line x1='149.0' y1='101.0' x2='192.2' y2='57.8' stroke-width='0.5' opacity='0.25'/><line x1='157.8' y1='116.2' x2='216.8' y2='100.4' stroke-width='0.5' opacity='0.25'/></g><g fill='none' stroke='currentColor' stroke-width='1' opacity='0.6'><circle cx='145.0' cy='125.0' r='15'/><circle cx='125.0' cy='145.0' r='15'/><circle cx='105.0' cy='125.0' r='15'/><circle cx='125.0' cy='105.0' r='15'/></g><circle cx='125' cy='125' r='11' fill='currentColor' opacity='0.22' stroke='none'/><circle cx='125' cy='125' r='4' fill='currentColor' opacity='0.5' stroke='none'/></svg>"),
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 260'><g fill='none' stroke='currentColor' stroke-linecap='round'><path d='M20,250 Q15,120 65.0,40 Q115,120 110,250' stroke-width='1.1' opacity='0.5'/><path d='M35,250 Q32,140 65.0,70 Q98,140 95,250' stroke-width='0.8' opacity='0.35'/><line x1='14' y1='250' x2='116' y2='250' stroke-width='0.8' opacity='0.4'/><line x1='65.0' y1='72' x2='65.0' y2='250' stroke-width='0.6' opacity='0.3'/><line x1='38' y1='170' x2='92' y2='170' stroke-width='0.6' opacity='0.3'/><circle cx='80.0' cy='108.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='65.0' cy='123.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='50.0' cy='108.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='65.0' cy='93.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='65.0' cy='108' r='4' fill='currentColor' stroke='none' opacity='0.35'/></g></svg>"),
+    linear-gradient(
+      180deg,
+      var(--chamber-bg-2) 0%,
+      var(--chamber-bg-1) 55%,
+      var(--chamber-bg-2) 100%
+    );
+}
+
+/* left and right are set only on their own rule (never both on the shared
+   rule above) so neither side is ever over-constrained alongside width. */
+body::before {
+  left: 0;
+  transform-origin: left center;
+  border-right: 1px solid rgba(210, 164, 37, 0.45);
+  box-shadow: 3px 0 26px rgba(0, 0, 0, 0.55);
+  animation: chamber-open-left var(--chamber-duration) var(--chamber-ease) both;
+}
+
+body::after {
+  right: 0;
+  transform-origin: right center;
+  border-left: 1px solid rgba(210, 164, 37, 0.45);
+  box-shadow: -3px 0 26px rgba(0, 0, 0, 0.55);
+  animation: chamber-open-right var(--chamber-duration) var(--chamber-ease) both;
+  /* Mirror image of the rose in body::before's first background layer: its
+     tracery is flush to the LEFT edge of its own canvas instead of the
+     right, and its lancet windows run in the same rhythm — so when both
+     doors are shut, right-clipped meets left-clipped and one unbroken
+     rose window sits exactly on the seam between chambers. */
+  background-image:
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 125 250'><g fill='none' stroke='currentColor' stroke-linecap='round'><line x1='120.0' y1='125.0' x2='130.0' y2='125.0' stroke-width='0.6' opacity='0.35'/><line x1='115.9' y1='156.1' x2='125.6' y2='158.6' stroke-width='0.6' opacity='0.35'/><line x1='103.9' y1='185.0' x2='112.6' y2='190.0' stroke-width='0.6' opacity='0.35'/><line x1='84.9' y1='209.9' x2='91.9' y2='216.9' stroke-width='0.6' opacity='0.35'/><line x1='60.0' y1='228.9' x2='65.0' y2='237.6' stroke-width='0.6' opacity='0.35'/><line x1='31.1' y1='240.9' x2='33.6' y2='250.6' stroke-width='0.6' opacity='0.35'/><line x1='0.0' y1='245.0' x2='0.0' y2='255.0' stroke-width='0.6' opacity='0.35'/><line x1='-31.1' y1='240.9' x2='-33.6' y2='250.6' stroke-width='0.6' opacity='0.35'/><line x1='-60.0' y1='228.9' x2='-65.0' y2='237.6' stroke-width='0.6' opacity='0.35'/><line x1='-84.9' y1='209.9' x2='-91.9' y2='216.9' stroke-width='0.6' opacity='0.35'/><line x1='-103.9' y1='185.0' x2='-112.6' y2='190.0' stroke-width='0.6' opacity='0.35'/><line x1='-115.9' y1='156.1' x2='-125.6' y2='158.6' stroke-width='0.6' opacity='0.35'/><line x1='-120.0' y1='125.0' x2='-130.0' y2='125.0' stroke-width='0.6' opacity='0.35'/><line x1='-115.9' y1='93.9' x2='-125.6' y2='91.4' stroke-width='0.6' opacity='0.35'/><line x1='-103.9' y1='65.0' x2='-112.6' y2='60.0' stroke-width='0.6' opacity='0.35'/><line x1='-84.9' y1='40.1' x2='-91.9' y2='33.1' stroke-width='0.6' opacity='0.35'/><line x1='-60.0' y1='21.1' x2='-65.0' y2='12.4' stroke-width='0.6' opacity='0.35'/><line x1='-31.1' y1='9.1' x2='-33.6' y2='-0.6' stroke-width='0.6' opacity='0.35'/><line x1='-0.0' y1='5.0' x2='-0.0' y2='-5.0' stroke-width='0.6' opacity='0.35'/><line x1='31.1' y1='9.1' x2='33.6' y2='-0.6' stroke-width='0.6' opacity='0.35'/><line x1='60.0' y1='21.1' x2='65.0' y2='12.4' stroke-width='0.6' opacity='0.35'/><line x1='84.9' y1='40.1' x2='91.9' y2='33.1' stroke-width='0.6' opacity='0.35'/><line x1='103.9' y1='65.0' x2='112.6' y2='60.0' stroke-width='0.6' opacity='0.35'/><line x1='115.9' y1='93.9' x2='125.6' y2='91.4' stroke-width='0.6' opacity='0.35'/><circle cx='0' cy='125' r='120' stroke-width='1' opacity='0.5'/><circle cx='0' cy='125' r='95' stroke-width='0.7' opacity='0.35'/><circle cx='0' cy='125' r='70' stroke-width='0.7' stroke-dasharray='2 4' opacity='0.4'/><path d='M34.0,125.0 Q73.0,136.0 112.0,125.0 Q73.0,114.0 34.0,125.0 Z' stroke-width='1' opacity='0.55'/><path d='M29.4,142.0 Q57.7,171.0 97.0,181.0 Q68.7,152.0 29.4,142.0 Z' stroke-width='1' opacity='0.55'/><path d='M17.0,154.4 Q27.0,193.7 56.0,222.0 Q46.0,182.7 17.0,154.4 Z' stroke-width='1' opacity='0.55'/><path d='M0.0,159.0 Q-11.0,198.0 0.0,237.0 Q11.0,198.0 0.0,159.0 Z' stroke-width='1' opacity='0.55'/><path d='M-17.0,154.4 Q-46.0,182.7 -56.0,222.0 Q-27.0,193.7 -17.0,154.4 Z' stroke-width='1' opacity='0.55'/><path d='M-29.4,142.0 Q-68.7,152.0 -97.0,181.0 Q-57.7,171.0 -29.4,142.0 Z' stroke-width='1' opacity='0.55'/><path d='M-34.0,125.0 Q-73.0,114.0 -112.0,125.0 Q-73.0,136.0 -34.0,125.0 Z' stroke-width='1' opacity='0.55'/><path d='M-29.4,108.0 Q-57.7,79.0 -97.0,69.0 Q-68.7,98.0 -29.4,108.0 Z' stroke-width='1' opacity='0.55'/><path d='M-17.0,95.6 Q-27.0,56.3 -56.0,28.0 Q-46.0,67.3 -17.0,95.6 Z' stroke-width='1' opacity='0.55'/><path d='M-0.0,91.0 Q11.0,52.0 -0.0,13.0 Q-11.0,52.0 -0.0,91.0 Z' stroke-width='1' opacity='0.55'/><path d='M17.0,95.6 Q46.0,67.3 56.0,28.0 Q27.0,56.3 17.0,95.6 Z' stroke-width='1' opacity='0.55'/><path d='M29.4,108.0 Q68.7,98.0 97.0,69.0 Q57.7,79.0 29.4,108.0 Z' stroke-width='1' opacity='0.55'/><line x1='32.8' y1='133.8' x2='91.8' y2='149.6' stroke-width='0.5' opacity='0.25'/><line x1='24.0' y1='149.0' x2='67.2' y2='192.2' stroke-width='0.5' opacity='0.25'/><line x1='8.8' y1='157.8' x2='24.6' y2='216.8' stroke-width='0.5' opacity='0.25'/><line x1='-8.8' y1='157.8' x2='-24.6' y2='216.8' stroke-width='0.5' opacity='0.25'/><line x1='-24.0' y1='149.0' x2='-67.2' y2='192.2' stroke-width='0.5' opacity='0.25'/><line x1='-32.8' y1='133.8' x2='-91.8' y2='149.6' stroke-width='0.5' opacity='0.25'/><line x1='-32.8' y1='116.2' x2='-91.8' y2='100.4' stroke-width='0.5' opacity='0.25'/><line x1='-24.0' y1='101.0' x2='-67.2' y2='57.8' stroke-width='0.5' opacity='0.25'/><line x1='-8.8' y1='92.2' x2='-24.6' y2='33.2' stroke-width='0.5' opacity='0.25'/><line x1='8.8' y1='92.2' x2='24.6' y2='33.2' stroke-width='0.5' opacity='0.25'/><line x1='24.0' y1='101.0' x2='67.2' y2='57.8' stroke-width='0.5' opacity='0.25'/><line x1='32.8' y1='116.2' x2='91.8' y2='100.4' stroke-width='0.5' opacity='0.25'/></g><g fill='none' stroke='currentColor' stroke-width='1' opacity='0.6'><circle cx='20.0' cy='125.0' r='15'/><circle cx='0.0' cy='145.0' r='15'/><circle cx='-20.0' cy='125.0' r='15'/><circle cx='-0.0' cy='105.0' r='15'/></g><circle cx='0' cy='125' r='11' fill='currentColor' opacity='0.22' stroke='none'/><circle cx='0' cy='125' r='4' fill='currentColor' opacity='0.5' stroke='none'/></svg>"),
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 260'><g fill='none' stroke='currentColor' stroke-linecap='round'><path d='M20,250 Q15,120 65.0,40 Q115,120 110,250' stroke-width='1.1' opacity='0.5'/><path d='M35,250 Q32,140 65.0,70 Q98,140 95,250' stroke-width='0.8' opacity='0.35'/><line x1='14' y1='250' x2='116' y2='250' stroke-width='0.8' opacity='0.4'/><line x1='65.0' y1='72' x2='65.0' y2='250' stroke-width='0.6' opacity='0.3'/><line x1='38' y1='170' x2='92' y2='170' stroke-width='0.6' opacity='0.3'/><circle cx='80.0' cy='108.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='65.0' cy='123.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='50.0' cy='108.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='65.0' cy='93.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='65.0' cy='108' r='4' fill='currentColor' stroke='none' opacity='0.35'/></g></svg>"),
+    linear-gradient(
+      180deg,
+      var(--chamber-bg-2) 0%,
+      var(--chamber-bg-1) 55%,
+      var(--chamber-bg-2) 100%
+    );
+  background-position: left center, center top, center;
+}
+
+body.chamber-exit::before {
+  animation-name: chamber-close-left;
+}
+
+body.chamber-exit::after {
+  animation-name: chamber-close-right;
+}
+
+@keyframes chamber-open-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes chamber-open-right {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes chamber-close-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes chamber-close-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    content: none;
+    animation: none;
+    display: none;
+  }
+}
+
+/* ==========================================================================
    Gothic scrollbar — applies site-wide, follows the same --primary-gold /
    --primary-red / --primary-black tokens the rest of the site uses, so it
    flips automatically between dark mode and body.light without duplicating
@@ -873,6 +1033,60 @@ body.light .nav-link:focus-visible::after {
   transform: translateY(-1px);
   outline: 2px solid rgba(255, 215, 120, 0.9);
   outline-offset: 2px;
+}
+
+/* Light mode: the manifesto card flips to a parchment/ivory surface with
+   dark text, matching the rest of the site's light-mode treatment
+   (.notes-panel-shell, .archive-personal) — a bright card in a dimmed
+   backdrop, rather than staying a permanently dark night-mode page. */
+body.light .popup-container {
+  background:
+    linear-gradient(180deg, rgba(232, 228, 216, 0.98), rgba(232, 228, 216, 0.95)),
+    radial-gradient(circle at top, rgba(90, 15, 20, 0.08), transparent 55%);
+  border-color: rgba(90, 15, 20, 0.35);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+body.light .popup-container::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(90, 15, 20, 0.55),
+    transparent
+  );
+}
+
+body.light .popup-container h2 {
+  color: var(--primary-black-colour);
+}
+
+body.light .popup-container p {
+  color: var(--primary-black-colour);
+  scrollbar-color: rgba(90, 15, 20, 0.6) rgba(0, 0, 0, 0.06);
+}
+
+body.light .popup-container p::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+body.light .popup-container p::-webkit-scrollbar-thumb {
+  background: rgba(90, 15, 20, 0.7);
+}
+
+body.light .popup-close {
+  background: rgba(232, 228, 216, 0.65);
+  border-color: rgba(90, 15, 20, 0.5);
+  color: var(--primary-black-colour);
+}
+
+body.light .popup-close:hover,
+body.light .popup-close:focus-visible {
+  background: rgba(90, 15, 20, 0.12);
+  border-color: var(--secondary-red-colour);
+  color: var(--secondary-red-colour);
+  outline-color: var(--secondary-red-colour);
 }
 
 .popup-close:focus-visible,
@@ -2142,6 +2356,29 @@ button:disabled {
   width: min(75ch, 100%);
   overflow-wrap: anywhere;
   justify-self: center;
+}
+
+/* Light mode: the image lightbox, like the manifesto card, is a deliberately
+   dark stage around the artwork regardless of site theme (its dialog
+   background/border above are literal, not theme tokens) — but the
+   caption/title/description/close button all read theme tokens that flip
+   to near-black in body.light, and the generic body.light p/h1-h6/button
+   rules outrank this dialog's own low-specificity selectors. Without these
+   the caption, title, and close glyph would render black-on-black. */
+body.light .image-modal-caption {
+  color: #f3efe5;
+}
+
+body.light .image-modal-title {
+  color: #f3efe5;
+}
+
+body.light .image-modal-description {
+  color: rgba(244, 238, 222, 0.9);
+}
+
+body.light .image-modal-close {
+  color: #f3efe5;
 }
 
 body.modal-open {
