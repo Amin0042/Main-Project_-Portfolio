@@ -15,8 +15,8 @@ function initializeThemeToggle() {
   themeButton.setAttribute("aria-label", "Toggle light and dark mode");
   themeButton.setAttribute("title", "Toggle light and dark mode");
   themeButton.innerHTML = `
-    <span class="theme-toggle-icon theme-icon-sun" aria-hidden="true">☀</span>
-    <span class="theme-toggle-icon theme-icon-moon" aria-hidden="true">☾</span>
+    <img class="theme-toggle-icon theme-icon-sun" src="./Assets/Icons/sun.svg" alt="Sun" aria-hidden="true" />
+    <img class="theme-toggle-icon theme-icon-moon" src="./Assets/Icons/moon.svg" alt="Moon" aria-hidden="true" />
   `;
 
   // Insert as a list item in the navbar menu for desktop

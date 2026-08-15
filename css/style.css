@@ -12,10 +12,10 @@
   --secondary-black-colour: #1a1a1d;
   --primary-gold-colour: #c6a85a;
   --secondary-gold-colour: #d2a425;
-  --secondary-gold-colour: #d2a425;
   --bs-navbar-color: #d2a425;
   --bs-navbar-icon-color: #d2a425;
   --primary-ivory-colour: #e8e4d8;
+  --body-copy-colour: rgba(255, 255, 255, 0.9);
   --font-family: "inter", "cinzel", "Playfair Display", "sans-serif";
   --fw-medium: 700;
   --fw-small: 500;
@@ -33,7 +33,7 @@
 }
 body.light {
   --bs-body-bg: #e8e4d8;
-  --bs-body-color: ;
+  --bs-body-color: #0a0a0b;
   --primary-red-colour: #5a0f14;
   --secondary-red-colour: #7a1c22;
   --primary-black-colour: #0a0a0b;
@@ -41,7 +41,8 @@ body.light {
   --primary-gold-colour: #0a0a0b;
   --secondary-gold-colour: #0a0a0b;
   --bs-navbar-icon-color: #0a0a0b;
-  --primary-ivory-colour: ;
+  --primary-ivory-colour: #0a0a0b;
+  --body-copy-colour: var(--primary-black-colour);
 }
 
 /* Light mode text color overrides */
@@ -128,7 +129,7 @@ p {
   max-width: 78ch;
   margin-inline: auto;
   font-size: clamp(1.08rem, 0.76vw + 0.94rem, 1.28rem);
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--body-copy-colour);
 }
 
 /* Word-by-word hover: main.js wraps each word of every plain paragraph in
@@ -224,6 +225,7 @@ button,
   background-color: var(--secondary-black-colour);
   color: var(--secondary-gold-colour);
   border: 2px solid var(--secondary-gold-colour);
+  border-radius: 0;
   padding: 0.7rem 1rem;
   cursor: pointer;
   box-shadow:
@@ -267,27 +269,19 @@ button:disabled,
   transform: none;
 }
 
-button a,
-.btn a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 100%;
-  color: inherit !important;
+/* CTA links styled as buttons (a.btn) instead of a <button> wrapping an
+   <a> — nesting two interactive elements is invalid HTML and confuses
+   assistive tech, so every "Read More" / "Explore" style CTA is a single
+   anchor carrying the .btn class and picks up the shared button look via
+   the `button, .btn, .navbar-toggler` rule above. */
+a.btn {
+  color: var(--secondary-gold-colour) !important;
   text-decoration: none;
 }
 
-button a:hover,
-.btn a:hover,
-button a:focus-visible,
-.btn a:focus-visible {
+a.btn:hover,
+a.btn:focus-visible {
   text-decoration: none;
-}
-
-button a:focus-visible,
-.btn a:focus-visible {
-  outline: none;
 }
 
 /*==================== Hamburger Menu (Mobile Nav Toggler) ====================*/
@@ -337,8 +331,8 @@ button a:focus-visible,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
-  line-height: 1;
+  width: 1.2rem;
+  height: 1.2rem;
   transition:
     opacity 0.2s ease,
     transform 0.2s ease;
@@ -898,7 +892,7 @@ body.light .nav-link:focus-visible::after {
   width: 100%;
   text-align: left;
   font-size: clamp(1.08rem, 0.76vw + 0.94rem, 1.28rem);
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--body-copy-colour);
 }
 .education-list li {
   list-style: disc;
@@ -991,12 +985,30 @@ body.light .nav-link:focus-visible::after {
   text-align: left;
   line-height: 1.95;
   letter-spacing: 0.01em;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--body-copy-colour);
 }
 
-.archive-personal button {
+.archive-personal .btn {
   align-self: flex-start;
   margin-top: 0.25rem;
+}
+
+/* Light mode: the card is a near-black gradient in dark mode, so it needs
+   its own light card treatment here too — otherwise the heading/body text
+   (which correctly flips to black for light mode) lands on a still-dark
+   card and becomes unreadable. Mirrors the .notes-post light treatment. */
+body.light .archive-personal {
+  background: linear-gradient(
+    180deg,
+    rgba(232, 228, 216, 0.85),
+    rgba(232, 228, 216, 0.65)
+  );
+  border-color: rgba(90, 15, 20, 0.22);
+}
+
+body.light .archive-img {
+  background: rgba(232, 228, 216, 0.4);
+  border-color: rgba(90, 15, 20, 0.3);
 }
 
 .header-left {
@@ -1036,7 +1048,7 @@ body.light .nav-link:focus-visible::after {
   padding: 1.1rem;
   border: 1.5px solid rgba(210, 164, 37, 0.95);
   border-radius: 0;
-  background: rgba(10, 10, 11, 0.35);
+  background: var(--secondary-black-colour);
   text-decoration: none;
   color: var(--primary-gold-colour);
   font-family: var(--heading-font);
@@ -1201,11 +1213,7 @@ body.light .nav-link:focus-visible::after {
   gap: 2rem;
   align-items: center;
   border: 1px solid rgba(210, 164, 37, 0.45);
-  background: linear-gradient(
-    180deg,
-    rgba(17, 16, 16, 0.94),
-    rgba(9, 9, 10, 0.97)
-  );
+  background: var(--secondary-black-colour);
   padding: 1.5rem;
 }
 
@@ -1475,7 +1483,11 @@ body.light .notes-post .info-body {
 
 body.light .notes-panel-shell {
   background:
-    linear-gradient(180deg, rgba(232, 228, 216, 0.98), rgba(232, 228, 216, 0.95)),
+    linear-gradient(
+      180deg,
+      rgba(232, 228, 216, 0.98),
+      rgba(232, 228, 216, 0.95)
+    ),
     #e8e4d8;
   border-left-color: rgba(90, 15, 20, 0.3);
 }
@@ -1573,7 +1585,7 @@ body.light .notes-panel-close:hover {
   max-width: 760px;
   line-height: 1.95;
   letter-spacing: 0.01em;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--body-copy-colour);
 }
 
 .contacts-grid {
@@ -2018,7 +2030,7 @@ button:disabled {
   width: 2.75rem;
   height: 2.75rem;
   border: 1px solid rgba(210, 164, 37, 0.65);
-  border-radius: 999px;
+  border-radius: 0;
   background: rgba(12, 12, 13, 0.82);
   color: var(--primary-ivory-colour);
   font-size: 1.35rem;
@@ -2398,7 +2410,6 @@ body.modal-open {
     grid-template-columns: 1fr;
     align-items: center;
     margin: 0rem;
-    background-color: #000001;
     padding-top: 3rem;
   }
 
