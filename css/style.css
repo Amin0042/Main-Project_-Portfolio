@@ -2057,6 +2057,8 @@ body.light .notes-panel-close:hover {
   border: 1px solid var(--gold-border-card);
   background: var(--secondary-black-colour);
   width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
   justify-content: flex-start;
 }
 
@@ -2070,6 +2072,13 @@ body.light .notes-panel-close:hover {
 .contact-icon li {
   color: var(--secondary-gold-colour);
   font-size: 0.95rem;
+}
+
+.contact-icon li a {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .contact-form {
