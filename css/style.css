@@ -317,6 +317,13 @@ body.chamber-exit::after {
 html {
   scrollbar-width: auto;
   scrollbar-color: var(--secondary-gold-colour) var(--secondary-black-colour);
+  /* Belt-and-suspenders against stray horizontal scrollbars: off-canvas
+     panels (notes/manifesto/image lightbox) are translated past the
+     right edge while closed, and fixed/transformed elements can still
+     register in the document's scrollable area even though nothing is
+     visibly overflowing. Vertical scroll (the only one this site uses)
+     is untouched. */
+  overflow-x: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -386,6 +393,7 @@ body {
   flex-direction: column;
   align-items: center;
   max-width: 100vw;
+  overflow-x: hidden;
   font-size: 1rem;
   line-height: var(--body-line-height);
   letter-spacing: var(--body-letter-spacing);
@@ -1389,6 +1397,14 @@ body.light .popup-close:focus-visible {
   width: 100vw;
 }
 .archive-personal {
+  /* Override the generic `.section { width: 100% }` with `auto`: with
+     width fixed at 100% *and* both left/right margins set below, the
+     box is over-constrained, and per the CSS spec the browser is
+     required to discard margin-right so the box stays flush against
+     the container's right edge — exactly the "margin only on the
+     left" bug this fixes. `auto` lets the browser derive the width
+     from the container minus both margins, as intended. */
+  width: auto;
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   align-items: center;
@@ -1806,7 +1822,13 @@ body.light .archive-img {
 }
 
 .notes-panel-shell {
-  position: absolute;
+  /* Fixed (not absolute): its parent .notes-panel is already
+     position:fixed, but an absolutely-positioned child still counts
+     toward the document's scrollable area once translateX(100%) shifts
+     its box off past the right edge — that's what was causing the
+     stray horizontal scrollbar on every page at desktop widths. Fixed
+     positioning takes it out of the flow entirely, panel included. */
+  position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
@@ -2334,6 +2356,18 @@ JavaScript selects this shared class.
   aspect-ratio: 3 / 4;
 }
 
+/* Featured Artworks (home page) shows more cards at once on desktop — 7
+   instead of the default 5 — by giving its own carousel more horizontal
+   room, not by shrinking the cards. Scoped to #featured and to the
+   desktop breakpoint only, so every other carousel (Portfolio Vaults,
+   Traditional/Digital/Cyborg, Dreams/Dreamers) and the mobile view
+   (<=800px, its own rule further down) are left untouched. */
+@media (min-width: 801px) {
+  #featured .carousel-content {
+    width: min(2500px, calc(100vw - 2rem));
+  }
+}
+
 .linear-item img {
   width: 100%;
   height: 100%;
@@ -2484,6 +2518,10 @@ button:disabled {
   display: grid;
   gap: 0.75rem;
   margin: 0;
+  /* Reserve room above the artwork so the absolutely-positioned close
+     button (top: 0.75rem, right: 0.75rem, 2.75rem square) sits clear of
+     the image with a visible gap, never touching or overlapping its frame. */
+  margin-top: 4.5rem;
   align-content: start;
 }
 
@@ -2902,5 +2940,95 @@ body.modal-open {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(3, 1fr);
     gap: 0.75rem;
+  }
+}
+
+/*============================================================
+   Tablet View (751px – 1024px)
+   ============================================================
+   Covers iPad portrait/landscape and most Android tablets — the gap
+   between the mobile rules above (their widest breakpoint is 750px)
+   and the default desktop styles that take over past 1024px. Kept as
+   one consolidated block, deliberately placed last, so every
+   tablet-only override lives in a single place: easy to find, easy to
+   audit, easy to remove or retune independently of either end without
+   hunting through each component's own mobile media query.
+
+   The lower bound is 751px rather than 768px purely to close the
+   751–767px sliver the 750px mobile breakpoint would otherwise leave
+   unstyled — no real device sits there, this just guarantees full
+   coverage with no gap between the two ranges.
+
+   Every rule below targets a problem confirmed by measuring actual
+   rendered layouts at 768/834/1024px (Playwright), not a guess: each
+   comment names the specific breakage it corrects. Nothing here touches
+   the sub-751px mobile rules or the desktop rules above 1024px. ============================================================ */
+@media (min-width: 751px) and (max-width: 1024px) {
+
+  /* ---- Carousel navigation: reclaim room for the gallery itself ----
+     Previous/Next buttons inherit the sitewide CTA sizing
+     (`button, .btn, .navbar-toggler { min-width: 9rem }`), correct for
+     standalone buttons like "Submit" or "Read More" but wasteful for
+     carousel arrows that flank every gallery in pairs. At tablet widths
+     the two buttons alone were consuming over a third of the viewport
+     (2 × 144px of ~768–834px), squeezing every carousel on the site —
+     Featured Artworks, Portfolio Vaults, Traditional/Digital/Cyborg and
+     Dreams/Dreamers image grids — down to a narrow strip. Shrinking
+     just these two controls, scoped to this range, gives every
+     carousel on every page its space back without touching the shared
+     button system used everywhere else. */
+  .previous-btn,
+  .next-btn {
+    min-width: 5.5rem;
+    padding: 0.55rem 0.65rem;
+    font-size: 0.85rem;
+  }
+
+  /* ---- About page: Background credentials grid ----
+     `.background` is a 4-column grid (Education / Focus / Influence /
+     Approach). Education carries a full bulleted list while the other
+     three hold a short paragraph each, so 4 equal columns at tablet
+     width leave Education only ~140px wide — narrow enough to wrap one
+     word per line. Two columns roughly doubles that to a comfortable
+     reading width, and reads cleanly as an asymmetric 2×2 grid. */
+  .background {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 3rem;
+  }
+
+  /* ---- About page: Tools & Crafts ----
+     `.about-craft` is a 2-column grid (intro paragraph | icon grid).
+     At tablet width that squeezes the 2×3 icon grid into a narrow
+     strip beside the paragraph, each icon's cell barely wider than the
+     icon itself. Stacking the two blocks and giving the icon grid the
+     full width back as 3 columns × 2 rows uses the same space far
+     better and keeps every icon comfortably sized. */
+  .about-craft {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+    text-align: center;
+  }
+
+  .craft-info {
+    align-items: center;
+  }
+
+  .craft-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
+
+  /* ---- Contact page: "Get in Touch" hint tiles ----
+     `.contacts-grid` splits into two columns (social links | form) at
+     75% of the page width, and `.contact-icon` inside the social
+     column is itself a 2-column grid — two levels of narrowing leave
+     each tile under ~190px, so labels like "January8thProject" wrap
+     one word per line. Stacking the outer grid to a single column and
+     reclaiming the full container width fixes both the social tiles
+     and the form's width in one move. */
+  .contacts-grid {
+    width: 100%;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
   }
 }
