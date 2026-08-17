@@ -188,15 +188,6 @@ body.light {
   --chamber-gilt: #7a5210;
 }
 
-body.light::before,
-body.light::after {
-  /* The SVG shapes bake their own low opacity in per-stroke, which reads
-     fine against black but washes out against parchment even with a
-     darker gilt tone — this lifts the whole pattern's presence without
-     having to hand-author a second, higher-opacity copy of every shape. */
-  filter: contrast(1.25) saturate(1.15);
-}
-
 body::before,
 body::after {
   content: "";
@@ -208,18 +199,19 @@ body::after {
   pointer-events: none;
   color: var(--chamber-gilt);
   background-color: var(--chamber-bg-1);
-  background-repeat: no-repeat, repeat-y, no-repeat;
-  background-size: 88% auto, 128px 256px, 100% 100%;
-  background-position: right center, center top, center;
-  background-image:
-    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 125 250'><g fill='none' stroke='currentColor' stroke-linecap='round'><line x1='245.0' y1='125.0' x2='255.0' y2='125.0' stroke-width='0.6' opacity='0.35'/><line x1='240.9' y1='156.1' x2='250.6' y2='158.6' stroke-width='0.6' opacity='0.35'/><line x1='228.9' y1='185.0' x2='237.6' y2='190.0' stroke-width='0.6' opacity='0.35'/><line x1='209.9' y1='209.9' x2='216.9' y2='216.9' stroke-width='0.6' opacity='0.35'/><line x1='185.0' y1='228.9' x2='190.0' y2='237.6' stroke-width='0.6' opacity='0.35'/><line x1='156.1' y1='240.9' x2='158.6' y2='250.6' stroke-width='0.6' opacity='0.35'/><line x1='125.0' y1='245.0' x2='125.0' y2='255.0' stroke-width='0.6' opacity='0.35'/><line x1='93.9' y1='240.9' x2='91.4' y2='250.6' stroke-width='0.6' opacity='0.35'/><line x1='65.0' y1='228.9' x2='60.0' y2='237.6' stroke-width='0.6' opacity='0.35'/><line x1='40.1' y1='209.9' x2='33.1' y2='216.9' stroke-width='0.6' opacity='0.35'/><line x1='21.1' y1='185.0' x2='12.4' y2='190.0' stroke-width='0.6' opacity='0.35'/><line x1='9.1' y1='156.1' x2='-0.6' y2='158.6' stroke-width='0.6' opacity='0.35'/><line x1='5.0' y1='125.0' x2='-5.0' y2='125.0' stroke-width='0.6' opacity='0.35'/><line x1='9.1' y1='93.9' x2='-0.6' y2='91.4' stroke-width='0.6' opacity='0.35'/><line x1='21.1' y1='65.0' x2='12.4' y2='60.0' stroke-width='0.6' opacity='0.35'/><line x1='40.1' y1='40.1' x2='33.1' y2='33.1' stroke-width='0.6' opacity='0.35'/><line x1='65.0' y1='21.1' x2='60.0' y2='12.4' stroke-width='0.6' opacity='0.35'/><line x1='93.9' y1='9.1' x2='91.4' y2='-0.6' stroke-width='0.6' opacity='0.35'/><line x1='125.0' y1='5.0' x2='125.0' y2='-5.0' stroke-width='0.6' opacity='0.35'/><line x1='156.1' y1='9.1' x2='158.6' y2='-0.6' stroke-width='0.6' opacity='0.35'/><line x1='185.0' y1='21.1' x2='190.0' y2='12.4' stroke-width='0.6' opacity='0.35'/><line x1='209.9' y1='40.1' x2='216.9' y2='33.1' stroke-width='0.6' opacity='0.35'/><line x1='228.9' y1='65.0' x2='237.6' y2='60.0' stroke-width='0.6' opacity='0.35'/><line x1='240.9' y1='93.9' x2='250.6' y2='91.4' stroke-width='0.6' opacity='0.35'/><circle cx='125' cy='125' r='120' stroke-width='1' opacity='0.5'/><circle cx='125' cy='125' r='95' stroke-width='0.7' opacity='0.35'/><circle cx='125' cy='125' r='70' stroke-width='0.7' stroke-dasharray='2 4' opacity='0.4'/><path d='M159.0,125.0 Q198.0,136.0 237.0,125.0 Q198.0,114.0 159.0,125.0 Z' stroke-width='1' opacity='0.55'/><path d='M154.4,142.0 Q182.7,171.0 222.0,181.0 Q193.7,152.0 154.4,142.0 Z' stroke-width='1' opacity='0.55'/><path d='M142.0,154.4 Q152.0,193.7 181.0,222.0 Q171.0,182.7 142.0,154.4 Z' stroke-width='1' opacity='0.55'/><path d='M125.0,159.0 Q114.0,198.0 125.0,237.0 Q136.0,198.0 125.0,159.0 Z' stroke-width='1' opacity='0.55'/><path d='M108.0,154.4 Q79.0,182.7 69.0,222.0 Q98.0,193.7 108.0,154.4 Z' stroke-width='1' opacity='0.55'/><path d='M95.6,142.0 Q56.3,152.0 28.0,181.0 Q67.3,171.0 95.6,142.0 Z' stroke-width='1' opacity='0.55'/><path d='M91.0,125.0 Q52.0,114.0 13.0,125.0 Q52.0,136.0 91.0,125.0 Z' stroke-width='1' opacity='0.55'/><path d='M95.6,108.0 Q67.3,79.0 28.0,69.0 Q56.3,98.0 95.6,108.0 Z' stroke-width='1' opacity='0.55'/><path d='M108.0,95.6 Q98.0,56.3 69.0,28.0 Q79.0,67.3 108.0,95.6 Z' stroke-width='1' opacity='0.55'/><path d='M125.0,91.0 Q136.0,52.0 125.0,13.0 Q114.0,52.0 125.0,91.0 Z' stroke-width='1' opacity='0.55'/><path d='M142.0,95.6 Q171.0,67.3 181.0,28.0 Q152.0,56.3 142.0,95.6 Z' stroke-width='1' opacity='0.55'/><path d='M154.4,108.0 Q193.7,98.0 222.0,69.0 Q182.7,79.0 154.4,108.0 Z' stroke-width='1' opacity='0.55'/><line x1='157.8' y1='133.8' x2='216.8' y2='149.6' stroke-width='0.5' opacity='0.25'/><line x1='149.0' y1='149.0' x2='192.2' y2='192.2' stroke-width='0.5' opacity='0.25'/><line x1='133.8' y1='157.8' x2='149.6' y2='216.8' stroke-width='0.5' opacity='0.25'/><line x1='116.2' y1='157.8' x2='100.4' y2='216.8' stroke-width='0.5' opacity='0.25'/><line x1='101.0' y1='149.0' x2='57.8' y2='192.2' stroke-width='0.5' opacity='0.25'/><line x1='92.2' y1='133.8' x2='33.2' y2='149.6' stroke-width='0.5' opacity='0.25'/><line x1='92.2' y1='116.2' x2='33.2' y2='100.4' stroke-width='0.5' opacity='0.25'/><line x1='101.0' y1='101.0' x2='57.8' y2='57.8' stroke-width='0.5' opacity='0.25'/><line x1='116.2' y1='92.2' x2='100.4' y2='33.2' stroke-width='0.5' opacity='0.25'/><line x1='133.8' y1='92.2' x2='149.6' y2='33.2' stroke-width='0.5' opacity='0.25'/><line x1='149.0' y1='101.0' x2='192.2' y2='57.8' stroke-width='0.5' opacity='0.25'/><line x1='157.8' y1='116.2' x2='216.8' y2='100.4' stroke-width='0.5' opacity='0.25'/></g><g fill='none' stroke='currentColor' stroke-width='1' opacity='0.6'><circle cx='145.0' cy='125.0' r='15'/><circle cx='125.0' cy='145.0' r='15'/><circle cx='105.0' cy='125.0' r='15'/><circle cx='125.0' cy='105.0' r='15'/></g><circle cx='125' cy='125' r='11' fill='currentColor' opacity='0.22' stroke='none'/><circle cx='125' cy='125' r='4' fill='currentColor' opacity='0.5' stroke='none'/></svg>"),
-    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 260'><g fill='none' stroke='currentColor' stroke-linecap='round'><path d='M20,250 Q15,120 65.0,40 Q115,120 110,250' stroke-width='1.1' opacity='0.5'/><path d='M35,250 Q32,140 65.0,70 Q98,140 95,250' stroke-width='0.8' opacity='0.35'/><line x1='14' y1='250' x2='116' y2='250' stroke-width='0.8' opacity='0.4'/><line x1='65.0' y1='72' x2='65.0' y2='250' stroke-width='0.6' opacity='0.3'/><line x1='38' y1='170' x2='92' y2='170' stroke-width='0.6' opacity='0.3'/><circle cx='80.0' cy='108.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='65.0' cy='123.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='50.0' cy='108.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='65.0' cy='93.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='65.0' cy='108' r='4' fill='currentColor' stroke='none' opacity='0.35'/></g></svg>"),
-    linear-gradient(
-      180deg,
-      var(--chamber-bg-2) 0%,
-      var(--chamber-bg-1) 55%,
-      var(--chamber-bg-2) 100%
-    );
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+  /* The rose window / lancet tracery that used to live here has been
+     removed — the lion guardians are the door's decoration now, and the
+     old gothic linework was showing through behind them, competing with
+     the new artwork instead of framing it. Plain gradient wall only. */
+  background-image: linear-gradient(
+    180deg,
+    var(--chamber-bg-2) 0%,
+    var(--chamber-bg-1) 55%,
+    var(--chamber-bg-2) 100%
+  );
 }
 
 /* left and right are set only on their own rule (never both on the shared
@@ -238,21 +230,6 @@ body::after {
   border-left: 1px solid var(--gold-border-card);
   box-shadow: -3px 0 26px rgba(0, 0, 0, 0.55);
   animation: chamber-open-right var(--chamber-duration) var(--chamber-ease) both;
-  /* Mirror image of the rose in body::before's first background layer: its
-     tracery is flush to the LEFT edge of its own canvas instead of the
-     right, and its lancet windows run in the same rhythm — so when both
-     doors are shut, right-clipped meets left-clipped and one unbroken
-     rose window sits exactly on the seam between chambers. */
-  background-image:
-    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 125 250'><g fill='none' stroke='currentColor' stroke-linecap='round'><line x1='120.0' y1='125.0' x2='130.0' y2='125.0' stroke-width='0.6' opacity='0.35'/><line x1='115.9' y1='156.1' x2='125.6' y2='158.6' stroke-width='0.6' opacity='0.35'/><line x1='103.9' y1='185.0' x2='112.6' y2='190.0' stroke-width='0.6' opacity='0.35'/><line x1='84.9' y1='209.9' x2='91.9' y2='216.9' stroke-width='0.6' opacity='0.35'/><line x1='60.0' y1='228.9' x2='65.0' y2='237.6' stroke-width='0.6' opacity='0.35'/><line x1='31.1' y1='240.9' x2='33.6' y2='250.6' stroke-width='0.6' opacity='0.35'/><line x1='0.0' y1='245.0' x2='0.0' y2='255.0' stroke-width='0.6' opacity='0.35'/><line x1='-31.1' y1='240.9' x2='-33.6' y2='250.6' stroke-width='0.6' opacity='0.35'/><line x1='-60.0' y1='228.9' x2='-65.0' y2='237.6' stroke-width='0.6' opacity='0.35'/><line x1='-84.9' y1='209.9' x2='-91.9' y2='216.9' stroke-width='0.6' opacity='0.35'/><line x1='-103.9' y1='185.0' x2='-112.6' y2='190.0' stroke-width='0.6' opacity='0.35'/><line x1='-115.9' y1='156.1' x2='-125.6' y2='158.6' stroke-width='0.6' opacity='0.35'/><line x1='-120.0' y1='125.0' x2='-130.0' y2='125.0' stroke-width='0.6' opacity='0.35'/><line x1='-115.9' y1='93.9' x2='-125.6' y2='91.4' stroke-width='0.6' opacity='0.35'/><line x1='-103.9' y1='65.0' x2='-112.6' y2='60.0' stroke-width='0.6' opacity='0.35'/><line x1='-84.9' y1='40.1' x2='-91.9' y2='33.1' stroke-width='0.6' opacity='0.35'/><line x1='-60.0' y1='21.1' x2='-65.0' y2='12.4' stroke-width='0.6' opacity='0.35'/><line x1='-31.1' y1='9.1' x2='-33.6' y2='-0.6' stroke-width='0.6' opacity='0.35'/><line x1='-0.0' y1='5.0' x2='-0.0' y2='-5.0' stroke-width='0.6' opacity='0.35'/><line x1='31.1' y1='9.1' x2='33.6' y2='-0.6' stroke-width='0.6' opacity='0.35'/><line x1='60.0' y1='21.1' x2='65.0' y2='12.4' stroke-width='0.6' opacity='0.35'/><line x1='84.9' y1='40.1' x2='91.9' y2='33.1' stroke-width='0.6' opacity='0.35'/><line x1='103.9' y1='65.0' x2='112.6' y2='60.0' stroke-width='0.6' opacity='0.35'/><line x1='115.9' y1='93.9' x2='125.6' y2='91.4' stroke-width='0.6' opacity='0.35'/><circle cx='0' cy='125' r='120' stroke-width='1' opacity='0.5'/><circle cx='0' cy='125' r='95' stroke-width='0.7' opacity='0.35'/><circle cx='0' cy='125' r='70' stroke-width='0.7' stroke-dasharray='2 4' opacity='0.4'/><path d='M34.0,125.0 Q73.0,136.0 112.0,125.0 Q73.0,114.0 34.0,125.0 Z' stroke-width='1' opacity='0.55'/><path d='M29.4,142.0 Q57.7,171.0 97.0,181.0 Q68.7,152.0 29.4,142.0 Z' stroke-width='1' opacity='0.55'/><path d='M17.0,154.4 Q27.0,193.7 56.0,222.0 Q46.0,182.7 17.0,154.4 Z' stroke-width='1' opacity='0.55'/><path d='M0.0,159.0 Q-11.0,198.0 0.0,237.0 Q11.0,198.0 0.0,159.0 Z' stroke-width='1' opacity='0.55'/><path d='M-17.0,154.4 Q-46.0,182.7 -56.0,222.0 Q-27.0,193.7 -17.0,154.4 Z' stroke-width='1' opacity='0.55'/><path d='M-29.4,142.0 Q-68.7,152.0 -97.0,181.0 Q-57.7,171.0 -29.4,142.0 Z' stroke-width='1' opacity='0.55'/><path d='M-34.0,125.0 Q-73.0,114.0 -112.0,125.0 Q-73.0,136.0 -34.0,125.0 Z' stroke-width='1' opacity='0.55'/><path d='M-29.4,108.0 Q-57.7,79.0 -97.0,69.0 Q-68.7,98.0 -29.4,108.0 Z' stroke-width='1' opacity='0.55'/><path d='M-17.0,95.6 Q-27.0,56.3 -56.0,28.0 Q-46.0,67.3 -17.0,95.6 Z' stroke-width='1' opacity='0.55'/><path d='M-0.0,91.0 Q11.0,52.0 -0.0,13.0 Q-11.0,52.0 -0.0,91.0 Z' stroke-width='1' opacity='0.55'/><path d='M17.0,95.6 Q46.0,67.3 56.0,28.0 Q27.0,56.3 17.0,95.6 Z' stroke-width='1' opacity='0.55'/><path d='M29.4,108.0 Q68.7,98.0 97.0,69.0 Q57.7,79.0 29.4,108.0 Z' stroke-width='1' opacity='0.55'/><line x1='32.8' y1='133.8' x2='91.8' y2='149.6' stroke-width='0.5' opacity='0.25'/><line x1='24.0' y1='149.0' x2='67.2' y2='192.2' stroke-width='0.5' opacity='0.25'/><line x1='8.8' y1='157.8' x2='24.6' y2='216.8' stroke-width='0.5' opacity='0.25'/><line x1='-8.8' y1='157.8' x2='-24.6' y2='216.8' stroke-width='0.5' opacity='0.25'/><line x1='-24.0' y1='149.0' x2='-67.2' y2='192.2' stroke-width='0.5' opacity='0.25'/><line x1='-32.8' y1='133.8' x2='-91.8' y2='149.6' stroke-width='0.5' opacity='0.25'/><line x1='-32.8' y1='116.2' x2='-91.8' y2='100.4' stroke-width='0.5' opacity='0.25'/><line x1='-24.0' y1='101.0' x2='-67.2' y2='57.8' stroke-width='0.5' opacity='0.25'/><line x1='-8.8' y1='92.2' x2='-24.6' y2='33.2' stroke-width='0.5' opacity='0.25'/><line x1='8.8' y1='92.2' x2='24.6' y2='33.2' stroke-width='0.5' opacity='0.25'/><line x1='24.0' y1='101.0' x2='67.2' y2='57.8' stroke-width='0.5' opacity='0.25'/><line x1='32.8' y1='116.2' x2='91.8' y2='100.4' stroke-width='0.5' opacity='0.25'/></g><g fill='none' stroke='currentColor' stroke-width='1' opacity='0.6'><circle cx='20.0' cy='125.0' r='15'/><circle cx='0.0' cy='145.0' r='15'/><circle cx='-20.0' cy='125.0' r='15'/><circle cx='-0.0' cy='105.0' r='15'/></g><circle cx='0' cy='125' r='11' fill='currentColor' opacity='0.22' stroke='none'/><circle cx='0' cy='125' r='4' fill='currentColor' opacity='0.5' stroke='none'/></svg>"),
-    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 260'><g fill='none' stroke='currentColor' stroke-linecap='round'><path d='M20,250 Q15,120 65.0,40 Q115,120 110,250' stroke-width='1.1' opacity='0.5'/><path d='M35,250 Q32,140 65.0,70 Q98,140 95,250' stroke-width='0.8' opacity='0.35'/><line x1='14' y1='250' x2='116' y2='250' stroke-width='0.8' opacity='0.4'/><line x1='65.0' y1='72' x2='65.0' y2='250' stroke-width='0.6' opacity='0.3'/><line x1='38' y1='170' x2='92' y2='170' stroke-width='0.6' opacity='0.3'/><circle cx='80.0' cy='108.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='65.0' cy='123.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='50.0' cy='108.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='65.0' cy='93.0' r='9.5' stroke-width='0.9' opacity='0.55'/><circle cx='65.0' cy='108' r='4' fill='currentColor' stroke='none' opacity='0.35'/></g></svg>"),
-    linear-gradient(
-      180deg,
-      var(--chamber-bg-2) 0%,
-      var(--chamber-bg-1) 55%,
-      var(--chamber-bg-2) 100%
-    );
-  background-position: left center, center top, center;
 }
 
 body.chamber-exit::before {
@@ -305,6 +282,137 @@ body.chamber-exit::after {
     content: none;
     animation: none;
     display: none;
+  }
+}
+
+/* ==========================================================================
+   Cathedral door guardians — a lion rampant, sword raised, carved into each
+   door as if standing sentry at the threshold. main.js's
+   initializeChamberGuardians appends one pair of elements to <body> on every
+   page (skipped entirely under prefers-reduced-motion, matching the doors
+   themselves), so no per-page markup is needed. The two guardians are the
+   same source artwork — a true transparent PNG, no plate/blend trick
+   needed: the right guardian keeps its natural leftward-facing pose, the
+   left guardian's inner .chamber-guardian-art is mirrored with scaleX(-1),
+   so the pair reads as two lions facing off across the seam. The mirror
+   lives on the inner wrapper and the slide animation on the outer one so
+   the two transforms never compose into each other.
+   ========================================================================== */
+.chamber-guardian {
+  position: fixed;
+  bottom: 4vh;
+  width: 36vw;
+  height: 64vh;
+  z-index: 100001;
+  pointer-events: none;
+  animation-duration: var(--chamber-duration);
+  animation-timing-function: var(--chamber-ease);
+  animation-fill-mode: both;
+}
+
+.chamber-guardian-art {
+  width: 100%;
+  height: 100%;
+  background-image: url("../Assets/Background-Image/Lion and Sword without BG .png");
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: contain;
+}
+
+.chamber-guardian-left {
+  left: 12vw;
+  animation-name: guardian-open-left;
+}
+
+.chamber-guardian-left .chamber-guardian-art {
+  transform: scaleX(-1);
+}
+
+.chamber-guardian-right {
+  left: 52vw;
+  animation-name: guardian-open-right;
+}
+
+body.chamber-exit .chamber-guardian-left {
+  animation-name: guardian-close-left;
+}
+
+body.chamber-exit .chamber-guardian-right {
+  animation-name: guardian-close-right;
+}
+
+@keyframes guardian-open-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50vw);
+  }
+}
+
+@keyframes guardian-close-left {
+  from {
+    transform: translateX(-50vw);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes guardian-open-right {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(50vw);
+  }
+}
+
+@keyframes guardian-close-right {
+  from {
+    transform: translateX(50vw);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Desktop sizing (36vw / 64vh, 12vw / 52vw insets) reads as bold guardian
+   figures on a wide door. On a 50vw-wide door that's already only a few
+   hundred px, the same proportions read as oversized and crowd the seam —
+   so both breakpoints below keep the same "mirrored pair flanking the
+   seam" geometry but scale the box down and widen the gap between them
+   as the viewport narrows. Keyframes are untouched: they already move by
+   a flat 50vw regardless of the guardian's own width. */
+@media (max-width: 991.98px) {
+  .chamber-guardian {
+    width: 30vw;
+    height: 50vh;
+    bottom: 3vh;
+  }
+
+  .chamber-guardian-left {
+    left: 9vw;
+  }
+
+  .chamber-guardian-right {
+    left: 61vw;
+  }
+}
+
+@media (max-width: 576px) {
+  .chamber-guardian {
+    width: 26vw;
+    height: 32vh;
+    bottom: 2vh;
+  }
+
+  .chamber-guardian-left {
+    left: 8vw;
+  }
+
+  .chamber-guardian-right {
+    left: 66vw;
   }
 }
 
@@ -579,7 +687,12 @@ a.btn:focus-visible {
 }
 
 /*==================== Hamburger Menu (Mobile Nav Toggler) ====================*/
-.theme-toggle-btn {
+/* .music-toggle-btn shares this exact box treatment with .theme-toggle-btn
+   — same square footprint, same idle/hover states — so the two sit in the
+   navbar as one deliberate pair, not a primary control next to an
+   afterthought. */
+.theme-toggle-btn,
+.music-toggle-btn {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -603,7 +716,9 @@ a.btn:focus-visible {
 }
 
 .theme-toggle-btn:hover,
-.theme-toggle-btn:focus-visible {
+.theme-toggle-btn:focus-visible,
+.music-toggle-btn:hover,
+.music-toggle-btn:focus-visible {
   background: rgba(198, 168, 90, 0.16);
   border-color: rgba(255, 215, 120, 1);
   box-shadow:
@@ -612,7 +727,48 @@ a.btn:focus-visible {
   outline: none;
 }
 
-.theme-toggle-item {
+/* While the chant is actually playing, the button carries a faint,
+   slow-breathing gold glow — the same "votive light" language as the
+   signature logo's idle state elsewhere on the site — so its state reads
+   at a glance without needing to look at the icon. */
+.music-toggle-btn.playing {
+  border-color: rgba(255, 215, 120, 0.9);
+  animation: chant-glow 2.6s ease-in-out infinite;
+}
+
+.music-toggle-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.music-toggle-btn:disabled:hover {
+  background: rgba(198, 168, 90, 0.08);
+  border-color: rgba(210, 164, 37, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(10, 10, 11, 0.28);
+}
+
+@keyframes chant-glow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 0 1px rgba(10, 10, 11, 0.28),
+      0 0 0 0 rgba(255, 215, 120, 0.35);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 1px rgba(10, 10, 11, 0.28),
+      0 0 10px 1px rgba(255, 215, 120, 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-toggle-btn.playing {
+    animation: none;
+  }
+}
+
+.theme-toggle-item,
+.music-toggle-item {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -648,6 +804,29 @@ body.light .theme-icon-sun {
 }
 
 body.light .theme-icon-moon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Play/pause crossfade on .music-toggle-btn follows the exact same pattern
+   as the sun/moon swap above: both icons always present, only opacity and
+   scale animate, so there's never a layout jump between states. */
+.music-icon-play {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.music-icon-pause {
+  opacity: 0;
+  transform: scale(0.7);
+}
+
+.music-toggle-btn.playing .music-icon-play {
+  opacity: 0;
+  transform: scale(0.7);
+}
+
+.music-toggle-btn.playing .music-icon-pause {
   opacity: 1;
   transform: scale(1);
 }
@@ -820,9 +999,8 @@ body.light .theme-icon-moon {
 }
 
 /*==================== Signature Logo Animation ====================*/
-/* The January8th glyph is a four-point gothic rose medallion — the same
-   rose-window motif that lights up the page-transition doors elsewhere on
-   the site. It gets one deliberate gesture everywhere it appears (navbar
+/* The January8th glyph is a four-point gothic rose medallion. It gets one
+   deliberate gesture everywhere it appears (navbar
    brand, footer mark, nowhere else): a slow devotional breath at rest —
    the faintest swell and a hint of gold aura, like a votive light left
    burning — and, whenever a visitor hovers, focuses, or taps it, a single
@@ -1031,14 +1209,16 @@ body.light .nav-link:focus-visible::after {
     padding: 0.62rem 0.1rem !important;
   }
 
-  .theme-toggle-item {
+  .theme-toggle-item,
+  .music-toggle-item {
     padding-left: 0.1rem;
     padding-right: 0.1rem;
     padding-top: 0.62rem;
     padding-bottom: 0.62rem;
   }
 
-  .theme-toggle-btn {
+  .theme-toggle-btn,
+  .music-toggle-btn {
     width: 2.5rem;
     height: 2.5rem;
     min-width: 2.5rem;
