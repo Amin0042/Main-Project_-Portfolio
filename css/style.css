@@ -44,6 +44,17 @@
   --fw-large: 900;
   --body-line-height: 2.05;
   --body-letter-spacing: 0.006em;
+  /* ---- Body copy scale ----------------------------------------------
+     One shared clamp for every block of readable prose on the site —
+     articles, the manifesto popup, notes excerpts, contact details, the
+     about page's credential lists. Before this existed, several of those
+     had their own slightly-smaller one-off clamp() or a flat rem value,
+     which is what made the site's text feel inconsistent from page to
+     page and, on the smaller ends of those ranges, too small to read
+     comfortably. Floor and ceiling are both raised versus the old base
+     `p` rule (was 1.08rem–1.28rem) and every element below now points
+     at this single value instead of hand-rolling its own. -------------- */
+  --body-copy-font-size: clamp(1.15rem, 0.6vw + 1.02rem, 1.4rem);
   --normal-font-size: 1.75rem;
   --h1-size: calc(var(--normal-font-size) * 2);
   --h2-size: calc(var(--normal-font-size) * 1.5);
@@ -525,7 +536,7 @@ a {
 p {
   max-width: 78ch;
   margin-inline: auto;
-  font-size: clamp(1.08rem, 0.76vw + 0.94rem, 1.28rem);
+  font-size: var(--body-copy-font-size);
   color: var(--body-copy-colour);
 }
 
@@ -687,12 +698,7 @@ a.btn:focus-visible {
 }
 
 /*==================== Hamburger Menu (Mobile Nav Toggler) ====================*/
-/* .music-toggle-btn shares this exact box treatment with .theme-toggle-btn
-   — same square footprint, same idle/hover states — so the two sit in the
-   navbar as one deliberate pair, not a primary control next to an
-   afterthought. */
-.theme-toggle-btn,
-.music-toggle-btn {
+.theme-toggle-btn {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -716,9 +722,7 @@ a.btn:focus-visible {
 }
 
 .theme-toggle-btn:hover,
-.theme-toggle-btn:focus-visible,
-.music-toggle-btn:hover,
-.music-toggle-btn:focus-visible {
+.theme-toggle-btn:focus-visible {
   background: rgba(198, 168, 90, 0.16);
   border-color: rgba(255, 215, 120, 1);
   box-shadow:
@@ -727,48 +731,7 @@ a.btn:focus-visible {
   outline: none;
 }
 
-/* While the chant is actually playing, the button carries a faint,
-   slow-breathing gold glow — the same "votive light" language as the
-   signature logo's idle state elsewhere on the site — so its state reads
-   at a glance without needing to look at the icon. */
-.music-toggle-btn.playing {
-  border-color: rgba(255, 215, 120, 0.9);
-  animation: chant-glow 2.6s ease-in-out infinite;
-}
-
-.music-toggle-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
-}
-
-.music-toggle-btn:disabled:hover {
-  background: rgba(198, 168, 90, 0.08);
-  border-color: rgba(210, 164, 37, 0.8);
-  box-shadow: inset 0 0 0 1px rgba(10, 10, 11, 0.28);
-}
-
-@keyframes chant-glow {
-  0%,
-  100% {
-    box-shadow:
-      inset 0 0 0 1px rgba(10, 10, 11, 0.28),
-      0 0 0 0 rgba(255, 215, 120, 0.35);
-  }
-  50% {
-    box-shadow:
-      inset 0 0 0 1px rgba(10, 10, 11, 0.28),
-      0 0 10px 1px rgba(255, 215, 120, 0.35);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .music-toggle-btn.playing {
-    animation: none;
-  }
-}
-
-.theme-toggle-item,
-.music-toggle-item {
+.theme-toggle-item {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -804,29 +767,6 @@ body.light .theme-icon-sun {
 }
 
 body.light .theme-icon-moon {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* Play/pause crossfade on .music-toggle-btn follows the exact same pattern
-   as the sun/moon swap above: both icons always present, only opacity and
-   scale animate, so there's never a layout jump between states. */
-.music-icon-play {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.music-icon-pause {
-  opacity: 0;
-  transform: scale(0.7);
-}
-
-.music-toggle-btn.playing .music-icon-play {
-  opacity: 0;
-  transform: scale(0.7);
-}
-
-.music-toggle-btn.playing .music-icon-pause {
   opacity: 1;
   transform: scale(1);
 }
@@ -1209,16 +1149,14 @@ body.light .nav-link:focus-visible::after {
     padding: 0.62rem 0.1rem !important;
   }
 
-  .theme-toggle-item,
-  .music-toggle-item {
+  .theme-toggle-item {
     padding-left: 0.1rem;
     padding-right: 0.1rem;
     padding-top: 0.62rem;
     padding-bottom: 0.62rem;
   }
 
-  .theme-toggle-btn,
-  .music-toggle-btn {
+  .theme-toggle-btn {
     width: 2.5rem;
     height: 2.5rem;
     min-width: 2.5rem;
@@ -1321,7 +1259,7 @@ body.light .nav-link:focus-visible::after {
   max-height: 66vh;
   overflow-y: auto;
   font-family: "Inter", sans-serif;
-  font-size: clamp(1.06rem, 0.7vw + 0.92rem, 1.25rem);
+  font-size: var(--body-copy-font-size);
   line-height: 1.9;
   letter-spacing: 0.01em;
   color: #f3efe5;
@@ -1447,7 +1385,6 @@ body.light .popup-close:focus-visible {
 
   .popup-container p {
     line-height: 1.8;
-    font-size: 1rem;
   }
 }
 /*==================== About ====================*/
@@ -1513,7 +1450,7 @@ body.light .popup-close:focus-visible {
   align-self: flex-start;
   width: 100%;
   text-align: left;
-  font-size: clamp(1.08rem, 0.76vw + 0.94rem, 1.28rem);
+  font-size: var(--body-copy-font-size);
   color: var(--body-copy-colour);
 }
 .education-list li {
@@ -1966,7 +1903,7 @@ body.light .archive-img {
 .notes-post .info-body {
   color: rgba(232, 228, 216, 0.95);
   line-height: 1.62;
-  font-size: 0.93rem;
+  font-size: var(--body-copy-font-size);
   margin: 0;
   max-width: 64ch;
 }
@@ -2207,7 +2144,15 @@ body.light .notes-panel-close:hover {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  padding: 2rem 0 3rem;
+  width: 100%;
+  /* Horizontal gutter lives here, not on .contacts-grid's own margin —
+     that grid needs to legitimately reach width: 100% at the narrower
+     breakpoints below (to give the stacked form real room), and a
+     width: 100% child can't also carry its own side margin to create a
+     gutter around itself. Keeping the gutter on the section instead
+     means it's consistent at every breakpoint without needing a
+     special case at each one. */
+  padding: 2rem clamp(1.25rem, 4vw, 3rem) 3rem;
 }
 .contact-container {
   width: min(820px, 80%);
@@ -2224,14 +2169,30 @@ body.light .notes-panel-close:hover {
   color: var(--body-copy-colour);
 }
 
+/* Get In Touch — originally a 2-column grid of social "tiles" squeezed
+   into 75% of the page width, so every link beyond a couple of characters
+   (the sitewide `a { text-transform: uppercase }` rule only makes this
+   worse — "January8thproject" renders as the wider "JANUARY8THPROJECT")
+   had no room and broke mid-word: "JANUARY8THPROJ/ECT",
+   "AMINI.KAVE95@GM/AIL.COM". A flat single column fixed that, but lost
+   the editorial, masthead-directory feel a two-column layout gives a
+   contact page. Restoring two columns properly this time: the outer grid
+   gives the social block a genuinely wide track (was capped at 480px,
+   now up to 700px) specifically so `.contact-icon` has the room a second
+   column needs, and that inner grid uses `repeat(auto-fit,
+   minmax(280px, 1fr))` rather than a hardcoded 2 — it only ever shows a
+   second column when there's honestly 280px to give it, and folds back
+   to one column on its own the moment there isn't, so the mid-word
+   breakage this page had before is structurally impossible to
+   reintroduce here. */
 .contacts-grid {
   display: grid;
-  margin: 1rem 3rem;
-  grid-template-columns: 1fr 1fr;
-  width: 75%;
+  margin: 1rem auto;
+  grid-template-columns: minmax(360px, 700px) minmax(320px, 1fr);
+  width: min(1360px, 100%);
   align-items: start;
   justify-items: start;
-  gap: 2.5rem;
+  gap: 4rem;
 }
 .contact-social {
   display: flex;
@@ -2242,11 +2203,17 @@ body.light .notes-panel-close:hover {
   width: 100%;
   padding: 0.25rem 0 0;
 }
+
+.contact-social h2 {
+  margin-bottom: 1.5rem;
+}
+
 .contact-icon {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem 1.25rem;
-  width: min(100%, 650px);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.85rem 1.75rem;
+  align-items: stretch;
+  width: 100%;
   margin: 0;
   padding: 0;
 }
@@ -2255,21 +2222,31 @@ body.light .notes-panel-close:hover {
   align-items: center;
   gap: 0.75rem;
   min-width: 0;
-  padding: 0.9rem 1rem;
+  padding: 0.7rem 1.1rem;
   border: 1px solid var(--gold-border-card);
   background: var(--secondary-black-colour);
   width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
   justify-content: flex-start;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.contact-icon li:has(a):hover {
+  border-color: rgba(255, 215, 120, 0.9);
+  background: rgba(198, 168, 90, 0.08);
 }
 
 .contact-icon li img {
-  width: 22px;
-  height: 22px;
-  flex: 0 0 22px;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
 }
 
+/* Deliberately smaller than the site's --body-copy-font-size scale used
+   everywhere else — this is a compact directory list (icon + label per
+   row), not a block of prose, and matching the full body-copy size here
+   was what made each row balloon in height. Back to the size this list
+   used before that sitewide bump. */
 .contact-icon li a,
 .contact-icon li {
   color: var(--secondary-gold-colour);
@@ -2333,6 +2310,34 @@ body.light .notes-panel-close:hover {
   min-width: 9rem;
   justify-self: start;
   padding-inline: 1.25rem;
+}
+
+/* Honeypot field for the FormSubmit relay — must stay invisible and
+   untabbable to real visitors while remaining a normal field in the DOM
+   (display:none inputs are sometimes stripped by autofill/bots, so this
+   uses an off-screen position instead, which is the more reliable trap). */
+.contact-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.contact-form-status {
+  margin: 0;
+  min-height: 1.2em;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+.contact-form-status.is-success {
+  color: #7fbf7f;
+}
+
+.contact-form-status.is-error {
+  color: #d97a7a;
 }
 /*==================== Personal Vault ====================*/
 .personal-image {
@@ -3052,10 +3057,6 @@ body.modal-open {
     gap: 2rem;
   }
 
-  .contact-icon {
-    grid-template-columns: 1fr;
-    width: 100%;
-  }
   .background {
     display: grid;
     grid-template-columns: 1fr;
@@ -3198,14 +3199,14 @@ body.modal-open {
     grid-template-rows: repeat(2, 1fr);
   }
 
-  /* ---- Contact page: "Get in Touch" hint tiles ----
-     `.contacts-grid` splits into two columns (social links | form) at
-     75% of the page width, and `.contact-icon` inside the social
-     column is itself a 2-column grid — two levels of narrowing leave
-     each tile under ~190px, so labels like "January8thProject" wrap
-     one word per line. Stacking the outer grid to a single column and
-     reclaiming the full container width fixes both the social tiles
-     and the form's width in one move. */
+  /* ---- Contact page: "Get in Touch" / form ----
+     The social list itself (.contact-icon) is a single full-width column
+     now and comfortable at any width on its own — the reason to still
+     stack here is the FORM. Side by side with the list's minmax(320px,
+     480px) column at a tablet viewport, the form is squeezed down to a
+     couple hundred px, too narrow to type a message in comfortably.
+     Stacking to a single column at this range gives the form (and the
+     list) the page's full width instead. */
   .contacts-grid {
     width: 100%;
     grid-template-columns: 1fr;

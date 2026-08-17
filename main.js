@@ -1,212 +1,3 @@
-// Swap this for the real file once it's placed in Assets — everything else
-// (button, icon states, resume-on-navigate, graceful failure) already works
-// against whatever this points to.
-const CHANT_AUDIO_SRC =
-  "/Assets/Music Library/jean-paul-v-latin-opera-370442.mp3";
-
-function initializeMusicToggle() {
-  if (typeof document === "undefined" || typeof window === "undefined") {
-    return;
-  }
-
-  const navbarContainer = document.querySelector(".navbar .container-fluid");
-
-  if (!navbarContainer || navbarContainer.querySelector(".music-toggle-btn")) {
-    return;
-  }
-
-  // One shared <audio> per page load — this is a full multi-page site, not
-  // an SPA, so a track cannot literally keep playing across a navigation.
-  // What we can do is remember whether it was on and roughly where it was,
-  // and resume both on the next page, so a click-through reads as
-  // "the chant kept going" rather than "the music reset."
-  const audio = document.createElement("audio");
-  audio.className = "chamber-chant-audio";
-  audio.loop = true;
-  audio.preload = "none";
-  audio.src = CHANT_AUDIO_SRC;
-  document.body.appendChild(audio);
-
-  const musicButton = document.createElement("button");
-  musicButton.type = "button";
-  musicButton.className = "theme-toggle-btn music-toggle-btn";
-  musicButton.setAttribute("aria-label", "Play the chant");
-  musicButton.setAttribute("title", "Play the chant");
-  musicButton.setAttribute("aria-pressed", "false");
-  musicButton.innerHTML = `
-    <svg class="theme-toggle-icon music-icon-play" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8.4 5.6c0-1.02 1.1-1.66 1.98-1.15l9.2 5.4c.86.5.86 1.75 0 2.25l-9.2 5.4c-.88.51-1.98-.13-1.98-1.15V5.6Z" fill="#c6a85a"/>
-    </svg>
-    <svg class="theme-toggle-icon music-icon-pause" viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="6.5" y="5" width="4" height="14" rx="1.3" fill="#c6a85a"/>
-      <rect x="13.5" y="5" width="4" height="14" rx="1.3" fill="#c6a85a"/>
-    </svg>
-  `;
-
-  const navbarNav = navbarContainer.querySelector(".navbar-nav");
-  const musicToggleItem = document.createElement("li");
-  musicToggleItem.className = "nav-item music-toggle-item";
-  musicToggleItem.appendChild(musicButton);
-
-  if (navbarNav) {
-    // Ahead of the theme toggle if it's already there, otherwise it'll
-    // land right before it once initializeThemeToggle runs — either init
-    // order still puts the two buttons adjacent.
-    const existingThemeItem = navbarNav.querySelector(".theme-toggle-item");
-
-    if (existingThemeItem) {
-      navbarNav.insertBefore(musicToggleItem, existingThemeItem);
-    } else {
-      navbarNav.appendChild(musicToggleItem);
-    }
-  } else {
-    const navToggler = navbarContainer.querySelector(".navbar-toggler");
-    if (navToggler) {
-      navbarContainer.insertBefore(musicButton, navToggler);
-    } else {
-      navbarContainer.appendChild(musicButton);
-    }
-  }
-
-  const STORAGE_PLAYING = "january8th-chant-playing";
-  const STORAGE_TIME = "january8th-chant-time";
-
-  const readStorage = function (key) {
-    try {
-      return window.localStorage.getItem(key);
-    } catch (error) {
-      return null;
-    }
-  };
-
-  const writeStorage = function (key, value) {
-    try {
-      window.localStorage.setItem(key, value);
-    } catch (error) {
-      // Private browsing / disabled storage — the chant just won't
-      // remember its state across pages, which is a fine fallback.
-    }
-  };
-
-  const setButtonState = function (isPlaying) {
-    // The native "error" event and a rejected play() promise can both
-    // fire for the same failed load, in either order — once the error
-    // handler has disabled the button for good, don't let a
-    // later-resolving play() rejection overwrite its "unavailable"
-    // label back to a working-looking one.
-    if (musicButton.disabled) {
-      return;
-    }
-
-    musicButton.classList.toggle("playing", isPlaying);
-    musicButton.setAttribute("aria-pressed", String(isPlaying));
-    musicButton.setAttribute(
-      "aria-label",
-      isPlaying ? "Pause the chant" : "Play the chant"
-    );
-    musicButton.title = isPlaying ? "Pause the chant" : "Play the chant";
-  };
-
-  // If the source file isn't there yet (or fails to load for any reason),
-  // the button quietly disables itself instead of pretending to work. This
-  // is the one place allowed to touch the button after it's disabled —
-  // everything else defers to it via the guard in setButtonState — so it
-  // clears any "playing" look itself rather than going through that
-  // guarded helper.
-  audio.addEventListener("error", function () {
-    musicButton.classList.remove("playing");
-    musicButton.disabled = true;
-    musicButton.setAttribute("aria-pressed", "false");
-    musicButton.setAttribute("aria-label", "Chant unavailable");
-    musicButton.title = "Chant unavailable";
-  });
-
-  let resumeTime = 0;
-  const storedTime = parseFloat(readStorage(STORAGE_TIME));
-  if (Number.isFinite(storedTime) && storedTime > 0) {
-    resumeTime = storedTime;
-  }
-
-  const wantsToPlay = readStorage(STORAGE_PLAYING) === "true";
-
-  // Persist position periodically and on the way out, so "pick up where
-  // it left off" survives both a normal navigation and a closed tab.
-  audio.addEventListener("timeupdate", function () {
-    if (Math.floor(audio.currentTime) % 2 === 0) {
-      writeStorage(STORAGE_TIME, String(audio.currentTime));
-    }
-  });
-
-  window.addEventListener("pagehide", function () {
-    if (!audio.paused) {
-      writeStorage(STORAGE_TIME, String(audio.currentTime));
-    }
-  });
-
-  const startPlayback = function (muted) {
-    audio.muted = muted;
-
-    // preload was just switched from "none" to "auto" (or this is the
-    // very first play on a fresh click) — the browser's resource-selection
-    // algorithm hasn't actually started yet at this point since nothing
-    // has yielded to it. Calling play() before it has runs into a
-    // networkState of NETWORK_NO_SOURCE and gets refused with a
-    // misleading NotAllowedError, even though the real problem is timing,
-    // not permissions. load() forces that algorithm to start immediately.
-    audio.load();
-    audio.currentTime = resumeTime;
-
-    const playPromise = audio.play();
-
-    if (playPromise && typeof playPromise.catch === "function") {
-      playPromise.catch(function () {
-        // Autoplay was refused (even muted, on some browsers/settings) —
-        // leave the button showing "paused" rather than lying about it.
-        setButtonState(false);
-      });
-    }
-  };
-
-  if (wantsToPlay) {
-    setButtonState(true);
-    audio.preload = "auto";
-
-    // Resume automatically, muted first (always permitted), then unmute
-    // on the visitor's first interaction with the new page. A click that
-    // triggered navigation on the PREVIOUS page doesn't count as a
-    // gesture on this fresh document, so this is the reliable way to
-    // make "I turned the chant on" feel like it actually persists.
-    startPlayback(true);
-
-    const unmuteOnFirstGesture = function () {
-      audio.muted = false;
-      document.removeEventListener("pointerdown", unmuteOnFirstGesture);
-      document.removeEventListener("keydown", unmuteOnFirstGesture);
-    };
-
-    document.addEventListener("pointerdown", unmuteOnFirstGesture, {
-      once: true,
-    });
-    document.addEventListener("keydown", unmuteOnFirstGesture, {
-      once: true,
-    });
-  }
-
-  musicButton.addEventListener("click", function () {
-    if (audio.paused) {
-      audio.preload = "auto";
-      startPlayback(false);
-      setButtonState(true);
-      writeStorage(STORAGE_PLAYING, "true");
-    } else {
-      audio.pause();
-      writeStorage(STORAGE_TIME, String(audio.currentTime));
-      setButtonState(false);
-      writeStorage(STORAGE_PLAYING, "false");
-    }
-  });
-}
-
 function initializeThemeToggle() {
   if (typeof document === "undefined") {
     return;
@@ -319,6 +110,93 @@ function initializeContactHints() {
     input.addEventListener("blur", hideHint);
 
     hideHint();
+  });
+}
+
+function initializeContactForm() {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  const form = document.querySelector("#contact-form");
+
+  if (!form) {
+    return;
+  }
+
+  const status = form.querySelector("#contact-form-status");
+  const submitButton = form.querySelector('button[type="submit"]');
+
+  const setStatus = function (message, tone) {
+    if (!status) {
+      return;
+    }
+    status.textContent = message;
+    status.classList.remove("is-success", "is-error");
+    if (tone) {
+      status.classList.add(tone);
+    }
+  };
+
+  form.addEventListener("submit", function (event) {
+    // FormSubmit.co is a hosted relay: it accepts this POST and forwards it
+    // as an email to the address in the form's action attribute, with no
+    // backend of our own required. Submitting via fetch (instead of a plain
+    // form POST) keeps the visitor on this page — a normal submit would
+    // navigate them away to FormSubmit's own confirmation page — and lets
+    // us show a message in place, matching the rest of the site's feel.
+    event.preventDefault();
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+    setStatus("Sending your message...", null);
+
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+      method: "POST",
+      body: formData,
+      headers: { Accept: "application/json" },
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("Request failed with status " + response.status);
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        // FormSubmit replies with HTTP 200 even when it did NOT deliver the
+        // email — e.g. while its one-time per-domain activation is still
+        // pending, or if it silently rejects the request for some other
+        // reason. The real signal is the JSON body's own success field, not
+        // the HTTP status, so that case has to be treated as a failure here
+        // rather than shown to the visitor as "message sent."
+        if (data && String(data.success).toLowerCase() === "false") {
+          throw new Error(data.message || "FormSubmit rejected the request");
+        }
+        form.reset();
+        setStatus(
+          "Message sent — thank you. I'll get back to you soon.",
+          "is-success"
+        );
+      })
+      .catch(function () {
+        setStatus(
+          "Something went wrong sending that. Please try again, or email amini.kave95@gmail.com directly.",
+          "is-error"
+        );
+      })
+      .finally(function () {
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
+      });
   });
 }
 
@@ -644,12 +522,12 @@ function initializeWordHoverEffect() {
 if (typeof module !== "undefined") {
   module.exports = {
     initializeContactHints,
+    initializeContactForm,
     initializeWordHoverEffect,
     initializeMagneticFooterLinks,
     initializePageTransitions,
     initializeLogoSignatureAnimation,
     initializeChamberGuardians,
-    initializeMusicToggle,
   };
 }
 
@@ -659,8 +537,8 @@ if (typeof document !== "undefined") {
   const popup = document.querySelector(".manifesto-popup");
 
   initializeThemeToggle();
-  initializeMusicToggle();
   initializeContactHints();
+  initializeContactForm();
   initializeWordHoverEffect();
   initializeMagneticFooterLinks();
   initializePageTransitions();

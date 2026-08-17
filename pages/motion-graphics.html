@@ -35,6 +35,23 @@
 </head>
 
 <body>
+  <script>
+    // Applies the saved light/dark preference synchronously, before the
+    // browser paints anything — main.js does the same thing but only
+    // loads at the very bottom of the page, so without this the door
+    // transition (and everything themed off body.light) would flash the
+    // wrong palette on every navigation before main.js caught up.
+    (function () {
+      try {
+        if (window.localStorage.getItem("january8th-theme") === "light") {
+          document.body.classList.add("light");
+        }
+      } catch (error) {
+        // Private browsing / disabled storage — default dark applies,
+        // same fallback main.js already uses.
+      }
+    })();
+  </script>
     <header>
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
