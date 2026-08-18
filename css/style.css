@@ -12,6 +12,7 @@
   --secondary-black-colour: #1a1a1d;
   --primary-gold-colour: #c6a85a;
   --secondary-gold-colour: #d2a425;
+  --muted-gold-colour: #8f7a3e;
   --bs-navbar-color: #d2a425;
   --bs-navbar-icon-color: #d2a425;
   /* ---- Signature cursor --------------------------------------------
@@ -1009,7 +1010,9 @@ body.light .theme-icon-moon {
 }
 
 .navbar-brand .icon,
-.footer-title img {
+.footer-title img,
+.background-section img,
+.craft-grid img {
   transform-origin: 50% 50%;
   animation: glyph-breathe 5.5s ease-in-out infinite;
   will-change: transform, filter, box-shadow;
@@ -1024,9 +1027,43 @@ body.light .theme-icon-moon {
   animation: glyph-awaken 1.6s cubic-bezier(0.45, 0, 0.2, 1) 1;
 }
 
+/* Same family of gesture as the signature logo, but dialed well back —
+   these icons sit in a content grid rather than as a brand mark, so the
+   hover/focus response is a quiet lift rather than the logo's full
+   attention-grabbing bloom. */
+@keyframes glyph-awaken-subtle {
+  0%,
+  100% {
+    transform: scale(1);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 1px rgba(210, 164, 37, 0.25),
+      inset 0 0 12px rgba(210, 164, 37, 0.25),
+      0 4px 14px rgba(0, 0, 0, 0.4);
+  }
+  55% {
+    transform: scale(1.045);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 1px rgba(210, 164, 37, 0.35),
+      inset 0 0 14px rgba(210, 164, 37, 0.32),
+      0 0 18px 3px rgba(210, 164, 37, 0.18),
+      0 4px 14px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.background-section img:hover,
+.background-section img:focus-visible,
+.craft-grid img:hover,
+.craft-grid img:focus-visible {
+  animation: glyph-awaken-subtle 1.6s cubic-bezier(0.45, 0, 0.2, 1) 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .navbar-brand .icon,
-  .footer-title img {
+  .footer-title img,
+  .background-section img,
+  .craft-grid img {
     animation: none;
   }
 }
@@ -1449,11 +1486,30 @@ body.light .popup-close:focus-visible {
   align-items: center;
   justify-content: center;
   gap: 3rem;
+  padding-inline: 2rem;
+  border-left: 1px solid rgba(143, 122, 62, 0.35);
+  border-right: 1px solid rgba(143, 122, 62, 0.35);
   img {
     width: 30%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    padding: 1rem;
     background-color: #0a0a0b;
-    border: 2px var(--gold-border-card) double;
+    border-radius: 50%;
+    border: 3px solid var(--secondary-gold-colour);
+    outline: 1px solid var(--gold-border-card);
+    outline-offset: 4px;
+    box-shadow:
+      0 0 0 1px rgba(210, 164, 37, 0.25),
+      inset 0 0 12px rgba(210, 164, 37, 0.25),
+      0 4px 14px rgba(0, 0, 0, 0.4);
   }
+}
+.background-section:first-child {
+  border-left: none;
+}
+.background-section:last-child {
+  border-right: none;
 }
 .education-intro {
   align-self: flex-start;
@@ -1482,17 +1538,28 @@ body.light .popup-close:focus-visible {
   gap: 2rem;
 }
 .craft-grid {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  img {
-    width: 40%;
-    background-color: #0a0a0b;
-    border: 2px var(--gold-border-card) double;
-  }
   gap: 3rem;
   align-content: center;
   justify-content: center;
+  img {
+    width: 40%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    padding: 1rem;
+    background-color: #0a0a0b;
+    border-radius: 50%;
+    border: 3px solid var(--secondary-gold-colour);
+    outline: 1px solid var(--gold-border-card);
+    outline-offset: 4px;
+    box-shadow:
+      0 0 0 1px rgba(210, 164, 37, 0.25),
+      inset 0 0 12px rgba(210, 164, 37, 0.25),
+      0 4px 14px rgba(0, 0, 0, 0.4);
+  }
 }
 .craft-info {
   display: flex;
@@ -2513,6 +2580,18 @@ body.light .notes-panel-close:hover {
   width: 100%;
 }
 
+#featured {
+  padding-bottom: 3rem;
+}
+
+#featured h2 {
+  margin-bottom: 5.5rem;
+}
+
+#featured .carousel {
+  margin-bottom: 3rem;
+}
+
 .carousel-content {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -2916,17 +2995,67 @@ body.modal-open {
   border: 2px solid var(--secondary-gold-colour);
   padding: clamp(1.1rem, 2.6vw, 2.1rem);
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+  transform-origin: 50% 50%;
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease,
     transform 0.25s ease;
+  animation: frame-breathe 5.5s ease-in-out infinite;
+  will-change: transform, box-shadow;
 }
 
 #featured .car-item:hover,
-#portfolio-vaults .car-item:hover {
+#portfolio-vaults .car-item:hover,
+#featured .car-item:focus-within,
+#portfolio-vaults .car-item:focus-within {
   border-color: rgba(255, 215, 120, 1);
-  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.45);
-  transform: translateY(-3px);
+  animation: frame-awaken 1.8s cubic-bezier(0.45, 0, 0.2, 1) 1 forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #featured .car-item,
+  #portfolio-vaults .car-item {
+    animation: none;
+  }
+}
+
+/* Same quiet "signature glyph" family of motion used on the icon
+   medallions elsewhere on the site, adapted to a rectangular gallery
+   frame: a slow devotional breath at rest, and on hover/focus a single
+   deep inhale — the frame lifts and a soft gold light gathers along its
+   edge — before easing back. Kept understated so it reads as a gallery
+   piece responding to attention, not a distracting gimmick. */
+@keyframes frame-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+  }
+  50% {
+    transform: scale(1.006);
+    box-shadow:
+      0 14px 30px rgba(0, 0, 0, 0.35),
+      0 0 16px 1px rgba(210, 164, 37, 0.12);
+  }
+}
+
+/* No vertical lift here on purpose: .car-window clips overflow so the
+   carousel can slide, and translateY would push the card's top edge
+   past that clipped boundary, making it appear to vanish mid-hover.
+   Scale + glow read as the same "awaken" gesture without that clipping. */
+@keyframes frame-awaken {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.45);
+  }
+  55% {
+    transform: scale(1.015);
+    box-shadow:
+      0 22px 44px rgba(0, 0, 0, 0.5),
+      0 0 28px 4px rgba(210, 164, 37, 0.32),
+      0 0 55px 10px rgba(210, 164, 37, 0.14);
+  }
 }
 
 #featured .car-item img,
@@ -3031,6 +3160,13 @@ body.modal-open {
     background-attachment: scroll;
     object-fit: cover;
   }
+  /* The generous 5.5rem gap under "Featured Artworks" was tuned for
+     desktop breathing room — at phone widths, where the heading itself
+     wraps to a larger relative size, it reads as an oversized gap
+     rather than elegant spacing. Scale it back proportionally. */
+  #featured h2 {
+    margin-bottom: 2.5rem;
+  }
   .carousel-content {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-areas:
@@ -3084,6 +3220,21 @@ body.modal-open {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: repeat(4, 1fr);
+    row-gap: 3.5rem;
+  }
+
+  /* Stacked single column — side-by-side dividers no longer apply, so
+     swap to a horizontal hairline between each panel instead, matching
+     the same muted-gold treatment used at desktop/tablet widths. */
+  .background-section {
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid rgba(143, 122, 62, 0.35);
+    padding-top: 2.5rem;
+  }
+  .background-section:first-child {
+    border-top: none;
+    padding-top: 0;
   }
   .about-craft {
     grid-template-columns: 1fr;
@@ -3187,6 +3338,13 @@ body.modal-open {
     font-size: 0.85rem;
   }
 
+  /* Same rationale as the phone breakpoint: scale the heading-to-cards
+     gap down proportionally rather than carrying the full desktop
+     5.5rem at tablet width. */
+  #featured h2 {
+    margin-bottom: 3.5rem;
+  }
+
   /* ---- About page: Background credentials grid ----
      `.background` is a 4-column grid (Education / Focus / Influence /
      Approach). Education carries a full bulleted list while the other
@@ -3197,6 +3355,26 @@ body.modal-open {
   .background {
     grid-template-columns: repeat(2, 1fr);
     row-gap: 3rem;
+  }
+
+  /* The vertical hairline dividers were built for a single row of 4 —
+     reapplied to a 2×2 grid, `:first-child`/`:last-child` alone would
+     leave a stray left border floating at the start of row 2. Rekey the
+     dividers to columns (odd = left column, even = right column) and
+     add a matching horizontal hairline between the two rows instead. */
+  .background-section {
+    border-top: 1px solid rgba(143, 122, 62, 0.35);
+    border-left: 1px solid rgba(143, 122, 62, 0.35);
+    border-right: 1px solid rgba(143, 122, 62, 0.35);
+  }
+  .background-section:nth-child(odd) {
+    border-left: none;
+  }
+  .background-section:nth-child(even) {
+    border-right: none;
+  }
+  .background-section:nth-child(-n + 2) {
+    border-top: none;
   }
 
   /* ---- About page: Tools & Crafts ----

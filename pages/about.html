@@ -36,23 +36,23 @@
 
 
 <body>
-  <script>
-    // Applies the saved light/dark preference synchronously, before the
-    // browser paints anything — main.js does the same thing but only
-    // loads at the very bottom of the page, so without this the door
-    // transition (and everything themed off body.light) would flash the
-    // wrong palette on every navigation before main.js caught up.
-    (function () {
-      try {
-        if (window.localStorage.getItem("january8th-theme") === "light") {
-          document.body.classList.add("light");
-        }
-      } catch (error) {
-        // Private browsing / disabled storage — default dark applies,
-        // same fallback main.js already uses.
-      }
-    })();
-  </script>
+    <script>
+        // Applies the saved light/dark preference synchronously, before the
+        // browser paints anything — main.js does the same thing but only
+        // loads at the very bottom of the page, so without this the door
+        // transition (and everything themed off body.light) would flash the
+        // wrong palette on every navigation before main.js caught up.
+        (function () {
+            try {
+                if (window.localStorage.getItem("january8th-theme") === "light") {
+                    document.body.classList.add("light");
+                }
+            } catch (error) {
+                // Private browsing / disabled storage — default dark applies,
+                // same fallback main.js already uses.
+            }
+        })();
+    </script>
     <header>
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
@@ -140,9 +140,25 @@
                 <div class="background-section">
                     <img src="../Assets/Icons/Focus Icon.svg" alt="" class="">
                     <h4 class="">Focus</h4>
-                    <p class="">Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora quam voluptate a cumque
-                        maxime porro nihil sequi sint commodi earum? Et necessitatibus voluptate possimus optio est
-                        inventore ut rerum quam.</p>
+                    <p class="">My focus lies upon an ocean of turbulent waves—composed of infinitesimally small
+                        particles that surround the world we
+                        inhabit, yet remain hidden from the sight of us humans, confined as we are within the limits of
+                        perception, for an
+                        indescribable eternity.
+                        These are precisely the places where the gods reside, calling us toward themselves—to join them,
+                        to intermingle with
+                        them, and ultimately to become one with them.
+                        My primary specialization is the creation of entirely imagined visual compositions.
+                        Consequently, the principal digital
+                        tools I work with are Adobe Illustrator and Adobe After Effects.
+                        I also possess a solid command of traditional drawing practices rooted in the methods of earlier
+                        generations, as well as
+                        entirely digital approaches built upon artificial intelligence. I have therefore drawn upon all
+                        of these tools and
+                        disciplines in creating this online collection—as a mirror intended to reflect my true identity:
+
+                        the man behind the mask,
+                        the questioning man.</p>
                 </div>
                 <div class="background-section">
                     <img src="../Assets/Icons/Influence Icon.svg" alt="" class="">
