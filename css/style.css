@@ -70,7 +70,9 @@
    native I-beam so typing stays legible. */
 @media (hover: hover) and (pointer: fine) {
   html {
-    cursor: var(--gothic-cursor-url) 16 5, auto;
+    cursor:
+      var(--gothic-cursor-url) 16 5,
+      auto;
   }
 
   /* Browsers ship a UA-stylesheet rule (:any-link { cursor: pointer })
@@ -83,7 +85,9 @@
   summary,
   label,
   [role="button"] {
-    cursor: var(--gothic-cursor-url) 16 5, pointer;
+    cursor:
+      var(--gothic-cursor-url) 16 5,
+      pointer;
   }
 
   input,
@@ -545,7 +549,9 @@ p {
    rest of the sentence. */
 p .word {
   display: inline-block;
-  cursor: var(--gothic-cursor-url) 16 5, auto;
+  cursor:
+    var(--gothic-cursor-url) 16 5,
+    auto;
   transition:
     color 0.25s ease,
     text-shadow 0.25s ease,
@@ -635,7 +641,9 @@ button,
   border: 2px solid var(--secondary-gold-colour);
   border-radius: 0;
   padding: 0.7rem 1rem;
-  cursor: var(--gothic-cursor-url) 16 5, pointer;
+  cursor:
+    var(--gothic-cursor-url) 16 5,
+    pointer;
   /* The outer ring (on top of the border itself) is what makes the gold
      edge read clearly against the near-black dark-mode surface without
      needing a heavier border-width; body.light's near-black gold tokens
@@ -714,7 +722,9 @@ a.btn:focus-visible {
   color: var(--secondary-gold-colour);
   box-shadow: inset 0 0 0 1px rgba(10, 10, 11, 0.28);
   flex: 0 0 auto;
-  cursor: var(--gothic-cursor-url) 16 5, pointer;
+  cursor:
+    var(--gothic-cursor-url) 16 5,
+    pointer;
   transition:
     background 0.2s ease,
     border-color 0.2s ease,
@@ -885,7 +895,9 @@ body.light .theme-icon-moon {
 .navbar {
   width: 100%;
   border-bottom: 2px solid var(--gold-border-strong);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28), 0 18px 30px -22px rgba(210, 164, 37, 0.35);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.28),
+    0 18px 30px -22px rgba(210, 164, 37, 0.35);
   background: var;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
@@ -987,8 +999,7 @@ body.light .theme-icon-moon {
   55% {
     transform: scale(1.16);
     border-radius: 50%;
-    filter:
-      drop-shadow(0 0 14px rgba(255, 236, 190, 0.95))
+    filter: drop-shadow(0 0 14px rgba(255, 236, 190, 0.95))
       drop-shadow(0 0 30px rgba(255, 215, 120, 0.6));
     box-shadow:
       0 0 36px 8px rgba(255, 225, 150, 0.55),
@@ -1299,7 +1310,9 @@ body.light .nav-link:focus-visible::after {
   font-size: 1.15rem;
   font-weight: 700;
   line-height: 1;
-  cursor: var(--gothic-cursor-url) 16 5, pointer;
+  cursor:
+    var(--gothic-cursor-url) 16 5,
+    pointer;
   transition: all 0.2s ease;
 }
 
@@ -1318,7 +1331,11 @@ body.light .nav-link:focus-visible::after {
    backdrop, rather than staying a permanently dark night-mode page. */
 body.light .popup-container {
   background:
-    linear-gradient(180deg, rgba(232, 228, 216, 0.98), rgba(232, 228, 216, 0.95)),
+    linear-gradient(
+      180deg,
+      rgba(232, 228, 216, 0.98),
+      rgba(232, 228, 216, 0.95)
+    ),
     radial-gradient(circle at top, rgba(90, 15, 20, 0.08), transparent 55%);
   border-color: rgba(90, 15, 20, 0.35);
   box-shadow:
@@ -1391,7 +1408,7 @@ body.light .popup-close:focus-visible {
 .about-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Webp/WebP Background images/About Page Background Image_result.webp")
+    url("../Assets/Webp/WebP Background images/About\ Page\ Tehran\ _result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
@@ -1598,7 +1615,9 @@ body.light .archive-img {
   background: rgba(10, 10, 11, 0.5);
 }
 .carousel-link {
-  cursor: var(--gothic-cursor-url) 16 5, pointer;
+  cursor:
+    var(--gothic-cursor-url) 16 5,
+    pointer;
   &:hover {
     transform: scale(1.3);
     transition: ease-in 0.3s;
@@ -2228,7 +2247,9 @@ body.light .notes-panel-close:hover {
   width: 100%;
   box-sizing: border-box;
   justify-content: flex-start;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .contact-icon li:has(a):hover {
@@ -2562,7 +2583,9 @@ JavaScript selects this shared class.
 }
 
 .car-item img.previewable-image {
-  cursor: var(--gothic-cursor-url) 16 5, pointer;
+  cursor:
+    var(--gothic-cursor-url) 16 5,
+    pointer;
 }
 
 /* Grid carousel */
@@ -3145,7 +3168,6 @@ body.modal-open {
    comment names the specific breakage it corrects. Nothing here touches
    the sub-751px mobile rules or the desktop rules above 1024px. ============================================================ */
 @media (min-width: 751px) and (max-width: 1024px) {
-
   /* ---- Carousel navigation: reclaim room for the gallery itself ----
      Previous/Next buttons inherit the sitewide CTA sizing
      (`button, .btn, .navbar-toggler { min-width: 9rem }`), correct for
