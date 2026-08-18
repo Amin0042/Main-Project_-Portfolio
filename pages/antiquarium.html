@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5ZTYEESHEG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag("js", new Date());
+    gtag("config", "G-5ZTYEESHEG");
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+    rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+
+  <link rel="stylesheet" href="../css/style.css" />
+  <!-- Antiquarium-only styles: layout for the exhibition stage and
+       experience selector. Scoped to [data-antiquarium] so it never
+       reaches any other page. -->
+  <link rel="stylesheet" href="../css/antiquarium.css" />
+
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
+
+  <link rel="icon" type="image/svg+xml" href="../Assets/Icons/Single January8th Symbol  .svg" />
+
+  <title>Antiquarium — Kave Amini Khanimani</title>
+</head>
+
+<body>
+  <script>
+    // Applies the saved light/dark preference synchronously, before the
+    // browser paints anything — main.js does the same thing but only
+    // loads at the very bottom of the page, so without this the door
+    // transition (and everything themed off body.light) would flash the
+    // wrong palette on every navigation before main.js caught up.
+    (function () {
+      try {
+        if (window.localStorage.getItem("january8th-theme") === "light") {
+          document.body.classList.add("light");
+        }
+      } catch (error) {
+        // Private browsing / disabled storage — default dark applies,
+        // same fallback main.js already uses.
+      }
+    })();
+  </script>
+  <header>
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+          <img class="icon" src="../Assets/Icons/Single January8th Symbol  .svg" alt="" />
+          <span>January8th</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/pages/about.html">About</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/#manifesto">Manifesto</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/pages/archive.html">Archive</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/pages/notes.html">Notes</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/pages/antiquarium.html">Antiquarium</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/pages/contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main data-antiquarium>
+    <section class="section antiquarium-hero" id="antiquarium-hero">
+      <span class="antiquarium-eyebrow">Experimental Wing</span>
+      <h1>Antiquarium</h1>
+      <p class="antiquarium-subtitle">
+        A small, evolving collection of interactive digital installations —
+        pieces meant to be entered and turned in the hand, not merely
+        viewed.
+      </p>
+    </section>
+
+    <section class="section antiquarium-exhibition" id="antiquarium-exhibition">
+      <div class="antiquarium-stage-frame">
+        <div class="antiquarium-stage" data-antiquarium-stage></div>
+
+        <div class="antiquarium-fallback" data-antiquarium-fallback hidden>
+          <h3>A Simplified View</h3>
+          <p>
+            Your browser or device can't render the interactive scene
+            smoothly here, so a plain view is shown in its place.
+            Everything else on January8th remains fully available — only
+            this experimental wing depends on WebGL and enough graphics
+            performance to run it well.
+          </p>
+        </div>
+
+        <!-- Museum wall-label, not a modal: plain text in a corner of the
+             stage, shown only while an artwork is being inspected.
+             Populated and toggled entirely by the active experience
+             module (e.g. floating-archive.js) — main.js just hands over
+             the element references. -->
+        <div class="antiquarium-inspector" data-antiquarium-inspector hidden aria-live="polite">
+          <span class="antiquarium-inspector-title" data-antiquarium-inspector-title></span>
+          <span class="antiquarium-inspector-meta" data-antiquarium-inspector-meta></span>
+          <span class="antiquarium-inspector-hint">Esc, or click outside, to return</span>
+        </div>
+      </div>
+
+      <p class="antiquarium-caption" data-antiquarium-caption aria-live="polite"></p>
+
+      <div class="antiquarium-selector" data-antiquarium-selector role="group" aria-label="Choose an installation">
+        <!-- Populated by js/antiquarium/main.js from the experience registry. -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="section footer" id="footer">
+    <div class="footer">
+      <div class="footer-title">
+        <a href="/">
+          <img src="../Assets/Icons/Simplified Correct Logo with correct Dark BG.svg" alt="" />
+        </a>
+
+        <h3>January8th</h3>
+      </div>
+
+      <div class="line"></div>
+
+      <div class="footer-navigation">
+        <h4>NAVIGATION</h4>
+
+        <ul>
+          <li>
+            <a href="/">Home</a>
+          </li>
+          <li>
+            <a href="/pages/about.html">About</a>
+          </li>
+          <li>
+            <a href="/#manifesto">Manifesto</a>
+          </li>
+          <li>
+            <a href="/pages/archive.html">Archive</a>
+          </li>
+          <li>
+            <a href="/pages/notes.html">Notes</a>
+          </li>
+          <li>
+            <a aria-current="page" href="/pages/antiquarium.html">Antiquarium</a>
+          </li>
+          <li>
+            <a href="/pages/contact.html">Contact</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="line"></div>
+
+      <div class="footer-contact">
+        <h4>CONTACT</h4>
+
+        <ul>
+          <li>
+            <a href="https://www.instagram.com/january8thproject/">Instagram</a>
+          </li>
+
+          <li>
+            <a href="https://www.linkedin.com/in/kave-amini-khanimani-10127b2b0/">LinkedIn</a>
+          </li>
+
+          <li>
+            <a href="mailto:amini.kave95@gmail.com">Email</a>
+          </li>
+
+          <li>
+            <a href="https://www.youtube.com/@January8thProject">YouTube</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+
+  <script src="../main.js"></script>
+  <!-- Antiquarium's own modular entry point — type="module" so it (and
+       Three.js, imported only from within it) loads exclusively on this
+       page and never touches the rest of the site. -->
+  <script type="module" src="../js/antiquarium/main.js"></script>
+</body>
+
+</html>

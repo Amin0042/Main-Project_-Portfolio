@@ -1,0 +1,237 @@
+/* ====================================================================
+   Antiquarium — dedicated stylesheet, loaded only by
+   pages/antiquarium.html. Every color and font here is pulled from the
+   variables already defined on :root in style.css (not redeclared), so
+   this page inherits the site's identity automatically instead of
+   forking it. Nothing in here touches a selector outside this page's
+   own [data-antiquarium] scope.
+   ==================================================================== */
+
+[data-antiquarium] {
+  width: 100%;
+}
+
+/* ---- Intro ------------------------------------------------------- */
+.antiquarium-hero {
+  padding-top: 3rem;
+}
+
+.antiquarium-eyebrow {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--muted-gold-colour);
+  margin-bottom: 1.1rem;
+}
+
+.antiquarium-hero h1 {
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+}
+
+.antiquarium-subtitle {
+  max-width: 56ch;
+  margin-inline: auto;
+  color: var(--body-copy-colour);
+}
+
+/* ---- Exhibition stage ---------------------------------------------- */
+.antiquarium-exhibition {
+  padding-top: 1.5rem;
+}
+
+.antiquarium-stage-frame {
+  position: relative;
+  width: min(1180px, 100%);
+  margin-inline: auto;
+  aspect-ratio: 16 / 9;
+  min-height: 320px;
+  border: 1px solid var(--gold-border-card);
+  box-shadow:
+    inset 0 0 0 1px rgba(10, 10, 11, 0.6),
+    0 30px 60px -30px rgba(0, 0, 0, 0.65);
+  background: var(--primary-black-colour);
+  overflow: hidden;
+}
+
+.antiquarium-stage {
+  position: absolute;
+  inset: 0;
+}
+
+.antiquarium-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* Thin gilt corner marks — a museum vitrine's frame, not a UI chrome
+   panel. Purely decorative, so they're excluded from the a11y tree. */
+.antiquarium-stage-frame::before,
+.antiquarium-stage-frame::after,
+.antiquarium-corner-tl,
+.antiquarium-corner-br {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.antiquarium-stage-frame::before {
+  top: 10px;
+  left: 10px;
+  border-top: 1px solid var(--gold-border-strong);
+  border-left: 1px solid var(--gold-border-strong);
+}
+
+.antiquarium-stage-frame::after {
+  bottom: 10px;
+  right: 10px;
+  border-bottom: 1px solid var(--gold-border-strong);
+  border-right: 1px solid var(--gold-border-strong);
+}
+
+.antiquarium-caption {
+  margin-top: 1.1rem;
+  font-family: "Inter", sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  color: var(--muted-gold-colour);
+  min-height: 1.4em;
+}
+
+/* ---- Inspection label -----------------------------------------------
+   A museum wall-label, not a UI panel: plain text sitting in the
+   stage's own corner, no border, no card background of its own — only
+   a soft scrim behind the text so it stays legible over a bright
+   artwork. Never intercepts pointer input, so it can never get in the
+   way of orbiting, dragging, or clicking through to the 3D scene
+   beneath it. */
+.antiquarium-inspector {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  padding: 2.75rem 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  text-align: center;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(10, 10, 11, 0.6), transparent);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.antiquarium-inspector.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.antiquarium-inspector-title {
+  font-family: "cinzel";
+  font-weight: var(--fw-medium);
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
+  color: var(--primary-gold-colour);
+}
+
+.antiquarium-inspector-meta {
+  font-family: "Inter", sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-gold-colour);
+}
+
+.antiquarium-inspector-hint {
+  margin-top: 0.5rem;
+  font-family: "Inter", sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: rgba(143, 122, 62, 0.65);
+}
+
+/* ---- Fallback (no WebGL / graceful degrade) ------------------------ */
+.antiquarium-fallback {
+  width: min(1180px, 100%);
+  margin-inline: auto;
+  padding: 3.5rem 2rem;
+  border: 1px solid var(--gold-border-card);
+  background: var(--primary-black-colour);
+  text-align: center;
+}
+
+.antiquarium-fallback p {
+  max-width: 52ch;
+}
+
+/* ---- Experience selector -------------------------------------------- */
+.antiquarium-selector {
+  margin-top: 2.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  width: min(1180px, 100%);
+  margin-inline: auto;
+}
+
+.antiquarium-selector-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  min-width: 15rem;
+  min-height: unset;
+  text-align: left;
+  padding: 1rem 1.25rem;
+}
+
+.antiquarium-selector-title {
+  font-family: "cinzel";
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--secondary-gold-colour);
+}
+
+.antiquarium-selector-status {
+  font-family: "Inter", sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-gold-colour);
+}
+
+.antiquarium-selector-item.is-current {
+  border-color: rgba(255, 215, 120, 1);
+  box-shadow:
+    inset 0 0 0 1px rgba(10, 10, 11, 0.7),
+    0 0 0 1px rgba(255, 215, 120, 0.6);
+}
+
+.antiquarium-selector-item.is-reserved {
+  opacity: 0.55;
+}
+
+.antiquarium-selector-item.is-reserved .antiquarium-selector-status {
+  color: var(--muted-gold-colour);
+}
+
+@media (max-width: 700px) {
+  .antiquarium-selector-item {
+    min-width: 100%;
+  }
+}
