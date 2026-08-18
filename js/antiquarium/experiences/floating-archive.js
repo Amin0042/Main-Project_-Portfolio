@@ -565,3 +565,5 @@ export function createFloatingArchive(stage, context = {}) {
 
   return { update, dispose };
 }
+
+export default createFloatingArchive;

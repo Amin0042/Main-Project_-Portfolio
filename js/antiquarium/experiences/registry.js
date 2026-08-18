@@ -22,8 +22,9 @@ export const experiences = [
   {
     id: "cartography-of-memory",
     title: "Iran — Cartography of Memory",
-    tagline: "A future installation, not yet open.",
-    status: "reserved",
+    tagline: "A holographic geography, held up to the light.",
+    status: "active",
+    load: () => import("./cartography-of-memory.js"),
   },
 ];
 

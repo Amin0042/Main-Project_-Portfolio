@@ -99,7 +99,10 @@ function initAntiquarium() {
     }
 
     const module = await entry.load();
-    const factory = module.createFloatingArchive || module.default;
+    // Every experience module exports its factory as `default` (plus,
+    // conventionally, a named export matching its function name) —
+    // main.js never needs to know an experience's specific export name.
+    const factory = module.default || module.createFloatingArchive;
     currentExperience = factory(stage, {
       inspectorEl,
       inspectorTitleEl,
