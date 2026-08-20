@@ -1012,7 +1012,9 @@ body.light .theme-icon-moon {
 .navbar-brand .icon,
 .footer-title img,
 .background-section img,
-.craft-grid img {
+.craft-grid img,
+#dreams .image-grid img,
+#dreamers .image-grid img {
   transform-origin: 50% 50%;
   animation: glyph-breathe 5.5s ease-in-out infinite;
   will-change: transform, filter, box-shadow;
@@ -1055,7 +1057,11 @@ body.light .theme-icon-moon {
 .background-section img:hover,
 .background-section img:focus-visible,
 .craft-grid img:hover,
-.craft-grid img:focus-visible {
+.craft-grid img:focus-visible,
+#dreams .image-grid img:hover,
+#dreams .image-grid img:focus-visible,
+#dreamers .image-grid img:hover,
+#dreamers .image-grid img:focus-visible {
   animation: glyph-awaken-subtle 1.6s cubic-bezier(0.45, 0, 0.2, 1) 1;
 }
 
@@ -1063,7 +1069,9 @@ body.light .theme-icon-moon {
   .navbar-brand .icon,
   .footer-title img,
   .background-section img,
-  .craft-grid img {
+  .craft-grid img,
+  #dreams .image-grid img,
+  #dreamers .image-grid img {
     animation: none;
   }
 }
@@ -3081,6 +3089,64 @@ body.modal-open {
 .carousel-track .image-grid img:hover {
   border-color: rgba(255, 215, 120, 1);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Dreams / Dreamers (Inspiration Vault) get the same circular-medallion
+   treatment as the About page's Background/Tools icons — dark backing
+   plate, double gold ring, resting glow, breathing idle animation, and
+   a one-shot "awaken" bloom on hover/focus/tap (see glyph-breathe /
+   glyph-awaken-subtle above). Scoped to #dreams/#dreamers only, so the
+   Personal Vault photo-grids above keep their plain rectangular frame.
+   Specificity here (two IDs) beats .carousel-track .image-grid img
+   above without needing !important. */
+#dreams .carousel-track .image-grid img,
+#dreamers .carousel-track .image-grid img {
+  border-radius: 50%;
+  border: 3px solid var(--secondary-gold-colour);
+  outline: 1px solid var(--gold-border-card);
+  outline-offset: 4px;
+  box-shadow:
+    0 0 0 1px rgba(210, 164, 37, 0.25),
+    inset 0 0 12px rgba(210, 164, 37, 0.25),
+    0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+#dreams .carousel-track .image-grid img:hover,
+#dreamers .carousel-track .image-grid img:hover {
+  border-color: rgba(255, 215, 120, 1);
+}
+
+/* The medallion decoration (outline-offset ring, breathing drop-shadow,
+   hover scale-up) needs actual headroom to expand into — the same way
+   the About page's Background/Tools medallions sit well inside their
+   flex/grid cell (30–40% width) rather than filling it edge to edge.
+   These images were still at width:100% with zero margin, so the ring
+   and glow had nowhere to go but into the neighboring cell — reading as
+   overlapping/"squished" circles, worst on hover. Shrinking the image
+   inside its own grid cell (instead of relying on the gap) fixes that
+   at its source and keeps the cell's own footprint unchanged, so the
+   3-column layout still fits its 700px window exactly as before. */
+#dreams .image-grid img,
+#dreamers .image-grid img {
+  width: 72%;
+  margin: 0 auto;
+  display: block;
+}
+
+/* .car-window clips overflow so the carousel can slide horizontally —
+   fine for the old rectangular frames, which had no reason to bleed
+   past their own cell. These medallions do: the outline-offset ring,
+   box-shadow, and breathing glow all reach outward past the circle
+   itself. Row 1 sits flush against that clipping edge with zero
+   headroom, so its halo gets sheared off flat along the top — reading
+   as an invisible straight border cutting across otherwise-round
+   circles. Padding the grid itself (not the window) gives the top and
+   bottom rows the same breathing room the middle row already has from
+   its neighbors, without changing the window's own clip boundary. */
+#dreams .image-grid,
+#dreamers .image-grid {
+  padding-block: 1.75rem;
+  row-gap: 2.5rem;
 }
 /*==================== Hero Motion (parallax / Ken Burns) ==================== */
 /* A slow, continuous zoom-and-drift plays on every full-bleed hero/gallery
