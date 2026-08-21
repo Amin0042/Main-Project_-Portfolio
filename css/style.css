@@ -1519,17 +1519,27 @@ body.light .popup-close:focus-visible {
 .background-section:last-child {
   border-right: none;
 }
+/* Education was the only one of the four Background panels set to
+   left-align (it originally needed room for the bulleted list below
+   it) — Focus/Influence/Approach are all center-aligned by default,
+   so Education read as the odd one out. Dropping the override lets it
+   fall back to the same centered text as its siblings. */
 .education-intro {
-  align-self: flex-start;
-  margin-inline: 0;
-  text-align: left;
+  width: 100%;
 }
 .education-list {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  align-self: flex-start;
+  /* The paragraph above is centered, but a bulleted list reads far
+     worse centered — disc markers drift away from ragged multi-line
+     text and wrapped lines no longer align under each other. Centering
+     the list as a block (rather than each line of text) keeps it
+     visually consistent with the rest of the panel while keeping each
+     entry itself readable, left-aligned like any normal list. */
+  align-self: center;
   width: 100%;
+  max-width: 42ch;
   text-align: left;
   font-size: var(--body-copy-font-size);
   color: var(--body-copy-colour);
@@ -3302,6 +3312,18 @@ body.modal-open {
     border-top: none;
     padding-top: 0;
   }
+
+  /* At desktop's 4-column layout, 30% of a narrow column is a
+     deliberately small medallion sized for a dense row. Stacked into
+     one full-width mobile column that same 30% shrinks to ~40px —
+     too small to read the line-art inside, and well under a
+     comfortable minimum icon size. Fix it to a real pixel size here
+     instead of a percentage of the (now much wider) column, matching
+     the Tools & Crafts icons' mobile size (~100px) so both icon
+     families read consistently. */
+  .background-section img {
+    width: clamp(88px, 26vw, 120px);
+  }
   .about-craft {
     grid-template-columns: 1fr;
     align-items: center;
@@ -3443,6 +3465,14 @@ body.modal-open {
     border-top: none;
   }
 
+  /* Same fix as the phone breakpoint: 30% of a tablet-width 2-column
+     cell is smaller than 30% of a phone-width single column, so
+     without an explicit size the icon actually shrinks going from
+     phone to tablet. Pin it to the same comfortable size at both. */
+  .background-section img {
+    width: clamp(90px, 14vw, 120px);
+  }
+
   /* ---- About page: Tools & Crafts ----
      `.about-craft` is a 2-column grid (intro paragraph | icon grid).
      At tablet width that squeezes the 2×3 icon grid into a narrow
@@ -3463,6 +3493,10 @@ body.modal-open {
   .craft-grid {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
+  }
+
+  .craft-grid img {
+    width: clamp(90px, 14vw, 120px);
   }
 
   /* ---- Contact page: "Get in Touch" / form ----

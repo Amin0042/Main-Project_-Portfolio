@@ -85,6 +85,93 @@ export const artworks = [
     rotation: [0, 0.56, 0],
     scale: 1.0,
   },
+
+  // ---- Second wave (added 2026) ------------------------------------
+  // Ten pieces pulled in from the Traditional/Digital/Cyborg Vaults and
+  // the homepage's Featured Artworks, chosen to extend the three
+  // threads the original six already hinted at rather than just
+  // padding the room out — see the shortlist discussion in-repo for
+  // the reasoning behind each pick.
+  {
+    title: "Mohammad Reza Shajarian",
+    image: "../Assets/Traditional Artworks/Mohammad Reza Shajarian .webp",
+    medium: "Traditional composition",
+    position: [5.2, 0.9, -2.2],
+    rotation: [0, -0.4, 0],
+    scale: 1.15,
+  },
+  {
+    title: "Persepolis",
+    image: "../Assets/Webp/WEBP of Digital works/Persepolis .webp",
+    medium: "Digital composition",
+    position: [-5.6, -0.8, -0.5],
+    rotation: [0, 0.5, 0],
+    scale: 1.0,
+  },
+  {
+    title: "Naser Al-Din Shah Qajar",
+    image: "../Assets/Webp/WEBP of Digital works/Webp Second Round/Nasser Bio .webp",
+    medium: "Digital composition",
+    position: [1.8, -1.8, -5.5],
+    rotation: [0, -0.15, 0],
+    scale: 1.35,
+  },
+  {
+    title: "Albert Camus",
+    image: "../Assets/Webp/WEBP of Digital works/Camus Ai .webp",
+    medium: "Digital composition",
+    position: [-2.2, 1.9, 2.4],
+    rotation: [0, 0.28, 0],
+    scale: 0.78,
+  },
+  {
+    title: "Charles Bukowski",
+    image: "../Assets/Webp/WEBP of Digital works/Bukowski Gladiator .webp",
+    medium: "Digital composition",
+    position: [4.6, 2.3, -5.8],
+    rotation: [0, -0.5, 0],
+    scale: 1.5,
+  },
+  {
+    title: "Solzhenitsyn",
+    image: "../Assets/Webp/WEBP of Ink made works/Solzhenitsyn .webp",
+    medium: "Traditional composition",
+    position: [-4.4, 1.3, 1.1],
+    rotation: [0, 0.42, 0],
+    scale: 0.88,
+  },
+  {
+    title: "Oscar Wilde",
+    image: "../Assets/Webp/WEBP of Digital works/Oscar Wilde_ Copilot _result.webp",
+    medium: "Digital composition",
+    position: [0.2, -2.1, -1.3],
+    rotation: [0, -0.22, 0],
+    scale: 0.95,
+  },
+  {
+    title: "Oppenheimer",
+    image: "../Assets/Webp/WEBP of Traditional works/Oppenheimer _result.webp",
+    medium: "Traditional composition",
+    position: [3.0, 0.2, 2.6],
+    rotation: [0, 0.6, 0],
+    scale: 0.8,
+  },
+  {
+    title: "Marie Antoinette",
+    image: "../Assets/Webp/WEBP of Digital works/Marie _result.webp",
+    medium: "Digital composition",
+    position: [-1.0, 0.5, -6.3],
+    rotation: [0, -0.35, 0],
+    scale: 1.55,
+  },
+  {
+    title: "Guernica of Kave",
+    image: "../Assets/Webp/WEBP of Ink made works/Guernica of Kave .webp",
+    medium: "Traditional composition",
+    position: [-5.9, -1.6, -3.6],
+    rotation: [0, 0.15, 0],
+    scale: 1.2,
+  },
 ];
 
 // New original work for this installation (as opposed to pieces already
