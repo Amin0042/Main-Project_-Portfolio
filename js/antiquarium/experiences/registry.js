@@ -17,7 +17,7 @@ export const experiences = [
     title: "The Floating Archive",
     tagline: "A suspended constellation of the collected work.",
     status: "active",
-    load: () => import("./floating-archive.js"),
+    load: () => import("./floating-archive/index.js"),
   },
   {
     id: "cartography-of-memory",

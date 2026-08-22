@@ -18,7 +18,11 @@ const PRESETS = {
     pixelRatioCap: 1.5,
     textureMaxDim: 768,
     perPlateDust: 8,
-    ambientDust: 8,
+    // STAGE 3.7 — modestly raised (was 8/14/20/24) so the ambient field
+    // reads as "a populated universe" rather than "empty black space"
+    // even where no star currently sits — still sparse (tens, not
+    // thousands), per the brief's explicit "do not make it dense."
+    ambientDust: 12,
     targetFps: 30,
     rotateSpeedScale: 0.85,
   },
@@ -26,7 +30,7 @@ const PRESETS = {
     pixelRatioCap: 1.75,
     textureMaxDim: 1024,
     perPlateDust: 12,
-    ambientDust: 14,
+    ambientDust: 20,
     targetFps: 30,
     rotateSpeedScale: 0.9,
   },
@@ -34,7 +38,7 @@ const PRESETS = {
     pixelRatioCap: 2,
     textureMaxDim: 1536,
     perPlateDust: 18,
-    ambientDust: 20,
+    ambientDust: 28,
     targetFps: null,
     rotateSpeedScale: 1,
   },
@@ -42,7 +46,7 @@ const PRESETS = {
     pixelRatioCap: 2,
     textureMaxDim: 2048,
     perPlateDust: 22,
-    ambientDust: 24,
+    ambientDust: 34,
     targetFps: null,
     rotateSpeedScale: 1,
   },
