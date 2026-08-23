@@ -103,10 +103,12 @@ function initAntiquarium() {
     // conventionally, a named export matching its function name) —
     // main.js never needs to know an experience's specific export name.
     const factory = module.default || module.createFloatingArchive;
+    const resetButtonEl = document.querySelector("[data-antiquarium-reset]");
     currentExperience = factory(stage, {
       inspectorEl,
       inspectorTitleEl,
       inspectorMetaEl,
+      resetButtonEl,
       quality,
     });
 

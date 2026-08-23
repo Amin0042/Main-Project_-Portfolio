@@ -162,6 +162,15 @@ export function createNavigation(domElement, camera, room, options = {}) {
 
   function clearFocus() {
     focusBlendGoal = 0;
+    focusPoint = null;
+  }
+
+  function reset() {
+    velAngle = 0;
+    angle = options.startAngle ?? 0;
+    room.rotation.y = angle;
+    idleTimer = IDLE_AFTER;
+    clearFocus();
   }
 
   function isFocused() {
@@ -187,5 +196,5 @@ export function createNavigation(domElement, camera, room, options = {}) {
     domElement.removeEventListener("wheel", onWheel);
   }
 
-  return { update, focusOn, clearFocus, isFocused, wasClick, isIdle, dispose };
+  return { update, focusOn, clearFocus, reset, isFocused, wasClick, isIdle, dispose };
 }

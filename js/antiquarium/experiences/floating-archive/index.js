@@ -47,6 +47,7 @@ export function createFloatingArchive(stage, context = {}) {
   const inspectorEl = context.inspectorEl || null;
   const inspectorTitleEl = context.inspectorTitleEl || null;
   const inspectorMetaEl = context.inspectorMetaEl || null;
+  const resetButtonEl = context.resetButtonEl || null;
   // main.js normally supplies this (computed once from device-tier.js);
   // the desktop preset is only a fallback for calling this factory
   // directly, e.g. from a test harness.
@@ -211,6 +212,15 @@ export function createFloatingArchive(stage, context = {}) {
     hideInspector();
   }
 
+  function resetView() {
+    rotateDragActive = false;
+    rotateDragMoved = 0;
+    lastRotateX = 0;
+    lastRotateY = 0;
+    clearFocus();
+    controls.reset();
+  }
+
   function applyFocusTargets() {
     stars.forEach((star) => {
       if (focusedStar === star) {
@@ -309,6 +319,9 @@ export function createFloatingArchive(stage, context = {}) {
   renderer.domElement.addEventListener("pointerdown", onPointerDownRotate);
   renderer.domElement.addEventListener("pointermove", onPointerMoveHover);
   renderer.domElement.addEventListener("pointerup", onPointerUp);
+  if (resetButtonEl) {
+    resetButtonEl.addEventListener("click", resetView);
+  }
   window.addEventListener("keydown", onKeyDown);
 
   // ---- Frame update -----------------------------------------------------
@@ -497,6 +510,9 @@ export function createFloatingArchive(stage, context = {}) {
     renderer.domElement.removeEventListener("pointerdown", onPointerDownRotate);
     renderer.domElement.removeEventListener("pointermove", onPointerMoveHover);
     renderer.domElement.removeEventListener("pointerup", onPointerUp);
+    if (resetButtonEl) {
+      resetButtonEl.removeEventListener("click", resetView);
+    }
     window.removeEventListener("keydown", onKeyDown);
     hideInspector();
     controls.dispose();
