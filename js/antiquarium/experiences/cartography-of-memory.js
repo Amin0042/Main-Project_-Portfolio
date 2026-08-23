@@ -38,6 +38,7 @@ export function createCartographyOfMemory(stage, context = {}) {
   const inspectorEl = context.inspectorEl || null;
   const inspectorTitleEl = context.inspectorTitleEl || null;
   const inspectorMetaEl = context.inspectorMetaEl || null;
+  const resetButtonEl = context.resetButtonEl || null;
   const quality = context.quality || getQualityPreset("desktop");
 
   const room = new THREE.Group();
@@ -212,7 +213,12 @@ export function createCartographyOfMemory(stage, context = {}) {
   const controls = createGalleryControls(renderer.domElement, camera, {
     idleDrift: reduceMotion ? 0 : 0.00014,
     speedScale: quality.rotateSpeedScale,
-    radius: 11,
+    // Was radius: 11 — noticeably further back than the archive's own
+    // default framing, leaving more empty dark space around the map
+    // plate than around the constellation. Pulled in toward the (already
+    // author-calibrated) minRadius so the map fills its frame to a
+    // similar degree by default; still zoomable out to the same 20.
+    radius: 9,
     minRadius: 5,
     maxRadius: 20,
     phi: 1.0,
@@ -315,8 +321,20 @@ export function createCartographyOfMemory(stage, context = {}) {
     }
   }
 
+  // Same "Reset view" contract as THE FLOATING ARCHIVE (navigation.js's
+  // reset()): clear whatever's selected/inspected and snap the camera
+  // back to its original framing. Previously never wired up here at
+  // all, so the shared button silently did nothing on this installation.
+  function resetView() {
+    clearSelection();
+    controls.reset();
+  }
+
   renderer.domElement.addEventListener("pointermove", onPointerMove);
   renderer.domElement.addEventListener("pointerup", onPointerUp);
+  if (resetButtonEl) {
+    resetButtonEl.addEventListener("click", resetView);
+  }
   window.addEventListener("keydown", onKeyDown);
 
   // ---- Frame update -----------------------------------------------------
@@ -365,6 +383,9 @@ export function createCartographyOfMemory(stage, context = {}) {
   function dispose() {
     renderer.domElement.removeEventListener("pointermove", onPointerMove);
     renderer.domElement.removeEventListener("pointerup", onPointerUp);
+    if (resetButtonEl) {
+      resetButtonEl.removeEventListener("click", resetView);
+    }
     window.removeEventListener("keydown", onKeyDown);
     hideInspector();
     controls.dispose();

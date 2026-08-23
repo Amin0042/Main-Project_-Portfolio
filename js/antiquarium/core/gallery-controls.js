@@ -18,14 +18,18 @@ import * as THREE from "https://unpkg.com/three@0.160.1/build/three.module.js";
 export function createGalleryControls(domElement, camera, options = {}) {
   const target = new THREE.Vector3(0, 0, 0);
 
-  let radius = options.radius ?? 8.5;
+  const initialRadius = options.radius ?? 8.5;
   const minRadius = options.minRadius ?? 4.5;
   const maxRadius = options.maxRadius ?? 13.5;
 
-  let theta = options.theta ?? 0.15;
-  let phi = options.phi ?? Math.PI / 2 - 0.08;
+  const initialTheta = options.theta ?? 0.15;
+  const initialPhi = options.phi ?? Math.PI / 2 - 0.08;
   const minPhi = 0.45;
   const maxPhi = Math.PI - 0.45;
+
+  let radius = initialRadius;
+  let theta = initialTheta;
+  let phi = initialPhi;
 
   const idleDrift = options.idleDrift ?? 0.00018;
   // A phone screen turns the same finger-width drag into a proportionally
@@ -225,6 +229,29 @@ export function createGalleryControls(domElement, camera, options = {}) {
     focusBlendGoal = 0;
   }
 
+  // Mirrors navigation.js's reset() (THE FLOATING ARCHIVE) so every
+  // experience's "Reset view" button behaves identically: back to the
+  // installation's original framing, any in-progress drag/zoom/focus
+  // motion cancelled outright rather than eased out.
+  function reset() {
+    radius = initialRadius;
+    theta = initialTheta;
+    phi = initialPhi;
+    velTheta = 0;
+    velPhi = 0;
+    velRadius = 0;
+    dragging = false;
+    moved = 0;
+    pinchDistance = null;
+    parallax.set(0, 0);
+    parallaxTarget.set(0, 0);
+    focusDirection = null;
+    focusLookAt = null;
+    focusBlend = 0;
+    focusBlendGoal = 0;
+    velFocusStandoff = 0;
+  }
+
   function isFocused() {
     return focusBlendGoal > 0.5;
   }
@@ -244,5 +271,5 @@ export function createGalleryControls(domElement, camera, options = {}) {
     domElement.removeEventListener("touchend", onTouchEnd);
   }
 
-  return { update, focusOn, clearFocus, isFocused, wasClick, dispose };
+  return { update, focusOn, clearFocus, reset, isFocused, wasClick, dispose };
 }
