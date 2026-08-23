@@ -47,6 +47,11 @@ export function createFloatingArchive(stage, context = {}) {
   const inspectorEl = context.inspectorEl || null;
   const inspectorTitleEl = context.inspectorTitleEl || null;
   const inspectorMetaEl = context.inspectorMetaEl || null;
+  // This installation has no use for the longer historical/artistic note
+  // (see Cartography of Memory) — only clearing it here so a description
+  // left over from that installation can never survive a swap back to
+  // this one; the inspector DOM is shared and outlives either mount.
+  const inspectorDescriptionEl = context.inspectorDescriptionEl || null;
   const resetButtonEl = context.resetButtonEl || null;
   // main.js normally supplies this (computed once from device-tier.js);
   // the desktop preset is only a fallback for calling this factory
@@ -171,6 +176,10 @@ export function createFloatingArchive(stage, context = {}) {
     }
     if (inspectorMetaEl) {
       inspectorMetaEl.textContent = star.medium || "";
+    }
+    if (inspectorDescriptionEl) {
+      inspectorDescriptionEl.hidden = true;
+      inspectorDescriptionEl.textContent = "";
     }
     inspectorEl.hidden = false;
     // Two-step so the browser registers `hidden` being removed before

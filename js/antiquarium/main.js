@@ -38,6 +38,9 @@ function initAntiquarium() {
   const inspectorEl = document.querySelector("[data-antiquarium-inspector]");
   const inspectorTitleEl = document.querySelector("[data-antiquarium-inspector-title]");
   const inspectorMetaEl = document.querySelector("[data-antiquarium-inspector-meta]");
+  const inspectorDescriptionEl = document.querySelector(
+    "[data-antiquarium-inspector-description]"
+  );
 
   if (!stageEl || !selectorEl) {
     return;
@@ -108,6 +111,7 @@ function initAntiquarium() {
       inspectorEl,
       inspectorTitleEl,
       inspectorMetaEl,
+      inspectorDescriptionEl,
       resetButtonEl,
       quality,
     });

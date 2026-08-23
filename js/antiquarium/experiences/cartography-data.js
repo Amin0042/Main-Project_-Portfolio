@@ -298,42 +298,98 @@ export const locations = [
     name: "Tehran",
     type: "city",
     coordinates: [51.3890, 35.6892],
-    description: "Iran's capital, in the country's north.",
+    date: "Capital since 1796 (Qajar dynasty)",
+    description:
+      "Qajar capital and home to the Golestan Palace — mirrored halls, glazed tilework, and the jewel-encrusted Peacock Throne, taken from Mughal Delhi in 1739.",
   },
   {
     id: "isfahan",
     name: "Isfahan",
     type: "city",
     coordinates: [51.6680, 32.6546],
-    description: "Safavid-era capital, known for its central square and bridges.",
+    date: "Safavid capital, 1598–1722",
+    description:
+      "Shah Abbas I's showcase capital, built around Naqsh-e Jahan Square — one of the largest public squares on Earth, ringed by tiled domes, palace pavilions, and a vaulted bazaar. Persians still call it \"half the world.\"",
   },
   {
     id: "shiraz",
     name: "Shiraz",
     type: "city",
     coordinates: [52.5837, 29.5918],
-    description: "City of poets and gardens, in Iran's southwest.",
+    date: "Zand capital, 1750–1794",
+    description:
+      "City of the poets Hafez and Saadi, whose verses are still learned by heart across the Persian-speaking world. Its rose gardens and stained-glass interiors, blazing with color at dawn, are landmarks of Persian design.",
   },
   {
     id: "tabriz",
     name: "Tabriz",
     type: "city",
     coordinates: [46.2919, 38.0800],
-    description: "A historic crossroads city in Iran's northwest.",
+    date: "Silk Road crossroads; briefly Safavid capital",
+    description:
+      "A Silk Road trading hub for over a thousand years, and briefly the Safavid dynasty's first capital. Its historic covered Bazaar — among the oldest and largest in the Middle East — is still trading today.",
   },
   {
     id: "mashhad",
     name: "Mashhad",
     type: "city",
     coordinates: [59.6168, 36.2605],
-    description: "Iran's second-largest city, in the northeast.",
+    date: "Eclipsed nearby Tus from the 13th century onward",
+    description:
+      "Rose as neighboring Tus — birthplace of the poet Ferdowsi, whose Shahnameh preserved Persian epic and language — fell to the Mongols. Later became Nader Shah's 18th-century capital; his mausoleum still stands here.",
+  },
+  {
+    id: "neyshabur",
+    name: "Neyshabur",
+    type: "city",
+    coordinates: [58.7958, 36.2133],
+    date: "Flourished 9th–12th centuries",
+    description:
+      "Home of Omar Khayyam, the polymath whose quatrains — the Rubaiyat — turned astronomy and doubt into some of the most translated poetry in the world. His turquoise-tiled tomb still stands in the city where he was born, worked, and was buried.",
   },
   {
     id: "persepolis",
     name: "Persepolis",
     type: "historical-site",
     coordinates: [52.8912, 29.9358],
-    date: "c. 518 BCE",
-    description: "Ceremonial capital of the Achaemenid Empire.",
+    date: "Founded c. 518 BCE, Achaemenid Empire",
+    description:
+      "Darius I's ceremonial capital. The Apadana staircase reliefs — rows of tribute-bearing envoys from twenty-three nations of the empire, carved in stone still legible today — are among the finest surviving works of Achaemenid art, before Alexander the Great burned the palace in 330 BCE.",
+  },
+  {
+    id: "pasargadae",
+    name: "Pasargadae",
+    type: "historical-site",
+    coordinates: [53.1753, 30.1928],
+    date: "Founded c. 546 BCE",
+    description:
+      "Cyrus the Great's first capital, and the site of his tomb — a plain limestone gable-roofed chamber so revered that Alexander the Great, finding it looted, ordered it restored and its guardians punished.",
+  },
+  {
+    id: "naqsh-e-rostam",
+    name: "Naqsh-e Rostam",
+    type: "historical-site",
+    coordinates: [52.8756, 29.9891],
+    date: "6th century BCE – 4th century CE",
+    description:
+      "A necropolis cut into a cliff face near Persepolis, holding the rock-hewn tombs of four Achaemenid kings above monumental Sasanian reliefs — including Shapur I's carved triumph over the captured Roman emperor Valerian.",
+  },
+  {
+    id: "chogha-zanbil",
+    name: "Chogha Zanbil",
+    type: "historical-site",
+    coordinates: [48.5175, 32.0008],
+    date: "Built c. 1250 BCE",
+    description:
+      "An Elamite ziggurat raised for the god Inshushinak — the best-preserved stepped temple of its kind anywhere on Earth, and among the oldest ziggurats still standing, predating Persepolis by nearly a thousand years.",
+  },
+  {
+    id: "bam-citadel",
+    name: "Bam Citadel",
+    type: "historical-site",
+    coordinates: [58.3570, 29.1080],
+    date: "Sasanian origins, flourished to the 19th century",
+    description:
+      "Arg-e Bam — the largest adobe (mud-brick) structure in the world, a fortified Silk Road city of ramparts, bazaars, and citadel towers, painstakingly restored after a catastrophic 2003 earthquake all but leveled it.",
   },
 ];

@@ -38,6 +38,7 @@ export function createCartographyOfMemory(stage, context = {}) {
   const inspectorEl = context.inspectorEl || null;
   const inspectorTitleEl = context.inspectorTitleEl || null;
   const inspectorMetaEl = context.inspectorMetaEl || null;
+  const inspectorDescriptionEl = context.inspectorDescriptionEl || null;
   const resetButtonEl = context.resetButtonEl || null;
   const quality = context.quality || getQualityPreset("desktop");
 
@@ -254,8 +255,21 @@ export function createCartographyOfMemory(stage, context = {}) {
       inspectorTitleEl.textContent = marker.data.name;
     }
     if (inspectorMetaEl) {
-      const parts = [marker.data.date, marker.data.description].filter(Boolean);
-      inspectorMetaEl.textContent = parts.join(" — ");
+      // Was `[date, description].join(" — ")` all on one uppercase
+      // eyebrow line — fine for a short tag, unreadable once description
+      // grew into an actual sentence or two of history/art context. The
+      // meta line now carries just the era/date; the real note goes to
+      // its own paragraph element below.
+      inspectorMetaEl.textContent = marker.data.date || marker.data.type || "";
+    }
+    if (inspectorDescriptionEl) {
+      if (marker.data.description) {
+        inspectorDescriptionEl.textContent = marker.data.description;
+        inspectorDescriptionEl.hidden = false;
+      } else {
+        inspectorDescriptionEl.hidden = true;
+        inspectorDescriptionEl.textContent = "";
+      }
     }
     inspectorEl.hidden = false;
     requestAnimationFrame(() => inspectorEl.classList.add("is-visible"));

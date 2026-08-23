@@ -145,6 +145,14 @@
         <div class="antiquarium-inspector" data-antiquarium-inspector hidden aria-live="polite">
           <span class="antiquarium-inspector-title" data-antiquarium-inspector-title></span>
           <span class="antiquarium-inspector-meta" data-antiquarium-inspector-meta></span>
+          <!-- Optional — only Cartography of Memory populates this, with a
+               real sentence or two of historical/artistic context per
+               site; THE FLOATING ARCHIVE never touches it, so it stays
+               hidden there. Kept as its own element rather than folded
+               into the meta line above because that line is styled as a
+               short uppercase eyebrow — legible for "Safavid capital,
+               1598–1722", not for a paragraph. -->
+          <p class="antiquarium-inspector-description" data-antiquarium-inspector-description hidden></p>
           <span class="antiquarium-inspector-hint">Esc, or click outside, to return</span>
         </div>
       </div>

@@ -1014,7 +1014,10 @@ body.light .theme-icon-moon {
 .background-section img,
 .craft-grid img,
 #dreams .image-grid img,
-#dreamers .image-grid img {
+#dreamers .image-grid img,
+#traditional-vault .image-grid img,
+#digital-vault .image-grid img,
+#cyborg-vault .image-grid img {
   transform-origin: 50% 50%;
   animation: glyph-breathe 5.5s ease-in-out infinite;
   will-change: transform, filter, box-shadow;
@@ -1061,7 +1064,13 @@ body.light .theme-icon-moon {
 #dreams .image-grid img:hover,
 #dreams .image-grid img:focus-visible,
 #dreamers .image-grid img:hover,
-#dreamers .image-grid img:focus-visible {
+#dreamers .image-grid img:focus-visible,
+#traditional-vault .image-grid img:hover,
+#traditional-vault .image-grid img:focus-visible,
+#digital-vault .image-grid img:hover,
+#digital-vault .image-grid img:focus-visible,
+#cyborg-vault .image-grid img:hover,
+#cyborg-vault .image-grid img:focus-visible {
   animation: glyph-awaken-subtle 1.6s cubic-bezier(0.45, 0, 0.2, 1) 1;
 }
 
@@ -1071,7 +1080,10 @@ body.light .theme-icon-moon {
   .background-section img,
   .craft-grid img,
   #dreams .image-grid img,
-  #dreamers .image-grid img {
+  #dreamers .image-grid img,
+  #traditional-vault .image-grid img,
+  #digital-vault .image-grid img,
+  #cyborg-vault .image-grid img {
     animation: none;
   }
 }
@@ -3084,7 +3096,10 @@ body.modal-open {
 
 /* Traditional / Digital / Cyborg Vault (Personal Vault) and Dreams /
    Dreamers (Inspiration Vault) use a denser photo-grid per slide instead of
-   one image per card, so the same frame is applied straight to each thumbnail. */
+   one image per card, so the same frame is applied straight to each
+   thumbnail. This plain rectangular frame is now only the fallback for
+   any future carousel that doesn't opt into the circular-medallion
+   treatment below — every current one does. */
 .carousel-track .image-grid img {
   background-color: transparent;
   border: 2px solid var(--secondary-gold-colour);
@@ -3101,16 +3116,22 @@ body.modal-open {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
 }
 
-/* Dreams / Dreamers (Inspiration Vault) get the same circular-medallion
-   treatment as the About page's Background/Tools icons — dark backing
-   plate, double gold ring, resting glow, breathing idle animation, and
-   a one-shot "awaken" bloom on hover/focus/tap (see glyph-breathe /
-   glyph-awaken-subtle above). Scoped to #dreams/#dreamers only, so the
-   Personal Vault photo-grids above keep their plain rectangular frame.
-   Specificity here (two IDs) beats .carousel-track .image-grid img
-   above without needing !important. */
+/* Every image-grid carousel — Dreams / Dreamers (Inspiration Vault) and
+   Traditional / Digital / Cyborg Vault (Personal Vault) alike — gets the
+   same circular-medallion treatment as the About page's Background/Tools
+   icons: dark backing plate, double gold ring, resting glow, breathing
+   idle animation, and a one-shot "awaken" bloom on hover/focus/tap (see
+   glyph-breathe / glyph-awaken-subtle above). Each image is already the
+   modal-opening trigger main.js wires up generically for every
+   .image-grid img (tabindex, role="button", aria-label, click + Enter/
+   Space) — the medallion is a skin on that same clickable element, not
+   a new interaction. Specificity here (two IDs) beats
+   .carousel-track .image-grid img above without needing !important. */
 #dreams .carousel-track .image-grid img,
-#dreamers .carousel-track .image-grid img {
+#dreamers .carousel-track .image-grid img,
+#traditional-vault .carousel-track .image-grid img,
+#digital-vault .carousel-track .image-grid img,
+#cyborg-vault .carousel-track .image-grid img {
   border-radius: 50%;
   border: 3px solid var(--secondary-gold-colour);
   outline: 1px solid var(--gold-border-card);
@@ -3122,7 +3143,10 @@ body.modal-open {
 }
 
 #dreams .carousel-track .image-grid img:hover,
-#dreamers .carousel-track .image-grid img:hover {
+#dreamers .carousel-track .image-grid img:hover,
+#traditional-vault .carousel-track .image-grid img:hover,
+#digital-vault .carousel-track .image-grid img:hover,
+#cyborg-vault .carousel-track .image-grid img:hover {
   border-color: rgba(255, 215, 120, 1);
 }
 
@@ -3137,7 +3161,10 @@ body.modal-open {
    at its source and keeps the cell's own footprint unchanged, so the
    3-column layout still fits its 700px window exactly as before. */
 #dreams .image-grid img,
-#dreamers .image-grid img {
+#dreamers .image-grid img,
+#traditional-vault .image-grid img,
+#digital-vault .image-grid img,
+#cyborg-vault .image-grid img {
   width: 72%;
   margin: 0 auto;
   display: block;
@@ -3154,7 +3181,10 @@ body.modal-open {
    bottom rows the same breathing room the middle row already has from
    its neighbors, without changing the window's own clip boundary. */
 #dreams .image-grid,
-#dreamers .image-grid {
+#dreamers .image-grid,
+#traditional-vault .image-grid,
+#digital-vault .image-grid,
+#cyborg-vault .image-grid {
   padding-block: 1.75rem;
   row-gap: 2.5rem;
 }

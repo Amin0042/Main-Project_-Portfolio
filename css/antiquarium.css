@@ -242,6 +242,21 @@
   color: var(--muted-gold-colour);
 }
 
+/* The longer historical/artistic note (Cartography of Memory only —
+   see the HTML comment on this element). Normal case and generous
+   line-height because it's read as a sentence or two, not a label;
+   capped to a comfortable measure and centered so it doesn't stretch
+   edge-to-edge across the wide desktop stage. */
+.antiquarium-inspector-description {
+  margin: 0.4rem 0 0;
+  max-width: 46ch;
+  font-family: "Inter", sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  color: var(--body-copy-colour, var(--muted-gold-colour));
+}
+
 .antiquarium-inspector-hint {
   margin-top: 0.5rem;
   font-family: "Inter", sans-serif;
