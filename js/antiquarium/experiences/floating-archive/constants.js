@@ -15,9 +15,15 @@ export const MUTED_GOLD = 0x8f7a3e;
 // core, before any per-artwork `scale` multiplier. Every star is a
 // perfect circle now (see memory-star.js) — no aspect-ratio stretching
 // — so a single diameter, not a width/height pair, fully describes size.
-export const STAR_DIAMETER = 1.9;
+//
+// FINAL VISUAL RECONSTRUCTION — raised substantially (1.9 → 2.5): the
+// brief is explicit that stars were "generally too small and vague" and
+// that a visitor should immediately recognize artwork content without
+// needing to approach. This is the base every star's hierarchy
+// multiplier (see memory-star.js's hierarchyScaleFor) and per-artwork
+// `scale` still multiply on top of.
+export const STAR_DIAMETER = 2.5;
 
-export const HOVER_SCALE = 1.045;
 export const FOCUS_SCALE = 1.2;
 export const RECEDE_SCALE = 0.88;
 export const RECEDE_OPACITY = 0.42;

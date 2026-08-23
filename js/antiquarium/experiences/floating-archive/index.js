@@ -10,17 +10,21 @@
 // picking, the focus/inspector flow, and the per-frame update/dispose
 // contract main.js expects from every experience.
 //
-// STAGE 2 wired the constellation/navigation architecture in: stars now
-// sit along constellation.js's endless, recurring path instead of a
-// bounded room, and the camera travels/looks around it via
-// navigation.js instead of orbiting a fixed center.
-//
 // STAGE 3/4 added the living Memory Star: continuous coherence-driven
 // formation/dissolution and an independent per-star pulse (both from
-// lifecycle.js), and the circular presentation (memory-star.js). Still
-// not implemented: the White Night atmosphere, and full artwork
-// inspection/reveal (today's focus flow still dollies the camera to a
-// circular star, not to an expanded rectangular view).
+// lifecycle.js), and the circular presentation (memory-star.js).
+//
+// MECHANICAL CAROUSEL RECONSTRUCTION — stars sit on constellation.js's
+// lemniscate (an infinity sign, flat in the XZ plane) rather than an
+// endless recurring path; the camera itself no longer travels or looks
+// around at all (navigation.js fixes it in place, with no up/down look
+// whatsoever) — instead the whole `room` group is spun, rigidly, like a
+// turntable, directly by the visitor's drag/scroll. When nothing is
+// turning it, the room eases into a slow, whole-scene "breathing" scale
+// (see the BREATH_* constants below) rather than sitting dead-still.
+// Still not implemented: the final White Night atmosphere, and full
+// artwork inspection/reveal (today's focus flow still dollies the
+// camera to a circular star, not to an expanded rectangular view).
 //
 // Exports a single factory, `createFloatingArchive(stage, context)`,
 // returning { update(delta), dispose() } — the shape every experience
@@ -32,16 +36,11 @@ import { createNavigation } from "./navigation.js";
 import { createAtmosphere } from "./atmosphere.js";
 import { createParticleField } from "./particle-field.js";
 import { createMemoryStar, createSharedGeometry } from "./memory-star.js";
+import { createStarfieldBackdrop } from "./starfield-backdrop.js";
 import { starPlacementFor } from "./constellation.js";
-import { getQualityPreset } from "../../core/device-tier.js";
+import { getQualityPreset, getDeviceTier } from "../../core/device-tier.js";
 import { artworks } from "./data.js";
-import {
-  HOVER_SCALE,
-  FOCUS_SCALE,
-  RECEDE_SCALE,
-  RECEDE_OPACITY,
-  reduceMotion,
-} from "./constants.js";
+import { FOCUS_SCALE, RECEDE_SCALE, RECEDE_OPACITY, reduceMotion } from "./constants.js";
 
 export function createFloatingArchive(stage, context = {}) {
   const { scene, camera, renderer } = stage;
@@ -57,6 +56,14 @@ export function createFloatingArchive(stage, context = {}) {
   scene.add(room);
 
   const atmosphereRig = createAtmosphere(room, scene);
+
+  // ---- Night-sky backdrop ----------------------------------------------
+  // Added directly to `scene` (not `room`) and re-centered on the camera
+  // every frame — see starfield-backdrop.js. Deliberately outside the
+  // constellation's own group so it is unaffected by anything that
+  // moves or clears `room`.
+  const starfield = createStarfieldBackdrop(camera, getDeviceTier());
+  scene.add(starfield.points);
 
   // ---- Memory Stars ---------------------------------------------------
   const { starGeometry, haloGeometry, ringGeometry } = createSharedGeometry();
@@ -88,9 +95,11 @@ export function createFloatingArchive(stage, context = {}) {
   const particleField = createParticleField(stars, quality);
   room.add(particleField.points);
 
-  // ---- Camera rig -----------------------------------------------------
-  const controls = createNavigation(renderer.domElement, camera, {
-    idleDrift: reduceMotion ? 0 : undefined, // undefined → navigation.js's own tuned default
+  // ---- Camera rig (mechanical carousel) --------------------------------
+  // MECHANICAL CAROUSEL RECONSTRUCTION — navigation.js no longer moves
+  // the camera through space; it spins `room` itself, rigidly, like a
+  // turntable. The camera stays fixed except while inspecting a piece.
+  const controls = createNavigation(renderer.domElement, camera, room, {
     speedScale: quality.rotateSpeedScale,
   });
 
@@ -99,6 +108,43 @@ export function createFloatingArchive(stage, context = {}) {
   const pointerNdc = new THREE.Vector2(10, 10);
   let hoveredStar = null;
   let focusedStar = null;
+  const _hoverWorldPos = new THREE.Vector3();
+
+  // CONSOLIDATED VISUAL RECONSTRUCTION — proximity-based hover, not a
+  // binary raycast hit. Each star's screen-space distance from the
+  // pointer is turned into a continuous [0, 1] closeness value every
+  // frame, so a star visibly wakes up (brighter halo, sharper edge, a
+  // touch larger) as the cursor approaches, per the brief's "the star
+  // should subtly react before direct contact" — rather than snapping
+  // from fully-rested to fully-hovered the instant the pointer lands
+  // exactly on its small circular hit area. The raycast pick (below,
+  // pickStar()) still exists, but only decides clicks now.
+  const HOVER_NDC_RADIUS = 0.17;
+
+  function updateHoverProximity() {
+    let best = null;
+    let bestAmount = 0;
+    stars.forEach((star) => {
+      star.holder.getWorldPosition(_hoverWorldPos);
+      _hoverWorldPos.project(camera);
+      if (_hoverWorldPos.z > 1 || _hoverWorldPos.z < -1) {
+        star.hoverAmountTarget = 0;
+        return;
+      }
+      const dx = _hoverWorldPos.x - pointerNdc.x;
+      const dy = _hoverWorldPos.y - pointerNdc.y;
+      const dist = Math.hypot(dx, dy);
+      const amount = Math.max(0, 1 - dist / HOVER_NDC_RADIUS);
+      // Eased (not linear) so the reaction is subtle at the outer edge
+      // of the influence radius and only becomes pronounced close in.
+      star.hoverAmountTarget = amount * amount;
+      if (star.hoverAmountTarget > bestAmount) {
+        bestAmount = star.hoverAmountTarget;
+        best = star;
+      }
+    });
+    hoveredStar = bestAmount > 0.02 ? best : null;
+  }
 
   function pointerToNdc(event) {
     const rect = renderer.domElement.getBoundingClientRect();
@@ -138,11 +184,18 @@ export function createFloatingArchive(stage, context = {}) {
     inspectorEl.classList.remove("is-visible");
   }
 
+  const _focusWorldPos = new THREE.Vector3();
+
   function setFocus(star) {
     focusedStar = star;
     star.tiltYawTarget = 0;
     star.tiltPitchTarget = 0;
-    controls.focusOn(star.basePosition, star.basePosition);
+    // MECHANICAL CAROUSEL RECONSTRUCTION — the camera is fixed and
+    // `room` (hence every star's holder) turns independently of it now,
+    // so the point navigation.js dollies toward has to be this star's
+    // live WORLD position, not its room-local basePosition.
+    star.holder.getWorldPosition(_focusWorldPos);
+    controls.focusOn(_focusWorldPos);
     applyFocusTargets();
     showInspector(star);
   }
@@ -262,18 +315,37 @@ export function createFloatingArchive(stage, context = {}) {
   let elapsed = 0;
   const easeFactor = (delta) => Math.min(1, delta * 6);
 
+  // MECHANICAL CAROUSEL RECONSTRUCTION — "when the user is not moving
+  // the things around I want the system to look like it's breathing."
+  // The whole `room` group (every star, its particles, all of it)
+  // gently, slowly scales in and out — on top of, not instead of, each
+  // star's own independent pulse — but only once the visitor has
+  // stopped turning the carousel (controls.isIdle()) and isn't
+  // inspecting a piece; the instant they take hold of it again, the
+  // breathing eases back to a dead-still 1.0 so it never fights the
+  // turning gesture itself.
+  let breathPhase = 0;
+  const BREATH_PERIOD = 6.4;
+  const BREATH_AMPLITUDE = reduceMotion ? 0.006 : 0.018;
+
   function update(delta) {
     elapsed += delta;
     controls.update(delta);
 
+    const idle = !focusedStar && controls.isIdle();
+    breathPhase += delta;
+    const breathTarget = idle
+      ? 1 + Math.sin((breathPhase / BREATH_PERIOD) * Math.PI * 2) * BREATH_AMPLITUDE
+      : 1;
+    room.scale.x += (breathTarget - room.scale.x) * easeFactor(delta);
+    room.scale.setScalar(room.scale.x);
+
     if (!focusedStar) {
-      const hit = pickStar();
-      if (hit !== hoveredStar) {
-        hoveredStar = hit;
-        stars.forEach((star) => {
-          star.scaleTarget = star === hoveredStar ? HOVER_SCALE : 1;
-        });
-      }
+      updateHoverProximity();
+    } else {
+      stars.forEach((star) => {
+        star.hoverAmountTarget = 0;
+      });
     }
 
     stars.forEach((star) => {
@@ -318,7 +390,9 @@ export function createFloatingArchive(stage, context = {}) {
       // The heartbeat: a small, per-star luminosity/scale ripple, same
       // "always calm while focused" treatment as coherence above.
       const pulseFactor = star.focusAmountTarget > 0.5 ? 0 : star.pulse;
-      star.overlayMaterial.uniforms.uPulse.value = pulseFactor;
+      // A hovered star's heartbeat reads slightly stronger — one more
+      // small, legible piece of "this object is responding to you."
+      star.overlayMaterial.uniforms.uPulse.value = pulseFactor * (1 + star.hoverAmount * 0.5);
 
       if (!reduceMotion) {
         star.holder.position.set(
@@ -352,6 +426,7 @@ export function createFloatingArchive(stage, context = {}) {
       // (Scale below stays on the un-softened coherenceFactor — see the
       // comment on scaleTarget.)
       const t = easeFactor(delta);
+      star.hoverAmount += (star.hoverAmountTarget - star.hoverAmount) * t;
       // "Microscopic scale" — the pulse's own contribution is
       // deliberately tiny (≤1.2%) next to coherence's (7%), so it reads
       // as a heartbeat riding on the star's state, not a second
@@ -360,9 +435,14 @@ export function createFloatingArchive(stage, context = {}) {
       // point reads as "the object is being deleted," which is exactly
       // the theatrical effect the brief rules out; a dissolved star's
       // disappearance is carried by opacity and its particles, not by
-      // the geometry collapsing.
+      // the geometry collapsing. hoverAmount adds a small, deliberate
+      // "leans toward the viewer" bump (≤6%) — enough to read as a
+      // response, never a jump.
       const scaleTarget =
-        star.scaleTarget * (0.93 + 0.07 * coherenceFactor) * (1 + pulseFactor * 0.012);
+        star.scaleTarget *
+        (0.93 + 0.07 * coherenceFactor) *
+        (1 + pulseFactor * 0.012) *
+        (1 + star.hoverAmount * 0.12);
       star.frame.scale.x += (scaleTarget - star.frame.scale.x) * t;
       star.frame.scale.setScalar(star.frame.scale.x);
 
@@ -381,7 +461,8 @@ export function createFloatingArchive(stage, context = {}) {
           0.99 + 0.01 * Math.sin(elapsed * 0.3 + star.floatPhase * 1.6);
       }
 
-      const edgeOpacityTarget = star.edgeOpacityTarget * artworkFactor;
+      const edgeOpacityTarget =
+        star.edgeOpacityTarget * artworkFactor * (1 + star.hoverAmount * 0.9);
       star.edgesMaterial.opacity += (edgeOpacityTarget - star.edgesMaterial.opacity) * t;
 
       const overlayOpacityTarget = star.overlayOpacityTarget * artworkFactor;
@@ -389,6 +470,8 @@ export function createFloatingArchive(stage, context = {}) {
         (overlayOpacityTarget - star.overlayMaterial.uniforms.uOpacity.value) * t;
       star.overlayMaterial.uniforms.uFocus.value +=
         (star.focusAmountTarget - star.overlayMaterial.uniforms.uFocus.value) * t;
+      star.overlayMaterial.uniforms.uHover.value +=
+        (star.hoverAmount - star.overlayMaterial.uniforms.uHover.value) * t;
 
       // The visitor's own rotate-drag on the focused star, and its
       // gentle return to neutral once inspection ends.
@@ -403,7 +486,8 @@ export function createFloatingArchive(stage, context = {}) {
       focused: Boolean(focusedStar),
       easeFactor,
     });
-    atmosphereRig.update(delta, { focused: Boolean(focusedStar), easeFactor });
+    atmosphereRig.update(delta, { focused: Boolean(focusedStar), easeFactor, camera });
+    starfield.update(delta, elapsed);
   }
 
   function dispose() {
@@ -422,6 +506,8 @@ export function createFloatingArchive(stage, context = {}) {
     haloGeometry.dispose();
     ringGeometry.dispose();
     particleField.dispose();
+    scene.remove(starfield.points);
+    starfield.dispose();
 
     stars.forEach((star) => {
       star.baseMaterial.map?.dispose();

@@ -43,18 +43,35 @@
   padding-top: 1.5rem;
 }
 
+/* MECHANICAL CAROUSEL RECONSTRUCTION — no box, no vitrine, no frame.
+   The brief is explicit: "as if the whole thing is happening on the
+   page," not inside a bordered widget. The gilt border, drop shadow,
+   and corner marks that used to read as a museum display case are
+   gone; the stage is just a plain, borderless region that is the
+   page's own background color, so the 3D scene's own night sky (see
+   atmosphere.js) is the only thing that visually separates itself from
+   the page — by being a sky, not by sitting in a box. */
 .antiquarium-stage-frame {
   position: relative;
-  width: min(1180px, 100%);
+  width: min(1600px, 96vw);
   margin-inline: auto;
-  aspect-ratio: 16 / 9;
-  min-height: 320px;
-  border: 1px solid var(--gold-border-card);
-  box-shadow:
-    inset 0 0 0 1px rgba(10, 10, 11, 0.6),
-    0 30px 60px -30px rgba(0, 0, 0, 0.65);
-  background: var(--primary-black-colour);
+  height: min(78vh, calc(96vw * 9 / 16));
+  min-height: 420px;
+  max-height: 860px;
+  /* Same variable body {} itself is painted with (see style.css) —
+     --primary-black-colour is identical in both themes, so it was
+     never actually "the page's color" in light mode; this is. */
+  background: var(--secondary-black-colour);
   overflow: hidden;
+}
+
+@media (max-width: 700px) {
+  .antiquarium-stage-frame {
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    height: min(72vh, calc(100vw * 4 / 3));
+    min-height: 380px;
+  }
 }
 
 .antiquarium-stage {
@@ -67,34 +84,6 @@
   width: 100%;
   height: 100%;
   touch-action: none;
-}
-
-/* Thin gilt corner marks — a museum vitrine's frame, not a UI chrome
-   panel. Purely decorative, so they're excluded from the a11y tree. */
-.antiquarium-stage-frame::before,
-.antiquarium-stage-frame::after,
-.antiquarium-corner-tl,
-.antiquarium-corner-br {
-  content: "";
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.antiquarium-stage-frame::before {
-  top: 10px;
-  left: 10px;
-  border-top: 1px solid var(--gold-border-strong);
-  border-left: 1px solid var(--gold-border-strong);
-}
-
-.antiquarium-stage-frame::after {
-  bottom: 10px;
-  right: 10px;
-  border-bottom: 1px solid var(--gold-border-strong);
-  border-right: 1px solid var(--gold-border-strong);
 }
 
 .antiquarium-caption {

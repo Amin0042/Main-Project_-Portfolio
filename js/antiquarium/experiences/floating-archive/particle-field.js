@@ -337,6 +337,11 @@ export function createParticleField(stars, quality) {
       const presence = star.presence ?? star.coherence ?? 1;
       const pulse = star.pulse ?? 0;
       const density = star.lifecycle?.densityScale ?? 1;
+      // CONSOLIDATED VISUAL RECONSTRUCTION — "the particle field around
+      // [a hovered star] should respond": a small, continuous brightness
+      // lift on that star's own halo particles, riding on top of
+      // presence rather than replacing it.
+      const hover = star.hoverAmount ?? 0;
       // 0 = fully present, 1 = fully dispersed. Everything below is a
       // continuous function of this one number — the same formula runs
       // whether it's rising (reconstruction) or falling (fragmentation).
@@ -382,8 +387,8 @@ export function createParticleField(stars, quality) {
       const fadeEnd = Math.min(1, fadeStart + haloFadeSpan[i]);
       const remaining = 1 - smoothstepJs(fadeStart, fadeEnd, dissolve);
 
-      dustSizes[i] = haloBaseSize[i] * (0.6 + 0.5 * remaining);
-      dustBrightness[i] = (0.45 + 0.6 * remaining) * (0.7 + 0.3 * presence);
+      dustSizes[i] = haloBaseSize[i] * (0.6 + 0.5 * remaining) * (1 + hover * 0.25);
+      dustBrightness[i] = (0.45 + 0.6 * remaining) * (0.7 + 0.3 * presence) * (1 + hover * 0.5);
     }
 
     positionAttribute.needsUpdate = true;

@@ -202,15 +202,32 @@ export function createLifecycle(index, totalCount) {
   // The un-shifted formula, used both as the real coherence function
   // (once wrapped with startOffset below) and, internally, to search for
   // that offset in the first place.
+  // CONSOLIDATED VISUAL RECONSTRUCTION — a reachable floor, not a
+  // reachable zero. Stage 3.7 let coherence fall all the way to 0, on
+  // the theory that "true dissolution" required a true zero; in
+  // practice this is exactly what produced "the scene can appear
+  // almost empty and black" — a star at or near coherence 0 isn't just
+  // unreadable, its artwork opacity (artworkFactor, in index.js) also
+  // approaches 0, so at any moment several of the sixteen stars were
+  // rendering as close to nothing. A star may still fully DISAPPEAR AS
+  // A READABLE ARTWORK (a floor of ~0.16 keeps artworkFactor down
+  // around 0.3, i.e. a faint ghost, not a crisp image) — but it never
+  // again reads as "not there." This is a floor on the number itself,
+  // not a downstream display clamp, so every consumer (opacity, scale,
+  // presence) inherits it uniformly.
+  const COHERENCE_FLOOR = 0.16;
+
   function rawSampleCoherence(t) {
     let raw = 0;
     for (let i = 0; i < 3; i += 1) {
       raw += weights[i] * Math.sin(baseAngular * frequencies[i] * t + phases[i]);
     }
     // raw is already close to [-1, 1] (the weights are normalized to sum
-    // to 1); the logistic reshape below maps it onto (0, 1) — a true,
-    // reachable zero at one extreme, a true, reachable one at the other.
-    return 1 / (1 + Math.exp(-steepness * raw));
+    // to 1); the logistic reshape maps it onto (0, 1), then the floor
+    // above remaps that onto [COHERENCE_FLOOR, 1] — full formation is
+    // still reachable, full dissolution is not.
+    const shaped = 1 / (1 + Math.exp(-steepness * raw));
+    return COHERENCE_FLOOR + (1 - COHERENCE_FLOOR) * shaped;
   }
 
   const startOffset = findStartOffset(rawSampleCoherence, bucketFor(index, totalCount), rand, basePeriod);

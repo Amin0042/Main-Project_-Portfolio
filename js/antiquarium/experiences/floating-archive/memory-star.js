@@ -55,6 +55,27 @@ import { createPlaceholderTexture } from "../../core/placeholder-texture.js";
 import { loadFittedTexture } from "../../core/texture-utils.js";
 import { createLifecycle } from "./lifecycle.js";
 
+// FINAL VISUAL RECONSTRUCTION — a deliberate size hierarchy on top of
+// STAR_DIAMETER and each artwork's own per-piece `scale`: one star per
+// experience reads as the unmistakable "hero" (large, clear, the thing
+// a first-time visitor immediately wonders about), a middle band of
+// "secondary" stars carries the bulk of the visible composition, and
+// the remainder sit smaller and dimmer as the "distant" tier the brief
+// asks for. Index 0 is the hero — it's also lifecycle.js's own
+// "coherent" bucket's first member and constellation.js places it
+// nearest the camera's own starting point (t≈0), so the star a visitor
+// is guaranteed to be near at rest is also the one guaranteed to open
+// fully formed and be rendered largest.
+function hierarchyScaleFor(index, totalCount) {
+  if (index === 0) {
+    return 1.55;
+  }
+  if (index < Math.max(1, Math.round(totalCount * 0.5))) {
+    return 1.1;
+  }
+  return 0.8;
+}
+
 const CIRCLE_SEGMENTS = 56;
 // How much larger the halo circle is than the artwork circle it
 // surrounds — 1.0 would mean no halo at all (the two coincide); kept
@@ -103,6 +124,14 @@ function createOverlayMaterial() {
       // This star's own heartbeat, in [-1, 1] — see lifecycle.js. Feeds
       // only a small luminosity variation; never restructures the shape.
       uPulse: { value: 0 },
+      // CONSOLIDATED VISUAL RECONSTRUCTION — continuous proximity/hover
+      // affordance, in [0, 1], eased in index.js from a screen-space
+      // distance to the pointer (not a binary raycast hit) so a star
+      // visibly wakes up *before* the cursor is exactly over it, per the
+      // brief's "the star should subtly react before direct contact."
+      // Distinct from uFocus (the inspected-piece state): hover is a
+      // passing "you could select this," focus is "this is selected."
+      uHover: { value: 0 },
     },
     transparent: true,
     depthWrite: false,
@@ -130,6 +159,7 @@ function createOverlayMaterial() {
       uniform float uOpacity;
       uniform float uFocus;
       uniform float uPulse;
+      uniform float uHover;
 
       void main() {
         // Normalized radial distance across THIS mesh (the halo circle,
@@ -145,25 +175,42 @@ function createOverlayMaterial() {
 
         // A soft halo bleeding outward from that edge, fading to
         // nothing well before this mesh's own boundary — restrained,
-        // never a glowing disc, never a hard ring.
+        // never a glowing disc, never a hard ring. Reaches slightly
+        // further out on hover — a widening corona, not a bigger circle.
+        float haloReach = mix(1.0, 1.4, uHover);
         float halo =
           smoothstep(coreEdge, coreEdge + 0.06, dist) *
-          (1.0 - smoothstep(coreEdge, 1.0, dist));
+          (1.0 - smoothstep(coreEdge, mix(coreEdge, 1.0, haloReach), dist));
 
         // Stand-in for chromatic separation, kept entirely inside the
-        // gold/charcoal palette: the boundary reads slightly warmer,
-        // the halo slightly more muted — an artifact reconstructed from
-        // light, not an RGB-split sci-fi hologram.
+        // gold/ivory palette: the boundary reads slightly warmer, the
+        // halo slightly more muted at rest — an artifact reconstructed
+        // from light, not an RGB-split sci-fi hologram. On hover the
+        // whole thing warms toward a brighter ivory-gold, the plain
+        // "this object is interactive" cue the brief asks the object
+        // teach through its own material rather than through UI.
         vec3 warmGold = vec3(0.776, 0.659, 0.353);
         vec3 mutedGold = vec3(0.561, 0.478, 0.243);
-        vec3 color = mix(mutedGold, warmGold, boundary);
+        vec3 hoverGold = vec3(0.98, 0.92, 0.74);
+        vec3 restColor = mix(mutedGold, warmGold, boundary);
+        vec3 color = mix(restColor, hoverGold, uHover * 0.85);
 
         // A slow, gentle breathing of the edge's own intensity, plus
         // this star's own independent pulse — both small, neither ever
         // fading the boundary to nothing or flaring it bright.
         float breathing = 0.82 + 0.18 * sin(uTime * 0.4) + uPulse * 0.05;
 
-        float alpha = (boundary * 0.34 + halo * 0.16) * breathing + boundary * 0.1 * uFocus;
+        // CONSOLIDATED VISUAL RECONSTRUCTION — a brighter, sharper edge
+        // and a fuller halo are the star's own way of "reacting before
+        // direct contact": both the boundary and halo terms are stronger
+        // at rest than the previous pass (0.34/0.16 → 0.44/0.26 — a
+        // "soft but visible luminous perimeter," not a UI border), and
+        // continue climbing with uHover/uFocus rather than only uFocus.
+        float alpha =
+          (boundary * 0.44 + halo * 0.26) * breathing +
+          boundary * 0.16 * uFocus +
+          boundary * 0.34 * uHover +
+          halo * 0.22 * uHover;
 
         gl_FragColor = vec4(color, alpha * uOpacity);
       }
@@ -234,7 +281,7 @@ export function createMemoryStar(data, index, totalCount, placement, shared) {
   overlay.position.z = 0.002;
   basePlane.add(overlay);
 
-  const scaleMultiplier = data.scale ?? 1;
+  const scaleMultiplier = (data.scale ?? 1) * hierarchyScaleFor(index, totalCount);
   // Uniform scale only — a circle stays a circle. The old rectangular
   // plate stretched non-uniformly to match each image's own aspect
   // ratio; a circle instead gets its center-crop from the texture's
@@ -283,6 +330,13 @@ export function createMemoryStar(data, index, totalCount, placement, shared) {
     edgeOpacityTarget: 0.6,
     overlayOpacityTarget: 1,
     focusAmountTarget: 0,
+    // CONSOLIDATED VISUAL RECONSTRUCTION — continuous hover affordance
+    // (see index.js's proximity-based hover and memory-star's uHover
+    // uniform above). hoverAmount is the eased value the per-frame loop
+    // actually renders from; hoverAmountTarget is what index.js sets
+    // each frame from pointer proximity.
+    hoverAmount: 0,
+    hoverAmountTarget: 0,
     tiltYawTarget: 0,
     tiltPitchTarget: 0,
     // Continuous formation/dissolution + heartbeat (lifecycle.js). Both
