@@ -93,21 +93,17 @@ const CORE_EDGE_RATIO = 1 / HALO_RADIUS_SCALE;
 // stars are gone.
 export function createSharedGeometry() {
   const starGeometry = new THREE.CircleGeometry(0.5, CIRCLE_SEGMENTS);
-  const haloGeometry = new THREE.CircleGeometry(0.5 * HALO_RADIUS_SCALE, CIRCLE_SEGMENTS);
+  const haloGeometry = new THREE.CircleGeometry(0.64, CIRCLE_SEGMENTS);
 
-  // A hairline ring tracing the artwork's own circular edge — deliberately
-  // a plain LineLoop, not an EdgesGeometry-derived shape (which, on a
-  // circle's triangle fan, would include every radial spoke as well as
-  // the rim). "Very subtle circular boundary," not a card outline.
-  const ringPositions = new Float32Array(CIRCLE_SEGMENTS * 3);
-  for (let i = 0; i < CIRCLE_SEGMENTS; i += 1) {
-    const theta = (i / CIRCLE_SEGMENTS) * Math.PI * 2;
-    ringPositions[i * 3] = Math.cos(theta) * 0.5;
-    ringPositions[i * 3 + 1] = Math.sin(theta) * 0.5;
-    ringPositions[i * 3 + 2] = 0;
+  // A hairline ring tracing the artwork's own circular boundary. This is
+  // the original object treatment: a flat circular plate with a subtle
+  // edge and glow, not a box-like volume.
+  const ringPoints = [];
+  for (let i = 0; i <= CIRCLE_SEGMENTS; i += 1) {
+    const angle = (i / CIRCLE_SEGMENTS) * Math.PI * 2;
+    ringPoints.push(new THREE.Vector3(Math.cos(angle) * 0.5, Math.sin(angle) * 0.5, 0));
   }
-  const ringGeometry = new THREE.BufferGeometry();
-  ringGeometry.setAttribute("position", new THREE.BufferAttribute(ringPositions, 3));
+  const ringGeometry = new THREE.BufferGeometry().setFromPoints(ringPoints);
 
   return { starGeometry, haloGeometry, ringGeometry };
 }
@@ -259,8 +255,9 @@ export function createMemoryStar(data, index, totalCount, placement, shared) {
   const baseMaterial = new THREE.MeshBasicMaterial({
     color: 0xffffff,
     transparent: true,
-    opacity: 0.98,
+    opacity: 1,
     side: THREE.DoubleSide,
+    depthWrite: true,
   });
   const basePlane = new THREE.Mesh(starGeometry, baseMaterial);
   frame.add(basePlane);
@@ -326,9 +323,9 @@ export function createMemoryStar(data, index, totalCount, placement, shared) {
     floatSpeedY: 0.14 + (index % 4) * 0.017,
     floatSpeedZ: 0.09 + (index % 2) * 0.02,
     scaleTarget: 1,
-    opacityTarget: 1,
-    edgeOpacityTarget: 0.6,
-    overlayOpacityTarget: 1,
+    opacityTarget: 1.1,
+    edgeOpacityTarget: 0.85,
+    overlayOpacityTarget: 1.2,
     focusAmountTarget: 0,
     // CONSOLIDATED VISUAL RECONSTRUCTION — continuous hover affordance
     // (see index.js's proximity-based hover and memory-star's uHover
@@ -378,6 +375,7 @@ export function createMemoryStar(data, index, totalCount, placement, shared) {
 
     baseMaterial.map = texture;
     baseMaterial.needsUpdate = true;
+    basePlane.material = baseMaterial;
   };
 
   let pendingLoad = null;

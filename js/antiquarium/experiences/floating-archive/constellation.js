@@ -120,9 +120,9 @@ function frameAt(t) {
 // "mechanical" reads as a precise, legible arrangement, not a chaotic
 // scatter; the shape itself (not per-star randomness) is now what
 // carries the composition's visual interest.
-const LATERAL_RANGE = 3.2;
-const VERTICAL_RANGE = 5.5;
-const DEPTH_JITTER = 2.2;
+const LATERAL_RANGE = 2.2;
+const VERTICAL_RANGE = 3.4;
+const DEPTH_JITTER = 1.6;
 
 /**
  * Where one Memory Star sits: a point `t` along the spine, plus a

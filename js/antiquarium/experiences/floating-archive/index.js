@@ -388,18 +388,12 @@ export function createFloatingArchive(stage, context = {}) {
       // coherence — only the universe around it should not.
       star.presence = Math.pow(Math.max(star.coherence, 0.0001), 0.4);
 
-      // Inspecting a piece always shows it clearly regardless of where
-      // its own lifecycle happens to be — the visitor's attention, not
-      // the star's dissolution, takes precedence while focused. Ambient
-      // (unfocused) stars follow their coherence untouched.
-      const coherenceFactor = star.focusAmountTarget > 0.5 ? 1 : star.coherence;
-      // A gentler curve than coherence itself for the ARTWORK's own
-      // opacity/edge/halo-shader targets below — coherence's logistic
-      // reshape is tuned for *whether a star is recognizable*, which is
-      // deliberately a fairly binary question; the artwork's own fade
-      // uses a softer exponent so "partial, incomplete artwork" is an
-      // actual visible phase on the way down/up, not a blink.
-      const artworkFactor = Math.pow(Math.max(coherenceFactor, 0), 0.6);
+      // The archive should remain clearly visible without requiring the
+      // visitor to zoom in to one asset. Focus still increases emphasis,
+      // but ambient stars are kept legible and bright at all viewing
+      // distances rather than fading into the scene.
+      const coherenceFactor = 1;
+      const artworkFactor = 1;
       // The heartbeat: a small, per-star luminosity/scale ripple, same
       // "always calm while focused" treatment as coherence above.
       const pulseFactor = star.focusAmountTarget > 0.5 ? 0 : star.pulse;
@@ -440,45 +434,29 @@ export function createFloatingArchive(stage, context = {}) {
       // comment on scaleTarget.)
       const t = easeFactor(delta);
       star.hoverAmount += (star.hoverAmountTarget - star.hoverAmount) * t;
-      // "Microscopic scale" — the pulse's own contribution is
-      // deliberately tiny (≤1.2%) next to coherence's (7%), so it reads
-      // as a heartbeat riding on the star's state, not a second
-      // formation/dissolution cycle. Scale itself is deliberately NOT
-      // driven all the way to 0 with coherence — a shape shrinking to a
-      // point reads as "the object is being deleted," which is exactly
-      // the theatrical effect the brief rules out; a dissolved star's
-      // disappearance is carried by opacity and its particles, not by
-      // the geometry collapsing. hoverAmount adds a small, deliberate
-      // "leans toward the viewer" bump (≤6%) — enough to read as a
-      // response, never a jump.
+
       const scaleTarget =
         star.scaleTarget *
-        (0.93 + 0.07 * coherenceFactor) *
+        1.35 *
         (1 + pulseFactor * 0.012) *
         (1 + star.hoverAmount * 0.12);
       star.frame.scale.x += (scaleTarget - star.frame.scale.x) * t;
       star.frame.scale.setScalar(star.frame.scale.x);
 
-      const opacityTarget = star.opacityTarget * artworkFactor * (1 + pulseFactor * 0.04);
+      // The artwork circle should remain fully visible at every distance in
+      // the room. The scene should not rely on a close camera approach to
+      // reveal each piece; the image itself should read at full opacity.
+      const opacityTarget = 1;
       star.baseMaterial.opacity += (opacityTarget - star.baseMaterial.opacity) * t;
 
       if (!reduceMotion) {
-        // A barely-there ripple in the artwork's own opacity — present
-        // enough to feel like a projected image rather than a flat
-        // texture, restrained enough that it never reads as flicker or
-        // hurts legibility. Narrow range (±1%), so unlike the coherence
-        // factor above, applying it as a direct multiply here settles
-        // at an imperceptibly different equilibrium rather than a
-        // meaningfully wrong one.
-        star.baseMaterial.opacity *=
-          0.99 + 0.01 * Math.sin(elapsed * 0.3 + star.floatPhase * 1.6);
+        star.baseMaterial.opacity = 1;
       }
 
-      const edgeOpacityTarget =
-        star.edgeOpacityTarget * artworkFactor * (1 + star.hoverAmount * 0.9);
+      const edgeOpacityTarget = 1;
       star.edgesMaterial.opacity += (edgeOpacityTarget - star.edgesMaterial.opacity) * t;
 
-      const overlayOpacityTarget = star.overlayOpacityTarget * artworkFactor;
+      const overlayOpacityTarget = 1;
       star.overlayMaterial.uniforms.uOpacity.value +=
         (overlayOpacityTarget - star.overlayMaterial.uniforms.uOpacity.value) * t;
       star.overlayMaterial.uniforms.uFocus.value +=

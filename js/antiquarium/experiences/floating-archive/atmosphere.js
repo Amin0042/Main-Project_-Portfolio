@@ -65,18 +65,14 @@ export function createAtmosphere(room, scene) {
   const hemisphere = new THREE.HemisphereLight(0x3a4a70, 0x0e1018, 0.48);
   room.add(hemisphere);
 
-  // ---- Background/fog override (see header note) ----------------------
+  // ---- Background override (see header note) ------------------------
   const previousBackground = scene.background;
   const previousFog = scene.fog;
 
   function applyPageBackground() {
     const color = readPageBackgroundColor();
     scene.background = color;
-    if (scene.fog) {
-      scene.fog.color = color;
-    } else {
-      scene.fog = new THREE.FogExp2(color, 0.02);
-    }
+    scene.fog = null;
   }
   applyPageBackground();
 

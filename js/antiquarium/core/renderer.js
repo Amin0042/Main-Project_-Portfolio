@@ -23,11 +23,11 @@ import * as THREE from "https://unpkg.com/three@0.160.1/build/three.module.js";
  */
 export function createStage(container, options = {}) {
   const scene = new THREE.Scene();
-  // Same near-black as --primary-black-colour, not the lighter panel
-  // tone — the void behind the exhibits should read as deeper than the
-  // page background around it.
+  // Keep the scene completely clear and un-hazed so the collection stays
+  // crisp at every distance. The earlier fog was causing the distant
+  // pieces to fade into a dark, blurry "fog of war" effect.
   scene.background = new THREE.Color(0x0a0a0b);
-  scene.fog = new THREE.FogExp2(0x0a0a0b, 0.045);
+  scene.fog = null;
 
   const camera = new THREE.PerspectiveCamera(
     42,
