@@ -13,18 +13,20 @@ const IDLE_AFTER = 0.9;
 export function createNavigation(domElement, camera, room, options = {}) {
   const controls = new OrbitControls(camera, domElement);
   controls.enableDamping = true;
-  controls.enablePan = false;
+  controls.enablePan = true;
   controls.enableZoom = true;
+  controls.enableRotate = true;
   controls.rotateSpeed = 0.9;
   controls.zoomSpeed = 0.9;
+  controls.panSpeed = 0.9;
   controls.dampingFactor = 0.08;
-  controls.minDistance = 18;
-  controls.maxDistance = 80;
-  controls.maxPolarAngle = Math.PI * 0.52;
-  controls.minPolarAngle = Math.PI * 0.2;
+  controls.minDistance = 6;
+  controls.maxDistance = 26;
+  controls.maxPolarAngle = Math.PI;
+  controls.minPolarAngle = 0;
   controls.target.set(0, 1.5, 0);
 
-  const REST_POSITION = new THREE.Vector3(0, 10, 46);
+  const REST_POSITION = new THREE.Vector3(0, 10, 58);
   const REST_LOOK_AT = new THREE.Vector3(0, 1.5, 0);
   camera.position.copy(REST_POSITION);
   camera.up.set(0, 1, 0);
@@ -36,7 +38,7 @@ export function createNavigation(domElement, camera, room, options = {}) {
   let lastY = 0;
 
   let focusPoint = null;
-  let focusStandoff = 2.4;
+  let focusStandoff = 8;
   let focusBlend = 0;
   let focusBlendGoal = 0;
   let idleTimer = IDLE_AFTER;
@@ -74,47 +76,24 @@ export function createNavigation(domElement, camera, room, options = {}) {
   domElement.addEventListener("pointerup", onPointerUp);
   domElement.addEventListener("pointercancel", onPointerUp);
 
-  const scratchTarget = new THREE.Vector3();
-  const scratchLookAt = new THREE.Vector3();
-  const scratchFocusDir = new THREE.Vector3();
-  const scratchFocusPos = new THREE.Vector3();
-
   function update(delta) {
-    if (focusBlendGoal <= 0) {
-      controls.enabled = true;
-      controls.update();
-      idleTimer += delta;
-    } else {
-      controls.enabled = false;
-      focusBlend += (focusBlendGoal - focusBlend) * Math.min(1, delta * 3.2);
-
-      scratchTarget.copy(camera.position);
-      scratchLookAt.copy(controls.target);
-
-      if (focusPoint) {
-        scratchFocusDir.subVectors(focusPoint, REST_POSITION);
-        if (scratchFocusDir.lengthSq() < 1e-6) {
-          scratchFocusDir.set(0, 0, -1);
-        } else {
-          scratchFocusDir.normalize();
-        }
-        scratchFocusPos.copy(focusPoint).addScaledVector(scratchFocusDir, -focusStandoff);
-
-        scratchTarget.lerp(scratchFocusPos, focusBlend);
-        scratchLookAt.lerp(focusPoint, focusBlend);
-      }
-
-      camera.position.copy(scratchTarget);
-      controls.target.copy(scratchLookAt);
-      camera.lookAt(scratchLookAt);
-    }
+    controls.enabled = true;
+    controls.update();
+    idleTimer += delta;
   }
 
   function focusOn(worldPosition) {
     focusPoint = worldPosition.clone();
-    focusStandoff = 2.4;
     focusBlendGoal = 1;
     idleTimer = 0;
+
+    const currentDirection = camera.position.clone().sub(worldPosition);
+    const orbitRadius = currentDirection.lengthSq() > 1 ? Math.max(8, Math.min(18, currentDirection.length())) : 12;
+    const direction = currentDirection.lengthSq() > 1 ? currentDirection.normalize() : new THREE.Vector3(0, 0, -1);
+
+    camera.position.copy(worldPosition).add(direction.multiplyScalar(orbitRadius));
+    controls.target.copy(worldPosition);
+    controls.update();
   }
 
   function clearFocus() {

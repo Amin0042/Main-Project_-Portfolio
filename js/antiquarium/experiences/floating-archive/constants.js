@@ -22,7 +22,7 @@ export const MUTED_GOLD = 0x8f7a3e;
 // the image surfaces clearly readable at range.
 export const STAR_DIAMETER = 4.6;
 
-export const FOCUS_SCALE = 1.2;
+export const FOCUS_SCALE = 1;
 export const RECEDE_SCALE = 0.88;
 export const RECEDE_OPACITY = 0.8;
 
