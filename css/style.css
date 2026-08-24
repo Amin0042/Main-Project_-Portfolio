@@ -518,6 +518,12 @@ body {
   align-items: center;
   max-width: 100vw;
   overflow-x: hidden;
+  /* .navbar is position:fixed (pinned in every viewport size, desktop
+     through mobile) and so is out of normal flow — this reserves the
+     space it would otherwise have occupied so page content doesn't
+     start out hidden underneath it. Kept in sync with .navbar's
+     min-height + border-bottom at each breakpoint below. */
+  padding-top: 78px;
   font-size: 1rem;
   line-height: var(--body-line-height);
   letter-spacing: var(--body-letter-spacing);
@@ -895,12 +901,21 @@ body.light .theme-icon-moon {
 
 .navbar {
   width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
   border-bottom: 2px solid var(--gold-border-strong);
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.28),
     0 18px 30px -22px rgba(210, 164, 37, 0.35);
-  background: var;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  background:
+    linear-gradient(180deg, rgba(12, 12, 13, 0.98), rgba(18, 16, 16, 0.98)),
+    var(--secondary-black-colour);
+}
+
+body.light .navbar {
+  background: var(--secondary-black-colour);
 }
 
 .navbar .container-fluid {
@@ -1187,6 +1202,10 @@ body.light .nav-link:focus-visible::after {
 }
 
 @media (max-width: 991.98px) {
+  body {
+    padding-top: 74px;
+  }
+
   .navbar .container-fluid {
     gap: 0.75rem;
     min-height: 72px;
@@ -1842,6 +1861,17 @@ body.light .archive-img {
   .archive-options-grid {
     width: min(1200px, calc(100vw - 2rem));
     grid-template-columns: 1fr;
+  }
+
+  /* Chronological Archive inherits .section's 2rem side padding, which
+     on a phone-width screen just doubles up with .archive-options-grid's
+     own `calc(100vw - 2rem)` inset above — the category tiles end up
+     pushed in from the edge twice over instead of reading as one centered
+     column. Zeroing it here lets the grid's own centered width be the
+     only inset, so the tiles sit centered with a single, even gutter. */
+  #chronological-archive {
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 .archive-detail-page {

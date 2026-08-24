@@ -27,6 +27,16 @@
   margin-bottom: 1.1rem;
 }
 
+/* --muted-gold-colour is a fixed sepia tone that never flips in
+   body.light (only the primary/secondary gold tokens do) — sitting on
+   the page's own background, which DOES flip to light parchment, it
+   drops under 3.5:1 there and fails WCAG AA for this size of text.
+   Darkened for light mode only, same tone family, comfortably above
+   the 4.5:1 floor. */
+body.light .antiquarium-eyebrow {
+  color: var(--primary-black-colour);
+}
+
 .antiquarium-hero h1 {
   text-decoration: none;
   margin-bottom: 1.25rem;
@@ -193,6 +203,13 @@
   min-height: 1.4em;
 }
 
+/* Same fix as .antiquarium-eyebrow above: this caption sits directly on
+   the page background, which flips to parchment in body.light, and
+   --muted-gold-colour never flips with it. */
+body.light .antiquarium-caption {
+  color: var(--primary-black-colour);
+}
+
 /* ---- Inspection label -----------------------------------------------
    A museum wall-label, not a UI panel: plain text sitting in the
    stage's own corner, no border, no card background of its own — only
@@ -257,6 +274,24 @@
   color: var(--body-copy-colour, var(--muted-gold-colour));
 }
 
+/* The wall-label sits over `background: linear-gradient(to top,
+   rgba(10, 10, 11, 0.6), transparent)` — a literal dark scrim, on
+   purpose, over the always-dark 3D scene (same "deliberately dark
+   stage regardless of site theme" idea as the image lightbox — see
+   body.light .image-modal-caption in style.css). --primary-gold-colour and
+   --body-copy-colour both flip to near-black in body.light for the
+   rest of the page, which is correct there but would render this
+   title/description black-on-black over that scrim. Pinned to the
+   scene's own literal gold/ivory tones instead of the theme tokens so
+   the map's marker labels stay legible in both themes. */
+body.light .antiquarium-inspector-title {
+  color: #c6a85a;
+}
+
+body.light .antiquarium-inspector-description {
+  color: rgba(244, 238, 222, 0.9);
+}
+
 .antiquarium-inspector-hint {
   margin-top: 0.5rem;
   font-family: "Inter", sans-serif;
@@ -291,6 +326,17 @@
 
 .antiquarium-fallback p {
   max-width: 52ch;
+}
+
+/* The fallback's own background is the literal --primary-black-colour
+   (unchanged by theme — see the comment above), but its heading and
+   paragraph text are plain <h3>/<p> elements, and the site's generic
+   body.light h1-h6/p rules force those to near-black. Without this,
+   anyone who lands on the fallback (no WebGL / too weak a GPU) in
+   light mode would see black text on a black panel. */
+body.light .antiquarium-fallback h3,
+body.light .antiquarium-fallback p {
+  color: #f3efe5;
 }
 
 @media (max-width: 700px) {
@@ -337,6 +383,15 @@
   color: var(--muted-gold-colour);
 }
 
+/* Unlike the title above it (which inherits from `body.light button`),
+   this status line sets its own color directly, so it keeps the fixed
+   --muted-gold-colour tone even in body.light — same low-contrast
+   issue as the eyebrow/caption above, now against the button's own
+   background (which does flip to parchment). */
+body.light .antiquarium-selector-status {
+  color: var(--primary-black-colour);
+}
+
 .antiquarium-selector-item.is-current {
   border-color: rgba(255, 215, 120, 1);
   box-shadow:
@@ -350,6 +405,13 @@
 
 .antiquarium-selector-item.is-reserved .antiquarium-selector-status {
   color: var(--muted-gold-colour);
+}
+
+/* Three classes here outrank the plain body.light .antiquarium-selector-
+   status rule above, so the reserved state needs its own override or it
+   would silently fall back to the same low-contrast muted gold. */
+body.light .antiquarium-selector-item.is-reserved .antiquarium-selector-status {
+  color: var(--primary-black-colour);
 }
 
 @media (max-width: 700px) {
