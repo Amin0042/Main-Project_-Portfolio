@@ -519,6 +519,35 @@ function initializeWordHoverEffect() {
   }
 }
 
+// About page — Background section: expands/collapses the truncated
+// "Influence" panel (the only column long enough to need a "Read More"
+// toggle; see .background-copy.collapsible in style.css, scoped to
+// desktop widths only). Generic over any `.read-more-btn` /
+// `.collapsible` pair so a second panel could opt in later just by
+// carrying the same markup — nothing here is Influence-specific.
+function initializeReadMoreSections() {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  const buttons = document.querySelectorAll(".read-more-btn");
+
+  buttons.forEach(function (button) {
+    const targetId = button.getAttribute("aria-controls");
+    const copy = targetId ? document.getElementById(targetId) : null;
+
+    if (!copy) {
+      return;
+    }
+
+    button.addEventListener("click", function () {
+      const isExpanded = copy.classList.toggle("expanded");
+      button.setAttribute("aria-expanded", String(isExpanded));
+      button.textContent = isExpanded ? "Read Less" : "Read More";
+    });
+  });
+}
+
 if (typeof module !== "undefined") {
   module.exports = {
     initializeContactHints,
@@ -528,6 +557,7 @@ if (typeof module !== "undefined") {
     initializePageTransitions,
     initializeLogoSignatureAnimation,
     initializeChamberGuardians,
+    initializeReadMoreSections,
   };
 }
 
@@ -544,6 +574,7 @@ if (typeof document !== "undefined") {
   initializePageTransitions();
   initializeLogoSignatureAnimation();
   initializeChamberGuardians();
+  initializeReadMoreSections();
 
   if (openButton) {
     const focusableSelector =

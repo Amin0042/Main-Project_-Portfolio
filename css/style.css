@@ -1493,10 +1493,27 @@ body.light .popup-close:focus-visible {
   flex-direction: column;
   gap: 6rem;
 }
+/* Quick-jump links to each Background sub-section (Education / Focus /
+   Influence / Approach). The four panels stack into one long scroll on
+   mobile — this gives phone visitors a way to skip straight to the one
+   they want instead of scrolling past several long-form paragraphs.
+   Hidden by default; only surfaced at the mobile breakpoint where the
+   stacked layout actually needs it (see Mobile View media query). */
+.background-jumpnav {
+  display: none;
+}
 .background {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  align-items: center;
+  /* `stretch` (the grid default) so every column's box — and the
+     hairline border drawn on it below — spans the full shared row
+     height, ending at the same level for all four regardless of how
+     much copy each one holds. Top alignment of the icon/heading is
+     handled inside `.background-section` instead (justify-content:
+     flex-start), so a taller box here no longer means a lower icon —
+     it just means more empty space *below* the shorter columns'
+     content, inside a border that still runs the full row height. */
+  align-items: stretch;
   gap: 2rem;
   margin: 0rem 3rem;
 }
@@ -1504,7 +1521,13 @@ body.light .popup-close:focus-visible {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* flex-start, not center: with the row now stretching every column
+     to equal height (see `.background` above), centering would pull
+     each column's icon/heading down by a different amount depending
+     on how much shorter it is than the tallest column — exactly the
+     misalignment this is meant to avoid. flex-start pins content to
+     the top of the box regardless of the box's own height. */
+  justify-content: flex-start;
   gap: 3rem;
   padding-inline: 2rem;
   border-left: 1px solid rgba(143, 122, 62, 0.35);
@@ -1530,6 +1553,27 @@ body.light .popup-close:focus-visible {
 }
 .background-section:last-child {
   border-right: none;
+}
+/* Influence in particular holds up to six separate paragraphs. The
+   parent `.background-section` is a flex column with one large gap
+   meant to separate icon / heading / body — reused directly between
+   paragraphs it would space every paragraph as far apart as the icon
+   is from the heading. Wrapping the body copy in its own flex column
+   lets it define a much tighter, paragraph-appropriate gap without
+   touching the icon/heading spacing above it. */
+.background-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  width: 100%;
+}
+/* Influence "Read More" — desktop only (see the min-width: 1025px
+   block below for the actual collapse/expand rules). At mobile/tablet
+   widths the four panels stack into one column and length differences
+   between them are irrelevant, so the button stays hidden there and
+   the full text always shows, same as before. */
+.read-more-btn {
+  display: none;
 }
 /* Education was the only one of the four Background panels set to
    left-align (it originally needed room for the bulleted list below
@@ -3325,8 +3369,14 @@ body.modal-open {
   .background {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(4, 1fr);
-    row-gap: 3.5rem;
+    /* NOT repeat(4, 1fr) — equal-fraction rows all size to match the
+       TALLEST row's content. Influence alone runs six paragraphs, so
+       forcing Education/Focus/Approach into a row that tall centered
+       each of them inside a huge box of empty space above and below.
+       auto-height rows let each section take only the height its own
+       content needs. */
+    grid-template-rows: auto;
+    row-gap: 3rem;
   }
 
   /* Stacked single column — side-by-side dividers no longer apply, so
@@ -3337,10 +3387,39 @@ body.modal-open {
     border-right: none;
     border-top: 1px solid rgba(143, 122, 62, 0.35);
     padding-top: 2.5rem;
+    padding-inline: 0.5rem;
+    /* Icon/heading/body gap can shrink from the desktop 3rem — a phone
+       screen is all vertical scroll, so the desktop spacing (tuned for
+       a wide single row) reads as excessive dead space stacked. */
+    gap: 1.75rem;
+    scroll-margin-top: 1.5rem;
   }
   .background-section:first-child {
     border-top: none;
     padding-top: 0;
+  }
+
+  /* Body copy stays centered on mobile, matching every other section
+     on the site and the icon/heading above it. Still capped to a
+     readable measure and centered as a block (not just the text
+     inside it) via margin-inline: auto, so it doesn't stretch
+     edge-to-edge on wider phones. */
+  .background-copy {
+    text-align: center;
+    gap: 1rem;
+  }
+  .background-copy p {
+    max-width: 60ch;
+    margin-inline: auto;
+  }
+  /* Center the credentials list as a block too, matching the intro
+     paragraph above it — the bullets themselves stay left-aligned
+     within that centered block (a left-ragged list reads far better
+     than a centered one; see the base .education-list rule), they
+     just sit in the middle of the column rather than pinned to it. */
+  .education-list {
+    align-self: center;
+    max-width: 60ch;
   }
 
   /* At desktop's 4-column layout, 30% of a narrow column is a
@@ -3354,12 +3433,53 @@ body.modal-open {
   .background-section img {
     width: clamp(88px, 26vw, 120px);
   }
+
+  /* Quick-jump strip: links to Education/Focus/Influence/Approach so
+     mobile visitors can skip straight to the one they want instead of
+     scrolling past whichever they don't need. Styled as plain `.btn`
+     (same sharp-cornered, gold-bordered look used for every other
+     button on the site) rather than a bespoke pill — layout-only rules
+     here, wrapping onto a second row rather than overflowing on
+     narrow phones. */
+  .background-jumpnav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 0 auto 1rem;
+  }
+  .background-jumpnav .btn {
+    min-width: 8rem;
+    font-size: 0.85rem;
+  }
+  /* Mobile-only reading order: heading, then every tool icon, then the
+     intro paragraph last. Desktop pairs heading+paragraph together in
+     one column beside the icon grid (unchanged) — reordering that on
+     mobile means pulling the heading and paragraph out from inside
+     `.craft-info` so they can be sequenced independently around
+     `.craft-grid`. `display: contents` un-boxes `.craft-info` at this
+     breakpoint only: it stops rendering as an element of its own and
+     hands its children (h2, p) directly to `.about-craft`'s flex
+     layout, where each can carry its own `order`. DOM order — and
+     therefore desktop and screen-reader reading order — is untouched;
+     only the mobile visual order changes. */
   .about-craft {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2rem;
+  }
+  .craft-info {
+    display: contents;
+  }
+  .craft-info h2 {
+    order: 1;
+    width: 100%;
   }
   .craft-grid {
+    order: 2;
+    width: 100%;
     img {
       margin: 0 auto;
     }
@@ -3369,11 +3489,9 @@ body.modal-open {
     justify-content: center;
     grid-template-rows: repeat(3, 1fr);
   }
-  .craft-info {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
+  .craft-info p {
+    order: 3;
+    width: 100%;
   }
   .archive-personal {
     text-align: center;
@@ -3541,5 +3659,72 @@ body.modal-open {
     width: 100%;
     grid-template-columns: 1fr;
     gap: 2.5rem;
+  }
+}
+
+/*============================================================
+   Desktop View (1025px+) — About page: Background "Read More"
+   ============================================================
+   `.background` lays Education/Focus/Influence/Approach out as four
+   grid columns that share a single row, top-aligned. Influence alone
+   runs to six paragraphs against Approach's one short paragraph, so
+   even top-aligned the columns end at wildly different heights and
+   the row reads as lopsided. Collapsing Influence's copy behind a
+   "Read More" toggle (main.js: initializeReadMoreSections) trims it
+   down near the other columns' natural height so all four end at
+   roughly the same level, while keeping the full text one click away.
+   Scoped to 1025px+ only — at mobile/tablet widths the panels stack
+   into a single column where differing lengths don't misalign
+   anything, so the full text stays visible there untouched. ============================================================ */
+@media (min-width: 1025px) {
+  .background-copy.collapsible {
+    position: relative;
+    /* Tuned by eye against Education/Focus's natural copy height so
+       the collapsed panel reads as roughly the same size as its
+       neighbors rather than an arbitrary crop — adjust this alone if
+       body copy or column width changes materially. */
+    max-height: 17rem;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .background-copy.collapsible::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 3.5rem;
+    background: linear-gradient(to bottom, transparent, var(--secondary-black-colour));
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .background-copy.collapsible.expanded {
+    /* max-height never stretches the box — it only clips content
+       taller than it, so as long as this stays comfortably above any
+       realistic content height the box simply shrinks to fit the
+       actual (shorter) text, same as `max-height: none` would render,
+       but still animatable. 60rem clipped Influence's six paragraphs
+       at the narrow ~230px column this grid gives each panel; 200rem
+       has enough headroom for that copy at any column width. */
+    max-height: 200rem;
+  }
+  .background-copy.collapsible.expanded::after {
+    opacity: 0;
+  }
+
+  /* Same shared button look as everywhere else on the site (sharp
+     corners, gold border) but scaled down — this is a small in-panel
+     control, not a page-level CTA, so it shouldn't compete with the
+     full-size buttons used elsewhere. */
+  .read-more-btn {
+    display: inline-flex;
+    min-width: 0;
+    min-height: 0;
+    margin-top: -1.75rem;
+    padding: 0.4rem 1.1rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    align-self: center;
+    position: relative;
+    z-index: 1;
   }
 }
