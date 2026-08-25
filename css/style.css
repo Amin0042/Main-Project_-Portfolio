@@ -1024,6 +1024,42 @@ body.light .navbar {
   }
 }
 
+/* Logo light/dark swap — same on/off pattern as the sun/moon theme-toggle
+   icon above (body.light flips which one is shown), so the site always
+   shows the lion mark cut for the surface it's actually sitting on: the
+   gold "Yellow Lion" mark for the dark chapel navbar/footer, the black
+   "b&w" mark once body.light lights the parchment behind it. Both marks
+   still match every selector below (.navbar-brand .icon, .footer-title
+   img, …) so they keep the exact same breathing/awaken animation the
+   medallion always had — only visibility changes here. */
+.logo-light {
+  display: none;
+}
+
+/* The gold mark's own artwork is line-art on a transparent field, and the
+   breathing/awaken keyframes below round it into a circle (border-radius:
+   50%) for the halo to bloom from — but the mark's source SVG is a tall
+   rectangle, not a square, so that 50% radius traces an oval, not a
+   circle. Filling that oval with the same dark surface color as the rest
+   of the chapel (--secondary-black-colour) is what makes it read as an
+   intentional medallion backing instead of a mismatched black patch;
+   left transparent, browsers were showing the oval as flat black
+   regardless of how dark the actual page behind it was. Using the token
+   rather than a literal hex means this stays correct even if the dark
+   palette itself is retuned later. */
+.logo-dark {
+  background-color: var(--secondary-black-colour);
+  border-radius: 50%;
+}
+
+body.light .logo-dark {
+  display: none;
+}
+
+body.light .logo-light {
+  display: block;
+}
+
 .navbar-brand .icon,
 .footer-title img,
 .background-section img,

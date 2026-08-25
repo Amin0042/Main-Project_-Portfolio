@@ -423,22 +423,30 @@ function initializeLogoSignatureAnimation() {
   const marks = document.querySelectorAll(".navbar-brand, .footer-title a");
 
   marks.forEach(function (mark) {
-    const glyph = mark.querySelector("img");
+    // Each mark now holds two stacked images (.logo-dark / .logo-light) so
+    // the lion glyph can swap with the light/dark theme — only one is ever
+    // visible at a time, but a tap should replay the breath on whichever
+    // one that is, so both are wired up here rather than just the first.
+    const glyphs = mark.querySelectorAll("img");
 
-    if (!glyph) {
+    if (!glyphs.length) {
       return;
     }
 
-    glyph.addEventListener("animationend", function (event) {
-      if (event.animationName === "glyph-awaken") {
-        glyph.classList.remove("glyph-spin");
-      }
+    glyphs.forEach(function (glyph) {
+      glyph.addEventListener("animationend", function (event) {
+        if (event.animationName === "glyph-awaken") {
+          glyph.classList.remove("glyph-spin");
+        }
+      });
     });
 
     mark.addEventListener("click", function () {
-      glyph.classList.remove("glyph-spin");
-      void glyph.offsetWidth; // restart the animation even on rapid repeat taps
-      glyph.classList.add("glyph-spin");
+      glyphs.forEach(function (glyph) {
+        glyph.classList.remove("glyph-spin");
+        void glyph.offsetWidth; // restart the animation even on rapid repeat taps
+        glyph.classList.add("glyph-spin");
+      });
     });
   });
 }
