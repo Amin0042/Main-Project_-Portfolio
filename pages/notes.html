@@ -36,23 +36,23 @@
 
 
 <body>
-  <script>
-    // Applies the saved light/dark preference synchronously, before the
-    // browser paints anything — main.js does the same thing but only
-    // loads at the very bottom of the page, so without this the door
-    // transition (and everything themed off body.light) would flash the
-    // wrong palette on every navigation before main.js caught up.
-    (function () {
-      try {
-        if (window.localStorage.getItem("january8th-theme") === "light") {
-          document.body.classList.add("light");
-        }
-      } catch (error) {
-        // Private browsing / disabled storage — default dark applies,
-        // same fallback main.js already uses.
-      }
-    })();
-  </script>
+    <script>
+        // Applies the saved light/dark preference synchronously, before the
+        // browser paints anything — main.js does the same thing but only
+        // loads at the very bottom of the page, so without this the door
+        // transition (and everything themed off body.light) would flash the
+        // wrong palette on every navigation before main.js caught up.
+        (function () {
+            try {
+                if (window.localStorage.getItem("january8th-theme") === "light") {
+                    document.body.classList.add("light");
+                }
+            } catch (error) {
+                // Private browsing / disabled storage — default dark applies,
+                // same fallback main.js already uses.
+            }
+        })();
+    </script>
     <header>
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
@@ -100,10 +100,37 @@
         <section class="section notes-hero" id="notes-hero">
             <div class="notes-container">
                 <h2>Notes</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minus reprehenderit reiciendis rerum
-                    dolores
-                    aspernatur magni quibusdam. Sint, ratione ut voluptatem ipsum maxime quae quam libero nostrum
-                    voluptatibus, necessitatibus eveniet distinctio.</p>
+                <p>I have set aside this damp attic room to fill it with scattered fragments—fragments laden with the
+                    fading memories of
+                    the strange era I have left behind.
+
+                    Here lies a repository of the writings of a man who had been writing for years before he ever took
+                    up a brush and
+                    transformed the canvas of his life. It would not be far from the truth to say that the countless
+                    pages he has written
+                    far exceed the visual works for which he is known by most.
+
+                    Writing, for me, is precisely as Franz Kafka once whispered into my ear: an act of splitting apart
+                    the frozen ocean that
+                    surrounds and separates me from the world around me.
+
+                    My instrument is the pen I hold in my hand. And what has always mattered to me is that there is no
+                    clearly defined or
+                    discernible boundary between the pen and my imprisoned existence. It is impossible to say with
+                    certainty whether it is I
+                    who create, entirely of my own accord, or whether it is the pen that compels me toward a form of
+                    creation that is
+                    multifaceted, questioning, filled with sincerity, and driven by hope.
+
+                    What is certain is this: I was born to witness the gradual collapse of myself and of the world
+                    around me. To witness decline,
+                    and ultimately the
+                    emergence of new orders—such as the transhuman orders of the present, with which we are all
+                    struggling in these days.
+
+                    I was born to become, much like Hedayat's The Blind Owl, the storyteller of a world filled with
+                    shifting and unstable
+                    shadows.</p>
             </div>
         </section>
         <section class="section notes" id="notes">
