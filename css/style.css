@@ -37,6 +37,22 @@
   --gold-border-hairline: rgba(210, 164, 37, 0.3);
   --gold-border-card: rgba(210, 164, 37, 0.5);
   --gold-border-strong: rgba(210, 164, 37, 0.85);
+  /* ---- Gilded-glass button system -----------------------------------
+     RGB triplets (not hex) of colors already used elsewhere on the
+     site, so buttons can be tinted at custom alpha values via
+     rgba(var(--x-rgb), n) instead of introducing new colors. --ink-rgb
+     and --amber-rgb/--highlight-rgb are the literal brand gold/near-
+     black already used throughout (--secondary-gold-colour is
+     rgb(210, 164, 37); the hover/awaken "hot" gold is
+     rgb(255, 215, 120)) and stay constant in both themes, so the glass
+     itself always reads as gold-tinted; --surface-rgb is the one
+     triplet that flips with body.light below, since it mirrors
+     --secondary-black-colour (the actual surface the glass sits on). */
+  --ink-rgb: 10, 10, 11;
+  --surface-rgb: 26, 26, 29;
+  --gold-rgb: 198, 168, 90;
+  --amber-rgb: 210, 164, 37;
+  --highlight-rgb: 255, 215, 120;
   --primary-ivory-colour: #e8e4d8;
   --body-copy-colour: rgba(255, 255, 255, 0.9);
   --font-family: "inter", "cinzel", "Playfair Display", "sans-serif";
@@ -111,6 +127,10 @@ body.light {
   --bs-navbar-icon-color: #0a0a0b;
   --primary-ivory-colour: #0a0a0b;
   --body-copy-colour: var(--primary-black-colour);
+  /* The glass tint (--gold-rgb/--amber-rgb/--highlight-rgb) stays the
+     literal brand gold in both themes on purpose — only the surface
+     the glass is mixed with follows the light parchment now. */
+  --surface-rgb: 232, 228, 216;
 }
 
 /* Light mode text color overrides */
@@ -235,7 +255,7 @@ body::after {
 body::before {
   left: 0;
   transform-origin: left center;
-  border-right: 1px solid var(--gold-border-card);
+  border-right: 1px solid transparent;
   box-shadow: 3px 0 26px rgba(0, 0, 0, 0.55);
   animation: chamber-open-left var(--chamber-duration) var(--chamber-ease) both;
 }
@@ -243,7 +263,7 @@ body::before {
 body::after {
   right: 0;
   transform-origin: right center;
-  border-left: 1px solid var(--gold-border-card);
+  border-left: 1px solid transparent;
   box-shadow: -3px 0 26px rgba(0, 0, 0, 0.55);
   animation: chamber-open-right var(--chamber-duration) var(--chamber-ease) both;
 }
@@ -512,7 +532,6 @@ body {
   background-color: var(--secondary-black-colour);
   font-family: var(--font-family);
   color: var(--secondary-gold-colour);
-  border: 2px solid;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -606,7 +625,6 @@ h4 {
   font-weight: var(--fw-medium);
   color: var(--primary-gold-colour);
   text-align: center;
-  text-decoration-line: underline;
   line-height: 3rem;
 }
 h1 {
@@ -634,6 +652,16 @@ ul {
 li {
   list-style: none;
 }
+/* Gilded-glass buttons: a fully-rounded pill with a frosted, gold-tinted
+   glass surface (the closest CSS gets to iOS's "Liquid Glass" material —
+   real backdrop refraction is OS-level rendering and out of reach on the
+   web, so this leans on blur + saturation + an inner gloss highlight +
+   a bright rim instead). Every color here comes from the site's own
+   palette: the rgba(var(--x-rgb), n) triplets are the exact brand gold/
+   near-black already used elsewhere as literals, --gold-border-card is
+   the same token used for every other card-level gold border on the
+   site, and `color`/`border` fall back to --secondary-gold-colour so
+   text/backdrop-less browsers still theme-swap exactly like before. */
 button,
 .btn,
 .navbar-toggler {
@@ -643,28 +671,46 @@ button,
   gap: 0.5rem;
   min-height: 2.9rem;
   min-width: 9rem;
-  background-color: var(--secondary-black-colour);
   color: var(--secondary-gold-colour);
-  border: 2px solid var(--secondary-gold-colour);
-  border-radius: 0;
-  padding: 0.7rem 1rem;
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.28),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid var(--gold-border-card);
+  border-radius: 999px;
+  padding: 0.75rem 1.5rem;
   cursor:
     var(--gothic-cursor-url) 16 5,
     pointer;
-  /* The outer ring (on top of the border itself) is what makes the gold
-     edge read clearly against the near-black dark-mode surface without
-     needing a heavier border-width; body.light's near-black gold tokens
-     keep this ring effectively invisible on parchment, so it only shows
-     up where it's needed. */
+  /* Inner top highlight = the glass gloss; inner bottom shadow = the
+     glass's own thickness/depth; outer shadow lifts the pill off the
+     page the way the old hard-edged button never needed to. */
   box-shadow:
-    inset 0 0 0 1px rgba(10, 10, 11, 0.65),
-    0 0 0 1px rgba(210, 164, 37, 0.35);
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.35),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.35),
+    0 8px 20px rgba(var(--ink-rgb), 0.35);
   transition:
     background-color 0.2s ease,
+    background-image 0.2s ease,
     border-color 0.2s ease,
     transform 0.2s ease,
     box-shadow 0.2s ease,
     color 0.2s ease;
+}
+
+/* backdrop-filter support is broad but not universal — without it the
+   "glass" would just look like a flat gold wash, so this thickens the
+   fallback background enough to still read clearly as a button. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  button,
+  .btn,
+  .navbar-toggler {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
 }
 
 button:hover,
@@ -673,11 +719,17 @@ button:hover,
 button:focus-visible,
 .btn:focus-visible,
 .navbar-toggler:focus-visible {
-  background-color: rgba(198, 168, 90, 0.09);
-  border-color: rgba(255, 215, 120, 1);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.4),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
   box-shadow:
-    inset 0 0 0 1px rgba(10, 10, 11, 0.7),
-    0 0 0 1px rgba(255, 215, 120, 0.6);
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.5),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.3),
+    0 10px 26px rgba(var(--ink-rgb), 0.4),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.35);
   transform: translateY(-1px);
   outline: none;
 }
@@ -686,7 +738,11 @@ button:active,
 .btn:active,
 .navbar-toggler:active {
   transform: translateY(0);
-  background-color: rgba(198, 168, 90, 0.14);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.48),
+    rgba(var(--surface-rgb), 0.22)
+  );
 }
 
 button:disabled,
@@ -707,6 +763,19 @@ a.btn {
   text-decoration: none;
 }
 
+/* Light mode: button/CTA text was landing on the wrong color (a stray
+   equal-specificity !important fight elsewhere in the file — "a" and
+   "body.light a" — was quietly outrunning the rule above depending on
+   the exact selector). Written with two classes on purpose so it
+   out-specifies every other !important color rule touching a button,
+   deterministically, rather than trying to win a specificity tie. */
+body.light .btn,
+body.light a.btn,
+body.light button,
+body.light .navbar-toggler {
+  color: var(--primary-black-colour) !important;
+}
+
 a.btn:hover,
 a.btn:focus-visible {
   text-decoration: none;
@@ -723,28 +792,48 @@ a.btn:focus-visible {
   min-width: 2.85rem;
   min-height: 2.85rem;
   padding: 0;
-  border-radius: 0;
-  border: 1px solid rgba(210, 164, 37, 0.8);
-  background: rgba(198, 168, 90, 0.08);
+  border-radius: 50%;
+  border: 1px solid var(--gold-border-card);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.3),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
   color: var(--secondary-gold-colour);
-  box-shadow: inset 0 0 0 1px rgba(10, 10, 11, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.35),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.3);
   flex: 0 0 auto;
   cursor:
     var(--gothic-cursor-url) 16 5,
     pointer;
   transition:
-    background 0.2s ease,
+    background-image 0.2s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 }
 
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .theme-toggle-btn {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
+}
+
 .theme-toggle-btn:hover,
 .theme-toggle-btn:focus-visible {
-  background: rgba(198, 168, 90, 0.16);
-  border-color: rgba(255, 215, 120, 1);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.42),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
   box-shadow:
-    inset 0 0 0 1px rgba(10, 10, 11, 0.35),
-    0 0 0 1px rgba(255, 215, 120, 0.45);
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.5),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.28),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.35);
   outline: none;
 }
 
@@ -795,7 +884,7 @@ body.light .theme-icon-moon {
   height: 3rem;
   padding: 0;
   gap: 0;
-  border-radius: 0;
+  border-radius: 50%;
   flex: 0 0 auto;
 }
 
@@ -884,7 +973,6 @@ body.light .theme-icon-moon {
 .section {
   margin: 0;
   padding: 2rem 2rem 3rem;
-  border-top: 1px solid var(--gold-border-hairline);
   text-align: center;
 }
 /* #footer is itself a `.section`, so it already inherits the hairline
@@ -967,15 +1055,17 @@ body.light .navbar {
 }
 
 /*==================== Signature Logo Animation ====================*/
-/* The January8th glyph is a four-point gothic rose medallion. It gets one
-   deliberate gesture everywhere it appears (navbar
-   brand, footer mark, nowhere else): a slow devotional breath at rest —
-   the faintest swell and a hint of gold aura, like a votive light left
-   burning — and, whenever a visitor hovers, focuses, or taps it, a single
-   deep inhale: the glyph grows, a halo of holy gold light blooms out
-   around it in soft concentric rings, then both ease back to rest. No
-   spin, no gimmick — the same stillness a relic or an icon in a chapel
-   would be lit with, just given one quiet, reverent pulse of life.
+/* The January8th glyph is a four-point gothic rose medallion. Everywhere
+   it appears in a content grid (background/craft icons, the vault image
+   grids), it gets one deliberate gesture: a slow devotional breath at
+   rest — the faintest swell and a hint of gold aura, like a votive light
+   left burning — and, on hover/focus/tap, a single deep inhale: the
+   glyph grows, a halo of holy gold light blooms out around it in soft
+   concentric rings, then both ease back to rest.
+   The navbar brand and footer mark use the same breath and inhale
+   (grow-then-shrink via glyph-breathe-mark / glyph-awaken-mark below),
+   but deliberately without the gold-light halo — just the quiet pulse
+   and the hover/tap grow, no bloom.
    border-radius: 50% below doesn't crop the artwork (it's already a
    circular medallion on a transparent field) — it just makes the glow
    radiate as a halo instead of hugging the image's square bounding box.
@@ -1024,6 +1114,30 @@ body.light .navbar {
   }
 }
 
+/* Navbar brand + footer mark only: identical scale timing/curve to
+   glyph-breathe / glyph-awaken above, minus the filter/box-shadow halo —
+   the pulse and the hover/tap grow-then-shrink stay, the gold bloom
+   doesn't. */
+@keyframes glyph-breathe-mark {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025);
+  }
+}
+
+@keyframes glyph-awaken-mark {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  55% {
+    transform: scale(1.16);
+  }
+}
+
 /* Logo light/dark swap — same on/off pattern as the sun/moon theme-toggle
    icon above (body.light flips which one is shown), so the site always
    shows the lion mark cut for the surface it's actually sitting on: the
@@ -1036,20 +1150,19 @@ body.light .navbar {
   display: none;
 }
 
-/* The gold mark's own artwork is line-art on a transparent field, and the
-   breathing/awaken keyframes below round it into a circle (border-radius:
-   50%) for the halo to bloom from — but the mark's source SVG is a tall
-   rectangle, not a square, so that 50% radius traces an oval, not a
-   circle. Filling that oval with the same dark surface color as the rest
-   of the chapel (--secondary-black-colour) is what makes it read as an
-   intentional medallion backing instead of a mismatched black patch;
-   left transparent, browsers were showing the oval as flat black
-   regardless of how dark the actual page behind it was. Using the token
-   rather than a literal hex means this stays correct even if the dark
-   palette itself is retuned later. */
+/* The gold mark's own artwork is line-art on a transparent field. This
+   used to also carry border-radius: 50%, matching the halo-bloom circle
+   the old medallion animation clipped itself to — but the lion mark's
+   horns reach out toward the top corners of its (non-square) SVG
+   bounding box, past where an inscribed ellipse cuts off, so that radius
+   was silently clipping their tips. The mark no longer has a halo to
+   bloom from (see glyph-breathe-mark above), so there's no reason left
+   to clip it into a circle: this is now a plain rectangular fill in the
+   same dark surface color as the rest of the chapel
+   (--secondary-black-colour), which reads just as seamless against the
+   navbar/footer background without cropping any artwork. */
 .logo-dark {
   background-color: var(--secondary-black-colour);
-  border-radius: 50%;
 }
 
 body.light .logo-dark {
@@ -1060,8 +1173,6 @@ body.light .logo-light {
   display: block;
 }
 
-.navbar-brand .icon,
-.footer-title img,
 .background-section img,
 .craft-grid img,
 #dreams .image-grid img,
@@ -1074,13 +1185,20 @@ body.light .logo-light {
   will-change: transform, filter, box-shadow;
 }
 
+.navbar-brand .icon,
+.footer-title img {
+  transform-origin: 50% 50%;
+  animation: glyph-breathe-mark 5.5s ease-in-out infinite;
+  will-change: transform;
+}
+
 .navbar-brand:hover .icon,
 .navbar-brand:focus-visible .icon,
 .navbar-brand .icon.glyph-spin,
 .footer-title a:hover img,
 .footer-title a:focus-visible img,
 .footer-title img.glyph-spin {
-  animation: glyph-awaken 1.6s cubic-bezier(0.45, 0, 0.2, 1) 1;
+  animation: glyph-awaken-mark 1.6s cubic-bezier(0.45, 0, 0.2, 1) 1;
 }
 
 /* Same family of gesture as the signature logo, but dialed well back —
@@ -1338,7 +1456,7 @@ body.light .nav-link:focus-visible::after {
   background:
     linear-gradient(180deg, rgba(18, 15, 12, 0.98), rgba(12, 12, 12, 0.98)),
     radial-gradient(circle at top, rgba(198, 168, 90, 0.12), transparent 55%);
-  border: 1px solid var(--gold-border-card);
+  border: 1px solid transparent;
   border-radius: 0;
   box-shadow:
     0 24px 80px rgba(0, 0, 0, 0.62),
@@ -1415,7 +1533,7 @@ body.light .nav-link:focus-visible::after {
   right: 1rem;
   width: 2.8rem;
   height: 2.8rem;
-  border: 1px solid var(--gold-border-card);
+  border: 1px solid transparent;
   border-radius: 0;
   background: rgba(10, 10, 11, 0.55);
   color: var(--primary-gold-colour);
@@ -1585,8 +1703,8 @@ body.light .popup-close:focus-visible {
   justify-content: flex-start;
   gap: 3rem;
   padding-inline: 2rem;
-  border-left: 1px solid rgba(143, 122, 62, 0.35);
-  border-right: 1px solid rgba(143, 122, 62, 0.35);
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
   img {
     width: 30%;
     aspect-ratio: 1 / 1;
@@ -1595,8 +1713,6 @@ body.light .popup-close:focus-visible {
     background-color: #0a0a0b;
     border-radius: 50%;
     border: 3px solid var(--secondary-gold-colour);
-    outline: 1px solid var(--gold-border-card);
-    outline-offset: 4px;
     box-shadow:
       0 0 0 1px rgba(210, 164, 37, 0.25),
       inset 0 0 12px rgba(210, 164, 37, 0.25),
@@ -1682,8 +1798,6 @@ body.light .popup-close:focus-visible {
     background-color: #0a0a0b;
     border-radius: 50%;
     border: 3px solid var(--secondary-gold-colour);
-    outline: 1px solid var(--gold-border-card);
-    outline-offset: 4px;
     box-shadow:
       0 0 0 1px rgba(210, 164, 37, 0.25),
       inset 0 0 12px rgba(210, 164, 37, 0.25),
@@ -1745,7 +1859,7 @@ body.light .popup-close:focus-visible {
     rgba(10, 10, 11, 0.9),
     rgba(18, 18, 20, 0.96)
   );
-  border: 1px solid var(--gold-border-card);
+  border: 1px solid transparent;
   padding: clamp(2rem, 3vw, 3.25rem);
   text-align: left;
 }
@@ -1807,7 +1921,7 @@ body.light .archive-img {
   max-width: 560px;
   height: auto;
   object-fit: cover;
-  border: 1px solid var(--gold-border-card);
+  border: 1px solid transparent;
   background: rgba(10, 10, 11, 0.5);
 }
 .carousel-link {
@@ -1819,7 +1933,13 @@ body.light .archive-img {
     transition: ease-in 0.3s;
   }
 }
+/* Same gilded-glass material as the button system (identical tokens,
+   identical blur/gloss recipe) but rounded as a rectangle rather than a
+   pill — these are square category tiles, not oblong CTAs, so a full
+   999px radius would just turn them into circles. One consistent
+   radius value (--tile-radius) keeps every tile matching exactly. */
 .archive-category-link {
+  --tile-radius: 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1828,9 +1948,20 @@ body.light .archive-img {
   width: min(100%, 260px);
   aspect-ratio: 1 / 1;
   padding: 1.1rem;
-  border: 1.5px solid var(--gold-border-card);
-  border-radius: 0;
-  background: var(--secondary-black-colour);
+  border: 1px solid var(--gold-border-card);
+  border-radius: var(--tile-radius);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.28),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.32),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.32),
+    0 8px 20px rgba(var(--ink-rgb), 0.3);
   text-decoration: none;
   color: var(--primary-gold-colour);
   font-family: var(--heading-font);
@@ -1838,15 +1969,31 @@ body.light .archive-img {
   letter-spacing: 0.12em;
   transition:
     transform 0.2s ease,
+    background-image 0.2s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .archive-category-link {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
 }
 
 .archive-category-link:hover,
 .archive-category-link:focus-visible {
   transform: translateY(-2px);
-  border-color: rgba(255, 215, 120, 1);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.4),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.5),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.28),
+    0 12px 26px rgba(var(--ink-rgb), 0.32),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.35);
   outline: none;
 }
 
@@ -1921,7 +2068,7 @@ body.light .archive-img {
   max-width: 720px;
   width: 100%;
   padding: 3rem;
-  border: 1px solid var(--gold-border-card);
+  border: 1px solid transparent;
   background: linear-gradient(
     145deg,
     rgba(10, 10, 11, 0.96),
@@ -1942,7 +2089,7 @@ body.light .archive-img {
   margin-top: 1.25rem;
   color: var(--primary-gold-colour);
   text-decoration: none;
-  border-bottom: 1px solid var(--gold-border-card);
+  border-bottom: 1px solid transparent;
 }
 .archive-back-link:hover {
   color: #fff;
@@ -2005,7 +2152,7 @@ body.light .archive-img {
   grid-template-columns: 2fr 1fr;
   gap: 2rem;
   align-items: center;
-  border: 1px solid var(--gold-border-card);
+  border: 1px solid transparent;
   background: var(--secondary-black-colour);
   padding: 1.5rem;
 }
@@ -2034,7 +2181,7 @@ body.light .archive-img {
   width: min(100%, 250px);
   aspect-ratio: 1;
   object-fit: cover;
-  border: 1px solid var(--gold-border-card);
+  border: 1px solid transparent;
   background-color: rgba(255, 255, 255, 0.05);
 }
 /*==================== Notes ====================*/
@@ -2065,7 +2212,7 @@ body.light .archive-img {
   min-height: 100%;
   gap: 1.15rem;
   padding: 1.4rem;
-  border: 1px solid var(--gold-border-card);
+  border: 1px solid transparent;
   background: linear-gradient(
     180deg,
     rgba(17, 16, 16, 0.94),
@@ -2180,7 +2327,7 @@ body.light .archive-img {
   background:
     linear-gradient(180deg, rgba(12, 12, 13, 0.98), rgba(18, 16, 16, 0.98)),
     var(--secondary-black-colour);
-  border-left: 2px solid var(--gold-border-card);
+  border-left: 2px solid transparent;
   transform: translateX(100%);
   transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -2449,7 +2596,7 @@ body.light .notes-panel-close:hover {
   gap: 0.75rem;
   min-width: 0;
   padding: 0.7rem 1.1rem;
-  border: 1px solid var(--gold-border-card);
+  border: 1px solid transparent;
   background: var(--secondary-black-colour);
   width: 100%;
   box-sizing: border-box;
@@ -2628,7 +2775,7 @@ body.light .notes-panel-close:hover {
     object-fit: cover;
     width: 100%;
     display: block;
-    border: 2px solid var(--gold-border-card);
+    border: 2px solid transparent;
   }
 }
 .effects-card-info {
@@ -2657,7 +2804,7 @@ body.light .notes-panel-close:hover {
 .gallery-item {
   width: 100%;
   min-width: 0;
-  border: 2px solid var(--gold-border-card);
+  border: 2px solid transparent;
   border-radius: 0;
   overflow: hidden;
   background: linear-gradient(
@@ -2920,7 +3067,7 @@ button:disabled {
   width: min(1100px, 100%);
   max-height: calc(100vh - 4rem);
   padding: 1rem;
-  border: 1px solid var(--gold-border-card);
+  border: 1px solid transparent;
   border-radius: 24px;
   background: linear-gradient(rgba(18, 16, 18, 0.96), rgba(8, 8, 9, 0.98));
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
@@ -2933,7 +3080,7 @@ button:disabled {
   right: 0.75rem;
   width: 2.75rem;
   height: 2.75rem;
-  border: 1px solid var(--gold-border-card);
+  border: 1px solid transparent;
   border-radius: 0;
   background: rgba(12, 12, 13, 0.82);
   color: var(--primary-ivory-colour);
@@ -3050,6 +3197,11 @@ body.modal-open {
 
 .footer-title h3 {
   margin: 0;
+  /* The global heading underline was removed everywhere else on the
+     site — footer (and navbar) headings are the one deliberate
+     exception, kept here since the underline no longer comes free from
+     the base h1–h4 rule. */
+  text-decoration-line: underline;
 }
 
 .footer-navigation {
@@ -3073,6 +3225,7 @@ body.modal-open {
 .footer-navigation h4,
 .footer-contact h4 {
   margin: 0 0 0.75rem;
+  text-decoration-line: underline;
 }
 
 .footer-navigation ul,
@@ -3121,81 +3274,62 @@ body.modal-open {
   border-top-right-radius: 50%;
 }
 /*==================== Artwork Gallery Frame ==================== */
-/* Every real artwork carousel across the site (Featured Artworks on the
-   homepage, Portfolio Vaults on the archive page, and the
-   Traditional/Digital/Cyborg/Dreams/Dreamers galleries) gets the same
-   exhibition frame: a secondary-gold outline with generous matting between
-   the frame and the artwork. No background fill under that mat — it stays
-   transparent so the page's own dark surface shows through instead of a
-   flat black box, which is what kept reading as cheap "framing" rather
-   than an actual gallery mat. */
+/* Featured Artworks (homepage) and Portfolio Vaults (archive page) share
+   the same gilded-glass, rounded-rectangle "option card" language as the
+   Chronological Archive tiles — same tokens, same blur/gloss recipe.
+   Hover uses a scale + glow rather than the tiles' translateY lift —
+   .car-window clips overflow so the carousel can slide, and a vertical
+   lift would push the card's top edge past that clipped boundary and
+   make it appear to vanish mid-hover. */
 #featured .car-item,
 #portfolio-vaults .car-item {
-  background-color: transparent;
-  border: 2px solid var(--secondary-gold-colour);
+  --tile-radius: 28px;
+  border: 1px solid var(--gold-border-card);
+  border-radius: var(--tile-radius);
   padding: clamp(1.1rem, 2.6vw, 2.1rem);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.28),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.32),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.32),
+    0 8px 20px rgba(var(--ink-rgb), 0.3);
   transform-origin: 50% 50%;
   transition:
+    background-image 0.25s ease,
     border-color 0.25s ease,
     box-shadow 0.25s ease,
     transform 0.25s ease;
-  animation: frame-breathe 5.5s ease-in-out infinite;
-  will-change: transform, box-shadow;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  #featured .car-item,
+  #portfolio-vaults .car-item {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
 }
 
 #featured .car-item:hover,
-#portfolio-vaults .car-item:hover,
 #featured .car-item:focus-within,
+#portfolio-vaults .car-item:hover,
 #portfolio-vaults .car-item:focus-within {
-  border-color: rgba(255, 215, 120, 1);
-  animation: frame-awaken 1.8s cubic-bezier(0.45, 0, 0.2, 1) 1 forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  #featured .car-item,
-  #portfolio-vaults .car-item {
-    animation: none;
-  }
-}
-
-/* Same quiet "signature glyph" family of motion used on the icon
-   medallions elsewhere on the site, adapted to a rectangular gallery
-   frame: a slow devotional breath at rest, and on hover/focus a single
-   deep inhale — the frame lifts and a soft gold light gathers along its
-   edge — before easing back. Kept understated so it reads as a gallery
-   piece responding to attention, not a distracting gimmick. */
-@keyframes frame-breathe {
-  0%,
-  100% {
-    transform: scale(1);
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
-  }
-  50% {
-    transform: scale(1.006);
-    box-shadow:
-      0 14px 30px rgba(0, 0, 0, 0.35),
-      0 0 16px 1px rgba(210, 164, 37, 0.12);
-  }
-}
-
-/* No vertical lift here on purpose: .car-window clips overflow so the
-   carousel can slide, and translateY would push the card's top edge
-   past that clipped boundary, making it appear to vanish mid-hover.
-   Scale + glow read as the same "awaken" gesture without that clipping. */
-@keyframes frame-awaken {
-  0%,
-  100% {
-    transform: scale(1);
-    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.45);
-  }
-  55% {
-    transform: scale(1.015);
-    box-shadow:
-      0 22px 44px rgba(0, 0, 0, 0.5),
-      0 0 28px 4px rgba(210, 164, 37, 0.32),
-      0 0 55px 10px rgba(210, 164, 37, 0.14);
-  }
+  transform: scale(1.02);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.4),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.5),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.28),
+    0 14px 30px rgba(var(--ink-rgb), 0.35),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.35);
 }
 
 #featured .car-item img,
@@ -3244,8 +3378,6 @@ body.modal-open {
 #cyborg-vault .carousel-track .image-grid img {
   border-radius: 50%;
   border: 3px solid var(--secondary-gold-colour);
-  outline: 1px solid var(--gold-border-card);
-  outline-offset: 4px;
   box-shadow:
     0 0 0 1px rgba(210, 164, 37, 0.25),
     inset 0 0 12px rgba(210, 164, 37, 0.25),
@@ -3451,7 +3583,7 @@ body.modal-open {
   .background-section {
     border-left: none;
     border-right: none;
-    border-top: 1px solid rgba(143, 122, 62, 0.35);
+    border-top: 1px solid transparent;
     padding-top: 2.5rem;
     padding-inline: 0.5rem;
     /* Icon/heading/body gap can shrink from the desktop 3rem — a phone
@@ -3665,9 +3797,9 @@ body.modal-open {
      dividers to columns (odd = left column, even = right column) and
      add a matching horizontal hairline between the two rows instead. */
   .background-section {
-    border-top: 1px solid rgba(143, 122, 62, 0.35);
-    border-left: 1px solid rgba(143, 122, 62, 0.35);
-    border-right: 1px solid rgba(143, 122, 62, 0.35);
+    border-top: 1px solid transparent;
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
   }
   .background-section:nth-child(odd) {
     border-left: none;
