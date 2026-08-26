@@ -980,13 +980,40 @@ body.light .theme-icon-moon {
    plus a soft gold wash bleeding off the edge, so the footer's top and
    the navbar's bottom below read as the two strong anchors bracketing
    every page, distinctly stronger than the hairlines dividing content
-   in between. */
+   in between. Same gilded-glass "iOS26" material as the navbar and every
+   card/button on the site now sits behind that anchor line — identical
+   tokens and blur/gloss recipe, edge-to-edge with no border-radius since
+   this is a full-bleed bar like the navbar, not a floating card. */
 #footer {
   border-top: 2px solid var(--gold-border-strong);
-  box-shadow: 0 -18px 30px -22px rgba(210, 164, 37, 0.35);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.2),
+    rgba(var(--surface-rgb), 0.12)
+  );
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.2),
+    0 -18px 30px -22px rgba(210, 164, 37, 0.35);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  #footer {
+    background-color: rgba(var(--surface-rgb), 0.94);
+  }
 }
 /*==================== Nav ====================*/
 
+/* Same gilded-glass "iOS26" material as every card/button on the site —
+   identical tokens, blur/gloss recipe — applied edge-to-edge with no
+   border-radius (a fixed, full-bleed bar, the way iOS's own translucent
+   toolbars stay square until they float free of the edge) so the page
+   content blurs and tints gold as it scrolls underneath. The strong gold
+   bottom border/glow stays, unchanged, as the anchor the .navbar-brand
+   comment above already describes — only the fill behind it goes from a
+   flat, opaque gradient to frosted glass. */
 .navbar {
   width: 100%;
   position: fixed;
@@ -994,16 +1021,24 @@ body.light .theme-icon-moon {
   left: 0;
   z-index: 1000;
   border-bottom: 2px solid var(--gold-border-strong);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.24),
+    rgba(var(--surface-rgb), 0.14)
+  );
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
   box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.28),
+    inset 0 -1px 0 rgba(var(--highlight-rgb), 0.22),
+    0 8px 24px rgba(var(--ink-rgb), 0.3),
     0 18px 30px -22px rgba(210, 164, 37, 0.35);
-  background:
-    linear-gradient(180deg, rgba(12, 12, 13, 0.98), rgba(18, 16, 16, 0.98)),
-    var(--secondary-black-colour);
 }
 
-body.light .navbar {
-  background: var(--secondary-black-colour);
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .navbar {
+    background-color: rgba(var(--surface-rgb), 0.94);
+  }
 }
 
 .navbar .container-fluid {
@@ -1157,12 +1192,15 @@ body.light .navbar {
    bounding box, past where an inscribed ellipse cuts off, so that radius
    was silently clipping their tips. The mark no longer has a halo to
    bloom from (see glyph-breathe-mark above), so there's no reason left
-   to clip it into a circle: this is now a plain rectangular fill in the
-   same dark surface color as the rest of the chapel
-   (--secondary-black-colour), which reads just as seamless against the
-   navbar/footer background without cropping any artwork. */
+   to clip it into a circle.
+   This used to carry an opaque --secondary-black-colour fill to seam
+   seamlessly into the navbar/footer's old flat, opaque background — now
+   that both are frosted gilded glass (see .navbar / #footer), an opaque
+   square behind the mark reads as a black patch punched through the
+   glass. Transparent lets the mark sit on the glass like every other
+   glyph on the site. */
 .logo-dark {
-  background-color: var(--secondary-black-colour);
+  background-color: transparent;
 }
 
 body.light .logo-dark {
@@ -1527,30 +1565,68 @@ body.light .nav-link:focus-visible::after {
   border-radius: 0;
 }
 
+/* Same gilded-glass circular icon-button as .theme-toggle-btn — identical
+   tokens, blur/gloss recipe and round shape — so the manifesto popup's
+   exit button reads as the same "iOS26" material as every other control
+   on the site instead of a flat dark square. */
 .popup-close {
   position: absolute;
   top: 1rem;
   right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 2.8rem;
   height: 2.8rem;
-  border: 1px solid transparent;
-  border-radius: 0;
-  background: rgba(10, 10, 11, 0.55);
-  color: var(--primary-gold-colour);
+  min-width: 2.8rem;
+  min-height: 2.8rem;
+  padding: 0;
+  border: 1px solid var(--gold-border-card);
+  border-radius: 50%;
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.3),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  color: var(--secondary-gold-colour);
   font-size: 1.15rem;
   font-weight: 700;
   line-height: 1;
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.35),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.3);
   cursor:
     var(--gothic-cursor-url) 16 5,
     pointer;
-  transition: all 0.2s ease;
+  transition:
+    background-image 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .popup-close {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
 }
 
 .popup-close:hover,
 .popup-close:focus-visible {
-  background: rgba(198, 168, 90, 0.12);
-  border-color: rgba(255, 215, 120, 1);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.42),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
   transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.5),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.26),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.35);
   outline: 2px solid rgba(255, 215, 120, 0.9);
   outline-offset: 2px;
 }
@@ -1597,20 +1673,6 @@ body.light .popup-container p::-webkit-scrollbar-track {
 
 body.light .popup-container p::-webkit-scrollbar-thumb {
   background: rgba(90, 15, 20, 0.7);
-}
-
-body.light .popup-close {
-  background: rgba(232, 228, 216, 0.65);
-  border-color: rgba(90, 15, 20, 0.5);
-  color: var(--primary-black-colour);
-}
-
-body.light .popup-close:hover,
-body.light .popup-close:focus-visible {
-  background: rgba(90, 15, 20, 0.12);
-  border-color: var(--secondary-red-colour);
-  color: var(--secondary-red-colour);
-  outline-color: var(--secondary-red-colour);
 }
 
 .popup-close:focus-visible,
@@ -1840,6 +1902,12 @@ body.light .popup-close:focus-visible {
   align-items: center;
   width: 100vw;
 }
+/* Personal / Inspirations / Motion Vault: same gilded-glass material as
+   the Featured Artworks / Portfolio Vaults cards (#featured .car-item,
+   #portfolio-vaults .car-item) — identical tokens, blur/gloss recipe and
+   --tile-radius — so the three vault sections read as one transparent,
+   frosted-glass "Liquid Glass" card each, stacked one after another,
+   instead of the old solid near-black panel. */
 .archive-personal {
   /* Override the generic `.section { width: 100% }` with `auto`: with
      width fixed at 100% *and* both left/right margins set below, the
@@ -1848,20 +1916,60 @@ body.light .popup-close:focus-visible {
      the container's right edge — exactly the "margin only on the
      left" bug this fixes. `auto` lets the browser derive the width
      from the container minus both margins, as intended. */
+  --tile-radius: 28px;
   width: auto;
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   align-items: center;
   gap: clamp(2rem, 4vw, 4rem);
-  margin: 0 clamp(1.25rem, 4vw, 4rem);
-  background: linear-gradient(
-    180deg,
-    rgba(10, 10, 11, 0.9),
-    rgba(18, 18, 20, 0.96)
+  margin: 0 clamp(1.25rem, 4vw, 4rem) clamp(2rem, 4vw, 3.5rem);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.28),
+    rgba(var(--surface-rgb), 0.16)
   );
-  border: 1px solid transparent;
-  padding: clamp(2rem, 3vw, 3.25rem);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid var(--gold-border-card);
+  border-radius: var(--tile-radius);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.32),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.32),
+    0 8px 20px rgba(var(--ink-rgb), 0.3);
+  /* Right side is deliberately tighter than the other three: the media
+     column's image sits inside this padding too, and a full 3.25rem gap
+     on that side reads as an awkward gutter next to the card's own
+     border. A decent-but-smaller inset lets the photo sit close to the
+     right edge without touching it. */
+  padding: clamp(2rem, 3vw, 3.25rem) clamp(0.85rem, 1.6vw, 1.35rem)
+    clamp(2rem, 3vw, 3.25rem) clamp(2rem, 3vw, 3.25rem);
   text-align: left;
+  transition:
+    background-image 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .archive-personal {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
+}
+
+.archive-personal:hover,
+.archive-personal:focus-within {
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.4),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.5),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.28),
+    0 14px 30px rgba(var(--ink-rgb), 0.35),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.35);
 }
 
 .archive-copy {
@@ -1875,6 +1983,11 @@ body.light .popup-close:focus-visible {
 
 .archive-copy p {
   margin: 0;
+  /* Extra breathing room under the heading specifically, on top of
+     .archive-copy's own 1.4rem gap between every child — so the
+     heading-to-paragraph gap reads more generous without also pushing
+     the "Read More" link further from the paragraph above it. */
+  margin-top: 0.6rem;
   max-width: 66ch;
   text-align: left;
   line-height: 1.95;
@@ -1885,24 +1998,6 @@ body.light .popup-close:focus-visible {
 .archive-personal .btn {
   align-self: flex-start;
   margin-top: 0.25rem;
-}
-
-/* Light mode: the card is a near-black gradient in dark mode, so it needs
-   its own light card treatment here too — otherwise the heading/body text
-   (which correctly flips to black for light mode) lands on a still-dark
-   card and becomes unreadable. Mirrors the .notes-post light treatment. */
-body.light .archive-personal {
-  background: linear-gradient(
-    180deg,
-    rgba(232, 228, 216, 0.85),
-    rgba(232, 228, 216, 0.65)
-  );
-  border-color: rgba(90, 15, 20, 0.22);
-}
-
-body.light .archive-img {
-  background: rgba(232, 228, 216, 0.4);
-  border-color: rgba(90, 15, 20, 0.3);
 }
 
 .header-left {
@@ -1916,13 +2011,71 @@ body.light .archive-img {
   justify-content: center;
 }
 
-.archive-img {
+/* Vault photos are now clickable, and get the same gilded-glass "iOS26"
+   frame as the Featured Artworks / Portfolio Vaults cards and the
+   Chronological Archive tiles (#featured .car-item, .archive-category-link)
+   — identical tokens, blur/gloss recipe, --tile-radius — so the image
+   itself reads as its own gilded card rather than a plain photo. The
+   frame lives on the link (border, glass fill, radius, shadow) with
+   overflow hidden, and .archive-img simply fills it edge to edge. */
+.archive-media-link {
+  --tile-radius: 28px;
+  display: block;
   width: 100%;
   max-width: 560px;
+  overflow: hidden;
+  border: 1px solid var(--gold-border-card);
+  border-radius: var(--tile-radius);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.28),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.32),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.32),
+    0 8px 20px rgba(var(--ink-rgb), 0.3);
+  cursor:
+    var(--gothic-cursor-url) 16 5,
+    pointer;
+  transition:
+    transform 0.25s ease,
+    background-image 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .archive-media-link {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
+}
+
+.archive-media-link:hover,
+.archive-media-link:focus-visible {
+  transform: translateY(-2px) scale(1.01);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.4),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.5),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.28),
+    0 14px 30px rgba(var(--ink-rgb), 0.35),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.35);
+  outline: none;
+}
+
+.archive-img {
+  display: block;
+  width: 100%;
   height: auto;
   object-fit: cover;
-  border: 1px solid transparent;
-  background: rgba(10, 10, 11, 0.5);
 }
 .carousel-link {
   cursor:
@@ -2590,25 +2743,58 @@ body.light .notes-panel-close:hover {
   margin: 0;
   padding: 0;
 }
+/* Same gilded-glass "iOS26" material as the contact form and the vault
+   cards — identical tokens, blur/gloss recipe — sized down to a compact
+   row-card (--tile-radius: 14px, matching the form's own inputs) so the
+   contact-info directory reads as frosted gold glass too, not just the
+   form beside it. Structure/layout (flex row, gap, grid columns) is
+   untouched — only the surface treatment changes. */
 .contact-icon li {
+  --tile-radius: 14px;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   min-width: 0;
   padding: 0.7rem 1.1rem;
-  border: 1px solid transparent;
-  background: var(--secondary-black-colour);
+  border: 1px solid var(--gold-border-card);
+  border-radius: var(--tile-radius);
+  background-color: rgba(var(--surface-rgb), 0.4);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.18),
+    rgba(var(--surface-rgb), 0.12)
+  );
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.22),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.24);
   width: 100%;
   box-sizing: border-box;
   justify-content: flex-start;
   transition:
+    background-image 0.2s ease,
     border-color 0.2s ease,
-    background 0.2s ease;
+    box-shadow 0.2s ease;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .contact-icon li {
+    background-color: rgba(var(--surface-rgb), 0.85);
+  }
 }
 
 .contact-icon li:has(a):hover {
-  border-color: rgba(255, 215, 120, 0.9);
-  background: rgba(198, 168, 90, 0.08);
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.3),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.4),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.2),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.22);
 }
 
 .contact-icon li img {
@@ -2635,11 +2821,39 @@ body.light .notes-panel-close:hover {
   word-break: break-word;
 }
 
+/* Contact form: same gilded-glass "iOS26" material as the vault cards
+   (.archive-personal / #featured .car-item) wrapped around the whole
+   form — identical tokens, blur/gloss recipe and --tile-radius — with
+   each input/textarea getting its own smaller glass pane so the form
+   reads as frosted gold glass throughout, not just its frame. Layout
+   (grid/gap/columns) is untouched — only the surface treatment changes. */
 .contact-form {
+  --tile-radius: 28px;
   width: 100%;
   color: var(--secondary-gold-colour);
   text-align: left;
   --bs-border-color: var(--gold-border-card);
+  padding: clamp(1.75rem, 3vw, 2.75rem);
+  border: 1px solid var(--gold-border-card);
+  border-radius: var(--tile-radius);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.28),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.32),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.32),
+    0 8px 20px rgba(var(--ink-rgb), 0.3);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .contact-form {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
 }
 
 .contact-form form {
@@ -2657,6 +2871,15 @@ body.light .notes-panel-close:hover {
   position: relative;
 }
 
+.contact-form .form-label {
+  color: var(--secondary-gold-colour);
+  font-family: var(--heading-font);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
 .contact-hint {
   display: none;
   margin-top: 0.5rem;
@@ -2671,8 +2894,56 @@ body.light .notes-panel-close:hover {
 
 .contact-form .form-control,
 .contact-form textarea {
+  --tile-radius: 14px;
   min-height: 3.25rem;
   width: 100%;
+  color: var(--secondary-gold-colour);
+  border: 1px solid var(--gold-border-card);
+  border-radius: var(--tile-radius);
+  background-color: rgba(var(--surface-rgb), 0.4);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.18),
+    rgba(var(--surface-rgb), 0.12)
+  );
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.22),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.24);
+  transition:
+    background-image 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .contact-form .form-control,
+  .contact-form textarea {
+    background-color: rgba(var(--surface-rgb), 0.85);
+  }
+}
+
+.contact-form .form-control::placeholder,
+.contact-form textarea::placeholder {
+  color: var(--secondary-gold-colour);
+  opacity: 0.5;
+}
+
+.contact-form .form-control:focus,
+.contact-form textarea:focus {
+  color: var(--secondary-gold-colour);
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.3),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.4),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.2),
+    0 0 0 3px rgba(var(--highlight-rgb), 0.22);
+  outline: none;
 }
 
 .contact-message {
@@ -2762,28 +3033,148 @@ body.light .notes-panel-close:hover {
   align-items: center;
   width: 100vw;
 }
+/* Aftereffects / Cyborg Vault cards (inside Motion Vault): same
+   gilded-glass "iOS26" treatment as the Archive page's Personal /
+   Inspirations / Motion Vault cards (.archive-personal /
+   .archive-media-link) — identical tokens, blur/gloss recipe and
+   --tile-radius, right padding kept tighter than the other three sides
+   so the photo sits close to the card's right edge, and the photo
+   itself is now a clickable gilded frame linking to its own vault
+   page. */
 .effects-card {
+  --tile-radius: 28px;
   display: grid;
   grid-template-columns: 1fr 3fr;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
+  margin: 0 clamp(1.25rem, 4vw, 4rem) clamp(2rem, 4vw, 3.5rem);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.28),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid var(--gold-border-card);
+  border-radius: var(--tile-radius);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.32),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.32),
+    0 8px 20px rgba(var(--ink-rgb), 0.3);
+  padding: clamp(2rem, 3vw, 3.25rem) clamp(0.85rem, 1.6vw, 1.35rem)
+    clamp(2rem, 3vw, 3.25rem) clamp(2rem, 3vw, 3.25rem);
+  transition:
+    background-image 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
-.effects-card-img {
-  width: 100%;
-  img {
-    aspect-ratio: 9/16;
-    object-fit: cover;
-    width: 100%;
-    display: block;
-    border: 2px solid transparent;
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .effects-card {
+    background-color: rgba(var(--surface-rgb), 0.92);
   }
 }
+
+.effects-card:hover,
+.effects-card:focus-within {
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.4),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.5),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.28),
+    0 14px 30px rgba(var(--ink-rgb), 0.35),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.35);
+}
+
+.effects-card-img {
+  width: 100%;
+}
+
+.effects-media-link {
+  --tile-radius: 22px;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--gold-border-card);
+  border-radius: var(--tile-radius);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.28),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.32),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.32),
+    0 8px 20px rgba(var(--ink-rgb), 0.3);
+  cursor:
+    var(--gothic-cursor-url) 16 5,
+    pointer;
+  transition:
+    transform 0.25s ease,
+    background-image 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .effects-media-link {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
+}
+
+.effects-media-link:hover,
+.effects-media-link:focus-visible {
+  transform: translateY(-2px) scale(1.01);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.4),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.5),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.28),
+    0 14px 30px rgba(var(--ink-rgb), 0.35),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.35);
+  outline: none;
+}
+
+.effects-media-link img {
+  aspect-ratio: 9/16;
+  object-fit: cover;
+  width: 100%;
+  display: block;
+}
+
 .effects-card-info {
   display: flex;
   flex-direction: column;
   text-align: left;
   justify-content: start;
   align-items: start;
+  gap: 1rem;
+}
+
+/* The sitewide `p { margin-inline: auto }` (for centered body copy
+   elsewhere) was centering this paragraph inside its own shrink-to-fit
+   box, reading as a huge left gap next to the now left-aligned heading.
+   Zeroing it here — the same override .archive-copy p already uses —
+   makes the paragraph a normal, plainly left-positioned block that
+   starts right under the heading. */
+.effects-card-info p {
+  margin: 0;
+  /* Extra breathing room under the heading specifically, on top of
+     .effects-card-info's own 1rem gap between every child. */
+  margin-top: 0.6rem;
+  max-width: 66ch;
 }
 /*==================== Cyborg Vault ====================*/
 .cyborg-image {
@@ -3074,18 +3465,67 @@ button:disabled {
   overflow-y: auto;
 }
 
+/* Same gilded-glass circular icon-button as .theme-toggle-btn / .popup-close
+   — identical blur/gloss recipe and round shape. Unlike those two, the
+   colors here are literal rather than theme tokens: this dialog is a
+   deliberately dark stage in both themes (see the body.light note below),
+   so the button's glass needs to stay dark-surface gold-glass too, not
+   flip to parchment the way --surface-rgb does in body.light. */
 .image-modal-close {
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 2.75rem;
   height: 2.75rem;
-  border: 1px solid transparent;
-  border-radius: 0;
-  background: rgba(12, 12, 13, 0.82);
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--gold-border-card);
+  border-radius: 50%;
+  background-color: rgba(26, 26, 29, 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.3),
+    rgba(26, 26, 29, 0.16)
+  );
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
   color: var(--primary-ivory-colour);
   font-size: 1.35rem;
   line-height: 1;
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.35),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.3);
+  transition:
+    background-image 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .image-modal-close {
+    background-color: rgba(26, 26, 29, 0.92);
+  }
+}
+
+.image-modal-close:hover,
+.image-modal-close:focus-visible {
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.42),
+    rgba(26, 26, 29, 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.5),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.26),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.35);
+  outline: none;
 }
 
 .image-modal-figure {
@@ -3696,7 +4136,7 @@ body.modal-open {
     display: grid;
     grid-template-columns: 1fr;
     align-items: center;
-    margin: 0rem;
+    margin: 0 1rem 2rem;
     padding-top: 3rem;
   }
 
