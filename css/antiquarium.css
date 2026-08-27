@@ -53,39 +53,63 @@ body.light .antiquarium-eyebrow {
   padding-top: 1.5rem;
 }
 
-/* A gilt museum frame around the floating archive's stage: a slim
-   double gold border plus a soft outer glow, standing proud of the
+/* Same gilded-glass "iOS26" material as every other card/frame on the
+   site (.archive-personal, #featured .car-item, .notes-post) — identical
+   tokens, blur/gloss recipe and rounded corners — standing proud of the
    page on its own outer margin (see the media queries below) so the
-   frame reads as an object the installation sits inside. No inner
+   frame still reads as an object the installation sits inside. No inner
    padding, on purpose — the canvas fills the frame right up to the
-   border. Padding here used to leave a visible ring of the frame's own
-   --secondary-black-colour between the gold edge and the scene's own
-   (slightly different, near-black) background — read as a flat grey
-   gap rather than part of either the frame or the installation. */
+   border; `overflow: hidden` clips it to the frame's own rounded
+   corners, so the frosted glass shows through only in the curved sliver
+   at each corner and along the border itself, exactly like every other
+   rounded media frame on the site. Single shared element, so this one
+   rule covers both installations (THE FLOATING ARCHIVE and Cartography
+   of Memory) — whichever is active sits inside the same frame. */
 .antiquarium-stage-frame {
   position: relative;
-  width: min(1600px, 96vw);
+  --tile-radius: 28px;
+  /* Widened side gutter (was 96vw, nearly edge-to-edge): a visitor
+     scrolling by click-dragging beside the stage — or just wanting to
+     glance past it — needs real room outside the canvas's own drag-to-
+     orbit/pinch-to-zoom input capture. 90vw leaves a consistently
+     comfortable margin at any width up to the 1500px cap, and grows
+     further beyond that automatically as the viewport widens past it. */
+  width: min(1500px, 90vw);
   /* Centered on both axes within the exhibition section, with a real
      (matching) gap above and below the frame — not just the leftover
      space flow happens to leave — so the archive reads as an object
      floating in its own bounded territory, not one pinned to the top
      of the section. */
   margin: clamp(1.25rem, 4vh, 3rem) auto;
-  height: min(78vh, calc(96vw * 9 / 16));
+  height: min(78vh, calc(90vw * 9 / 16));
   min-height: 420px;
   max-height: 860px;
-  /* Thicker, square-cornered gold edge plus one inset line standing a
-     hair's width inside it — reads as a plain carved gothic/medieval
-     frame (a solid band, a groove, done) rather than an ornamental one.
-     No radius: hard corners are what makes it read as a frame instead
-     of a rounded UI card. */
-  border: 4px solid rgba(255, 215, 120, 0.8);
-  border-radius: 0;
+  /* Thicker and a stronger gold than the hairline `--gold-border-card`
+     every other gilded card uses — this frame is the page's one central
+     object, not a card in a list, so it earns a more distinguishable
+     edge that still reads as the same gilded-glass material, just
+     turned up to stand on its own. */
+  border: 3px solid var(--gold-border-strong);
+  border-radius: var(--tile-radius);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.28),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
   box-shadow:
-    inset 0 0 0 3px rgba(10, 10, 11, 0.9),
-    inset 0 0 0 4px rgba(255, 215, 120, 0.4),
-    0 18px 48px rgba(0, 0, 0, 0.5);
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.32),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.32),
+    0 8px 20px rgba(var(--ink-rgb), 0.3);
   overflow: hidden;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .antiquarium-stage-frame {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
 }
 
 /* Dynamic-viewport height where supported (dvh) so the stage doesn't get
@@ -95,7 +119,7 @@ body.light .antiquarium-eyebrow {
    value above still applies everywhere this isn't supported. */
 @supports (height: 100dvh) {
   .antiquarium-stage-frame {
-    height: min(78dvh, calc(96vw * 9 / 16));
+    height: min(78dvh, calc(90vw * 9 / 16));
   }
 }
 
@@ -159,11 +183,14 @@ body.light .antiquarium-eyebrow {
 /* Picks up the site's shared button look (button, .btn, .navbar-toggler
    in style.css) — same gold border, fill, and hover/active states as
    every other button on January8th — just repositioned to float over
-   the stage, sized down to fit that corner, and with no border-radius. */
+   the stage, sized down to fit that corner. Inset 1.5rem, not 1rem: the
+   frame itself is now rounded (--tile-radius: 28px) with overflow
+   hidden, and a 1rem inset alone would let the button's own corner
+   creep into — and get clipped by — that curve. */
 .antiquarium-reset-button {
   position: absolute;
-  right: 1rem;
-  top: 1rem;
+  right: 1.5rem;
+  top: 1.5rem;
   z-index: 4;
   /* 44px is the widely-used minimum comfortable touch target (WCAG 2.5.5
      / Apple & Material guidance) — kept even at the smaller font size
@@ -180,8 +207,8 @@ body.light .antiquarium-eyebrow {
 
 @media (max-width: 700px) {
   .antiquarium-reset-button {
-    right: 0.6rem;
-    top: 0.6rem;
+    right: 1.1rem;
+    top: 1.1rem;
     font-size: 0.68rem;
     padding: 0.6rem 0.75rem;
   }
@@ -314,14 +341,38 @@ body.light .antiquarium-inspector-description {
   }
 }
 
-/* ---- Fallback (no WebGL / graceful degrade) ------------------------ */
+/* ---- Fallback (no WebGL / graceful degrade) ------------------------
+   Sits inside the same gilded-glass .antiquarium-stage-frame as the
+   canvas it replaces, so it picks up the same rounded, frosted material
+   rather than reading as a flat black box floating inside a glass
+   frame. Built from literal dark-surface values (not the theme-flipping
+   --surface-rgb token others on the site use) since — like the stage
+   frame's own scene and the image lightbox — this stays a dark panel in
+   both themes on purpose; see the body.light text override below. */
 .antiquarium-fallback {
   width: min(1180px, 100%);
   margin-inline: auto;
   padding: 3.5rem 2rem;
   border: 1px solid var(--gold-border-card);
-  background: var(--primary-black-colour);
+  border-radius: var(--tile-radius, 28px);
+  background-color: rgba(26, 26, 29, 0.6);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.24),
+    rgba(26, 26, 29, 0.14)
+  );
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.28),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.3);
   text-align: center;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .antiquarium-fallback {
+    background-color: rgba(26, 26, 29, 0.92);
+  }
 }
 
 .antiquarium-fallback p {
@@ -356,15 +407,22 @@ body.light .antiquarium-fallback p {
   margin-inline: auto;
 }
 
+/* Overrides the sitewide button's default 999px pill radius: that shape
+   suits a short single-line label, but this button stacks a title and a
+   status line, so a full pill reads oddly with two centered lines
+   inside it. A gentler rounded-rect radius (matching the scale of the
+   site's other compact gilded tiles) plus generous inner padding and
+   centered text reads as a proper selectable tile instead. */
 .antiquarium-selector-item {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 0.35rem;
+  align-items: center;
+  gap: 0.4rem;
   min-width: 15rem;
   min-height: unset;
-  text-align: left;
-  padding: 1rem 1.25rem;
+  text-align: center;
+  padding: 1.35rem 1.75rem;
+  border-radius: 18px;
 }
 
 .antiquarium-selector-title {

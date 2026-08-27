@@ -668,8 +668,14 @@ if (typeof document !== "undefined") {
     return normalized || "/";
   }
 
-  function syncNavbarActiveState() {
-    const navLinks = document.querySelectorAll(".navbar .nav-link");
+  // Shared by the navbar's .nav-link list and the footer's NAVIGATION
+  // column — same "which link matches the current page" logic, same
+  // active/aria-current bookkeeping, just pointed at a different list
+  // each time so both stay in sync with each other automatically
+  // instead of the footer relying on a hardcoded (and easily stale)
+  // aria-current in the markup.
+  function syncActiveNavState(linkSelector) {
+    const navLinks = document.querySelectorAll(linkSelector);
 
     if (!navLinks.length) {
       return;
@@ -720,7 +726,7 @@ if (typeof document !== "undefined") {
     });
 
     if (!activeLink) {
-      activeLink = document.querySelector('.navbar .nav-link[href="/"]');
+      activeLink = document.querySelector(`${linkSelector}[href="/"]`);
     }
 
     if (activeLink) {
@@ -741,7 +747,133 @@ if (typeof document !== "undefined") {
     });
   }
 
-  syncNavbarActiveState();
+  syncActiveNavState(".navbar .nav-link");
+  syncActiveNavState(".footer-navigation a");
+
+  // The sliding gilded-glass pill behind the navbar / footer NAVIGATION /
+  // footer CONTACT links (see .nav-pill-indicator in style.css). One
+  // indicator element per list, moved with plain top/left/width/height so
+  // CSS's own `transition` on those properties does the actual gliding —
+  // this just measures the target link's box and hands the numbers over.
+  function initializeNavPillIndicator(containerSelector) {
+    const container = document.querySelector(containerSelector);
+
+    if (!container) {
+      return;
+    }
+
+    const links = Array.from(container.querySelectorAll(":scope > li > a"));
+
+    if (!links.length) {
+      return;
+    }
+
+    const indicator = document.createElement("span");
+    indicator.className = "nav-pill-indicator";
+    indicator.setAttribute("aria-hidden", "true");
+    container.insertBefore(indicator, container.firstChild);
+
+    function getActiveLink() {
+      return container.querySelector(
+        ":scope > li > a.active, :scope > li > a[aria-current='page']",
+      );
+    }
+
+    function placeIndicator(link, options) {
+      const opts = options || {};
+
+      if (!link) {
+        indicator.classList.remove("is-visible", "is-current", "is-hovering");
+        return;
+      }
+
+      if (opts.instant) {
+        indicator.classList.add("nav-pill-indicator--instant");
+      }
+
+      indicator.style.top = `${link.offsetTop}px`;
+      indicator.style.left = `${link.offsetLeft}px`;
+      indicator.style.width = `${link.offsetWidth}px`;
+      indicator.style.height = `${link.offsetHeight}px`;
+      indicator.classList.add("is-visible");
+      indicator.classList.toggle("is-current", Boolean(opts.current));
+      indicator.classList.toggle("is-hovering", Boolean(opts.hovering));
+
+      if (opts.instant) {
+        // Force layout now, synchronously, so the instant jump actually
+        // lands before the class is removed and transitions resume on
+        // the very next (real) move.
+        void indicator.offsetHeight;
+        indicator.classList.remove("nav-pill-indicator--instant");
+      }
+    }
+
+    function settleOnActive(options) {
+      const activeLink = getActiveLink();
+      placeIndicator(activeLink, { current: true, ...(options || {}) });
+    }
+
+    links.forEach(function (link) {
+      link.addEventListener("mouseenter", function () {
+        placeIndicator(link, {
+          current: link === getActiveLink(),
+          hovering: link !== getActiveLink(),
+        });
+      });
+
+      link.addEventListener("focus", function () {
+        placeIndicator(link, {
+          current: link === getActiveLink(),
+          hovering: link !== getActiveLink(),
+        });
+      });
+
+      // The "chamber" page-transition (initializePageTransitions) holds
+      // the current page for ~650ms before actually navigating away, so
+      // sliding the pill onto the clicked link here has real time to
+      // play out rather than being cut off mid-flight by navigation.
+      link.addEventListener("click", function () {
+        placeIndicator(link, { current: true, hovering: false });
+      });
+    });
+
+    container.addEventListener("mouseleave", function () {
+      settleOnActive();
+    });
+
+    container.addEventListener("focusout", function (event) {
+      const next = event.relatedTarget;
+
+      if (next && container.contains(next)) {
+        return;
+      }
+
+      settleOnActive();
+    });
+
+    // Initial placement lands on the current page instantly — no slide-in
+    // from the corner of the list on first paint.
+    settleOnActive({ instant: true });
+
+    // A mobile hamburger menu starts collapsed (display: none), so the
+    // initial placement above measured a zero-size box. Recompute once
+    // Bootstrap finishes expanding it.
+    const collapseAncestor = container.closest(".collapse");
+
+    if (collapseAncestor) {
+      collapseAncestor.addEventListener("shown.bs.collapse", function () {
+        settleOnActive({ instant: true });
+      });
+    }
+
+    window.addEventListener("resize", function () {
+      settleOnActive({ instant: true });
+    });
+  }
+
+  initializeNavPillIndicator(".navbar .navbar-nav");
+  initializeNavPillIndicator(".footer-navigation ul");
+  initializeNavPillIndicator(".footer-contact ul");
 
   function optimizeImageLoading() {
     const images = document.querySelectorAll("img");
@@ -1043,26 +1175,6 @@ if (typeof document !== "undefined") {
     };
   }
 
-  function normalizeNotesGridPosts(posts, targetCount) {
-    if (!Array.isArray(posts) || posts.length === 0) {
-      return [];
-    }
-
-    if (posts.length >= targetCount) {
-      return posts.slice(0, targetCount);
-    }
-
-    const normalized = posts.slice();
-    let index = 0;
-
-    while (normalized.length < targetCount) {
-      normalized.push({ ...posts[index % posts.length] });
-      index += 1;
-    }
-
-    return normalized;
-  }
-
   function sortNotesNewestFirst(posts) {
     return [...posts].sort(function (a, b) {
       const dateA = new Date(a.date).getTime();
@@ -1103,8 +1215,45 @@ if (typeof document !== "undefined") {
     }
   });
 
+  const NOTES_PAGE_SIZE = 3;
+
+  // Reads ?page=N from the current URL so a direct link/bookmark/back-
+  // button lands on the same page of notes instead of always resetting
+  // to page 1.
+  function getNotesPageFromQuery() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const page = parseInt(params.get("page"), 10);
+      return Number.isFinite(page) && page > 0 ? page : 1;
+    } catch (error) {
+      return 1;
+    }
+  }
+
+  // Reflects the active page in the URL (pushState, not replace) so the
+  // browser's own back/forward buttons step through pages the visitor
+  // already viewed, and a page can be shared/bookmarked directly —
+  // without ever leaving/reloading the notes page itself.
+  function setNotesPageQuery(page) {
+    try {
+      const url = new URL(window.location.href);
+
+      if (page <= 1) {
+        url.searchParams.delete("page");
+      } else {
+        url.searchParams.set("page", String(page));
+      }
+
+      window.history.pushState({ notesPage: page }, "", url);
+    } catch (error) {
+      // History/URL API unsupported (or blocked) — pagination still
+      // works via clicks, it just won't be reflected in the address bar.
+    }
+  }
+
   async function loadNotesMarkdownPosts() {
     const notesList = document.querySelector("#notes-list");
+    const pagination = document.querySelector("#notes-pagination");
 
     if (!notesList) {
       return;
@@ -1130,44 +1279,150 @@ if (typeof document !== "undefined") {
       }
 
       const sortedPosts = sortNotesNewestFirst(posts);
-      const displayPosts = normalizeNotesGridPosts(sortedPosts, 9);
-
-      notesList.innerHTML = "";
+      const totalPages = Math.max(
+        1,
+        Math.ceil(sortedPosts.length / NOTES_PAGE_SIZE),
+      );
       const postCache = new Map();
+      let currentPage = Math.min(
+        Math.max(getNotesPageFromQuery(), 1),
+        totalPages,
+      );
 
-      displayPosts.forEach(function (post) {
-        const article = createNotesPostElement(post);
-        const button = article.querySelector(".info-btn");
+      function renderNotesPagination() {
+        if (!pagination) {
+          return;
+        }
 
-        button.addEventListener("click", async function () {
-          button.disabled = true;
-          button.textContent = "Loading...";
+        pagination.innerHTML = "";
 
-          try {
-            let renderedHtml = postCache.get(post.file);
+        // A single page needs no page-number chrome at all.
+        if (totalPages <= 1) {
+          return;
+        }
 
-            if (!renderedHtml) {
-              const postResponse = await fetch(`../posts/${post.file}`);
+        const fragment = document.createDocumentFragment();
 
-              if (!postResponse.ok) {
-                throw new Error(`Failed to load post (${postResponse.status})`);
-              }
+        const makePageControl = function (label, targetPage, options) {
+          const opts = options || {};
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = opts.className || "btn notes-page-btn";
+          button.textContent = label;
 
-              const markdown = await postResponse.text();
-              renderedHtml = marked.parse(markdown);
-              postCache.set(post.file, renderedHtml);
+          if (opts.disabled) {
+            button.disabled = true;
+          }
+
+          if (opts.current) {
+            button.classList.add("is-active");
+            button.setAttribute("aria-current", "page");
+          }
+
+          if (opts.ariaLabel) {
+            button.setAttribute("aria-label", opts.ariaLabel);
+          }
+
+          button.addEventListener("click", function () {
+            if (opts.disabled || targetPage === currentPage) {
+              return;
             }
 
-            openNotesPanel(post, renderedHtml);
-          } catch (error) {
-            openNotesPanel(post, "<p>Unable to load this post right now.</p>");
-          } finally {
-            button.disabled = false;
-            button.textContent = "Read More";
-          }
+            renderNotesPage(targetPage);
+          });
+
+          return button;
+        };
+
+        fragment.appendChild(
+          makePageControl("Previous", currentPage - 1, {
+            className: "btn notes-page-nav",
+            disabled: currentPage <= 1,
+            ariaLabel: "Go to previous page of notes",
+          }),
+        );
+
+        for (let page = 1; page <= totalPages; page += 1) {
+          fragment.appendChild(
+            makePageControl(String(page), page, {
+              current: page === currentPage,
+              ariaLabel: `Go to notes page ${page}`,
+            }),
+          );
+        }
+
+        fragment.appendChild(
+          makePageControl("Next", currentPage + 1, {
+            className: "btn notes-page-nav",
+            disabled: currentPage >= totalPages,
+            ariaLabel: "Go to next page of notes",
+          }),
+        );
+
+        pagination.appendChild(fragment);
+      }
+
+      function renderNotesPage(page, options) {
+        const opts = options || {};
+        currentPage = Math.min(Math.max(page, 1), totalPages);
+
+        const start = (currentPage - 1) * NOTES_PAGE_SIZE;
+        const pagePosts = sortedPosts.slice(start, start + NOTES_PAGE_SIZE);
+
+        notesList.innerHTML = "";
+
+        pagePosts.forEach(function (post) {
+          const article = createNotesPostElement(post);
+          const button = article.querySelector(".info-btn");
+
+          button.addEventListener("click", async function () {
+            button.disabled = true;
+            button.textContent = "Loading...";
+
+            try {
+              let renderedHtml = postCache.get(post.file);
+
+              if (!renderedHtml) {
+                const postResponse = await fetch(`../posts/${post.file}`);
+
+                if (!postResponse.ok) {
+                  throw new Error(
+                    `Failed to load post (${postResponse.status})`,
+                  );
+                }
+
+                const markdown = await postResponse.text();
+                renderedHtml = marked.parse(markdown);
+                postCache.set(post.file, renderedHtml);
+              }
+
+              openNotesPanel(post, renderedHtml);
+            } catch (error) {
+              openNotesPanel(post, "<p>Unable to load this post right now.</p>");
+            } finally {
+              button.disabled = false;
+              button.textContent = "Read More";
+            }
+          });
+
+          notesList.appendChild(article);
         });
 
-        notesList.appendChild(article);
+        renderNotesPagination();
+
+        if (!opts.skipHistory) {
+          setNotesPageQuery(currentPage);
+        }
+
+        if (opts.scrollIntoView) {
+          notesList.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      renderNotesPage(currentPage, { skipHistory: true });
+
+      window.addEventListener("popstate", function () {
+        renderNotesPage(getNotesPageFromQuery(), { skipHistory: true });
       });
     } catch (error) {
       notesList.innerHTML =
@@ -1176,4 +1431,56 @@ if (typeof document !== "undefined") {
   }
 
   loadNotesMarkdownPosts();
+
+  // Click-to-load YouTube facade: an embedded YouTube <iframe> pulls in
+  // the full player bundle (scripts, styles, its own tracking requests —
+  // typically several hundred KB to 1MB+) the instant it's in the DOM,
+  // whether or not a visitor ever presses play. Aftereffects/Cyborg
+  // Vault each embed 9 of them, so that cost was paid 9 times over on
+  // every page load. This swaps each iframe for a lightweight
+  // thumbnail + play button (`.youtube-facade`, styled to sit in
+  // exactly the same box as `.gallery-item iframe` did — no layout or
+  // design change) and only builds the real iframe once a visitor
+  // actually clicks it, matching the "click to load" pattern most
+  // major sites use for embedded video for exactly this reason.
+  function initializeYoutubeFacades() {
+    const facades = document.querySelectorAll(".youtube-facade");
+
+    facades.forEach(function (facade) {
+      const videoId = facade.getAttribute("data-video-id");
+
+      if (!videoId) {
+        return;
+      }
+
+      const loadVideo = function () {
+        const iframe = document.createElement("iframe");
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        iframe.title =
+          facade.getAttribute("data-video-title") || "YouTube video player";
+        iframe.setAttribute("frameborder", "0");
+        iframe.setAttribute(
+          "allow",
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
+        );
+        iframe.setAttribute(
+          "referrerpolicy",
+          "strict-origin-when-cross-origin",
+        );
+        iframe.setAttribute("allowfullscreen", "");
+
+        facade.replaceWith(iframe);
+      };
+
+      facade.addEventListener("click", loadVideo);
+      facade.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          loadVideo();
+        }
+      });
+    });
+  }
+
+  initializeYoutubeFacades();
 }

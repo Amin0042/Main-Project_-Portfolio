@@ -1300,6 +1300,7 @@ body.light .logo-light {
 }
 
 .navbar-nav {
+  position: relative;
   margin-left: auto;
   align-items: center;
   gap: clamp(0.8rem, 1.25vw, 1.7rem);
@@ -1325,28 +1326,11 @@ body.light .logo-light {
     transform 0.2s ease;
 }
 
-.nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0.42rem;
-  right: 0.42rem;
-  bottom: 0.18rem;
-  height: 1.5px;
-  background: rgba(198, 168, 90, 0.86);
-  transform: scaleX(0);
-  transform-origin: center center;
-  transition: transform 180ms ease;
-}
-
 .nav-link:hover,
 .nav-link:focus-visible {
   color: var(--primary-gold-colour) !important;
   text-shadow: 0 0 10px rgba(210, 164, 37, 0.22);
   transform: translateY(-1px);
-}
-
-.nav-link:hover::after {
-  transform: scaleX(1);
 }
 
 .nav-item .active,
@@ -1355,15 +1339,126 @@ body.light .logo-light {
   text-decoration: none;
 }
 
-.nav-item .active::after,
-.nav-link[aria-current="page"]::after {
-  transform: scaleX(1);
+/* iOS26-style selection: one shared gilded-glass pill per nav list
+   (navbar, footer NAVIGATION, footer CONTACT — see
+   initializeNavPillIndicator in main.js) that physically glides between
+   options instead of each link fading its own indicator in and out —
+   sized and positioned in JS from the target link's own box (offsetLeft/
+   Top/Width/Height), then left to CSS `transition` to animate the move.
+   Inserted as the first child of its list, so it paints behind every
+   link's own text in normal DOM stacking order — no z-index needed.
+   Moves on hover/focus (a live preview as you move across options) and
+   on click (see the "chamber" page-transition delay in
+   initializePageTransitions, which holds the current page just long
+   enough for this slide to actually play before navigating away),
+   settling back onto the current page whenever the pointer/focus
+   leaves the list. */
+.nav-pill-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background-color: rgba(var(--surface-rgb), 0.5);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.3),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    top 320ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    left 320ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    width 320ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    height 320ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 200ms ease,
+    background-image 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+/* Applied once (via a briefly-added .nav-pill-indicator--instant class,
+   see main.js) to place the indicator on the current page on load
+   without it visibly sliding in from the corner of the list first. */
+.nav-pill-indicator.nav-pill-indicator--instant {
+  transition: none;
+}
+
+.nav-pill-indicator.is-visible {
+  opacity: 1;
+}
+
+.nav-pill-indicator.is-current {
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.42),
+    rgba(var(--surface-rgb), 0.2)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.4),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.24),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.3);
+}
+
+.nav-pill-indicator.is-hovering {
+  border-color: var(--gold-border-card);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-pill-indicator {
+    transition:
+      opacity 150ms ease,
+      background-image 150ms ease,
+      border-color 150ms ease,
+      box-shadow 150ms ease;
+  }
 }
 
 /* Light mode navbar styling */
 body.light .navbar-brand span {
   color: var(--primary-black-colour);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* The sitewide `body.light a:hover/:focus-visible { text-decoration:
+   underline }` (for inline body-copy links) would otherwise draw an
+   underline under "January8th" here too — the navbar brand and the
+   footer's logo+wordmark link aren't inline text links, they're a
+   brand mark, and an underline reads as a typo/mistake under it rather
+   than an intentional link style. */
+body.light .navbar-brand:hover,
+body.light .navbar-brand:focus-visible,
+body.light .footer-title a:hover,
+body.light .footer-title a:focus-visible {
+  text-decoration: none !important;
+}
+
+/* Footer NAVIGATION/CONTACT links: without this they'd fall through to
+   the sitewide `body.light a { color: var(--secondary-red-colour) }`
+   rule (meant for inline body-copy links) and read red even at rest —
+   matching the navbar's own .nav-link instead: black by default, and
+   the same secondary-red the navbar uses on hover, focus, and the
+   current page. .footer-title (the logo+wordmark) is deliberately left
+   out, same as .navbar-brand beside it — a brand mark, not a nav
+   "option", so it stays plain black without a red hover state. */
+body.light .footer-navigation a,
+body.light .footer-contact a {
+  color: var(--primary-black-colour) !important;
+}
+
+body.light .footer-navigation a:hover,
+body.light .footer-contact a:hover,
+body.light .footer-navigation a:focus-visible,
+body.light .footer-contact a:focus-visible {
+  color: var(--secondary-red-colour) !important;
+}
+
+body.light .footer-navigation a[aria-current="page"] {
+  color: var(--secondary-red-colour) !important;
 }
 
 body.light .nav-link {
@@ -1382,15 +1477,6 @@ body.light .nav-item .active,
 body.light .nav-link[aria-current="page"] {
   color: var(--secondary-red-colour) !important;
   text-decoration: none !important;
-}
-
-body.light .nav-link::after {
-  background: var(--secondary-gold-colour);
-}
-
-body.light .nav-link:hover::after,
-body.light .nav-link:focus-visible::after {
-  transform: scaleX(1);
 }
 
 @media (max-width: 991.98px) {
@@ -1781,6 +1867,18 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
       0 4px 14px rgba(0, 0, 0, 0.4);
   }
 }
+/* Wraps the icon + its heading as one unit (was two loose flex children
+   sharing the section's own `gap: 3rem` above, spaced identically to
+   heading-to-body) — same 3rem gap between icon and heading as before,
+   just now grouped so the pair can be handled — and, at desktop, vertically
+   centered — as a single block instead of two separate items. */
+.background-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+
 .background-section:first-child {
   border-left: none;
 }
@@ -2357,7 +2455,14 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   text-align: center;
   width: 50%;
 }
+/* Same gilded-glass "iOS26" material as every other card on the site
+   (.archive-personal, #featured .car-item, .archive-category-link) —
+   identical tokens, blur/gloss recipe and --tile-radius — so the notes
+   grid reads as frosted gold glass too, not the old flat near-black
+   panel. Layout (flex column, gap, grid placement in #notes-list) is
+   untouched — only the surface treatment changes. */
 .notes-post {
+  --tile-radius: 22px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -2365,30 +2470,74 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   min-height: 100%;
   gap: 1.15rem;
   padding: 1.4rem;
-  border: 1px solid transparent;
-  background: linear-gradient(
-    180deg,
-    rgba(17, 16, 16, 0.94),
-    rgba(9, 9, 10, 0.97)
+  border: 1px solid var(--gold-border-card);
+  border-radius: var(--tile-radius);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.26),
+    rgba(var(--surface-rgb), 0.15)
   );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
   box-shadow:
-    inset 0 0 0 1px rgba(210, 164, 37, 0.16),
-    inset 0 0 0 8px rgba(10, 10, 11, 0.35),
-    0 14px 26px rgba(0, 0, 0, 0.22);
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.3),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.3),
+    0 8px 20px rgba(var(--ink-rgb), 0.28);
+  transition:
+    background-image 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
 }
 
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .notes-post {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
+}
+
+.notes-post:hover,
+.notes-post:focus-within {
+  transform: translateY(-2px);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.38),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.48),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.26),
+    0 14px 28px rgba(var(--ink-rgb), 0.32),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.3);
+}
+
+/* One column, three rows: each of a page's 3 posts now spans the full
+   width of the section as its own row-card, stacked one after another,
+   instead of sitting three-across in a grid. */
 #notes-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2rem;
-  align-items: stretch;
-  grid-auto-rows: 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
 }
+
+/* With the card now a full-width row, the date badge reads better as a
+   fixed-width column beside the title/body/button rather than a
+   thin strip stacked above them — same directional layout the
+   Archive/Motion vault row-cards already use elsewhere on the site. */
+.notes-post {
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+}
+
 .post-img {
   border: 0;
   background: transparent;
   min-height: auto;
-  width: 100%;
+  width: 9rem;
+  flex: 0 0 9rem;
   max-width: none;
   display: flex;
   align-items: center;
@@ -2412,6 +2561,7 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   align-items: flex-start;
   gap: 0.8rem;
   width: 100%;
+  min-width: 0;
   flex: 1;
 }
 
@@ -2434,15 +2584,84 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   max-width: 64ch;
 }
 
+/* Inherits the sitewide gilded-glass pill (button, .btn) as-is — just
+   sized down to sit flush at the bottom of a compact note card instead
+   of the default min-width: 9rem. */
 .notes-post .info-btn {
   width: auto;
   min-width: 0;
   margin-top: auto;
   padding: 0.52rem 0.95rem;
-  border-width: 1px;
   letter-spacing: 0.05em;
-  border-radius: 0;
 }
+
+/* Page-number controls under the notes grid — Previous / 1 2 3 … / Next.
+   Each control is a small gilded-glass pill (same tokens/blur recipe as
+   every button on the site), sized down for a compact row of controls;
+   the active page reads as the "awake" hover/focus treatment at rest
+   instead of on interaction, so it's obvious which page is showing. */
+.notes-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 2.5rem;
+}
+
+.notes-pagination:empty {
+  margin-top: 0;
+}
+
+.notes-page-btn,
+.notes-page-nav {
+  min-width: 2.85rem;
+  min-height: 2.85rem;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+}
+
+.notes-page-nav {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.82rem;
+  padding-inline: 1.1rem;
+}
+
+.notes-page-btn.is-active {
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.4),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  color: var(--primary-gold-colour);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.5),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.28),
+    0 10px 22px rgba(var(--ink-rgb), 0.32),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.35);
+}
+
+body.light .notes-page-btn.is-active {
+  color: var(--primary-black-colour);
+}
+
+@media (max-width: 700px) {
+  .notes-pagination {
+    gap: 0.45rem;
+    margin-top: 2rem;
+  }
+
+  .notes-page-btn,
+  .notes-page-nav {
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    padding: 0.4rem 0.65rem;
+  }
+}
+
 .notes-panel-open {
   overflow: hidden;
 }
@@ -2553,19 +2772,6 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
 }
 
 /* Light mode notes styling */
-body.light .notes-post {
-  background: linear-gradient(
-    180deg,
-    rgba(232, 228, 216, 0.7),
-    rgba(232, 228, 216, 0.5)
-  );
-  border-color: var(--secondary-gold-colour);
-  box-shadow:
-    inset 0 0 0 1px rgba(90, 15, 20, 0.1),
-    inset 0 0 0 8px rgba(232, 228, 216, 0.2),
-    0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
 body.light .post-date {
   color: #e53935;
   font-size: 0.85rem;
@@ -2615,22 +2821,20 @@ body.light .notes-panel-close:hover {
   color: var(--secondary-red-colour);
 }
 
-@media (max-width: 1100px) {
-  #notes-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
+/* Full-width row-cards: the date column stays a fixed-width side rail
+   next to the title/body/button down to phone width — .notes-post only
+   drops to a stacked column once that side rail genuinely can't share a
+   row with readable body copy any more. */
 @media (max-width: 700px) {
-  #notes-list {
-    grid-template-columns: 1fr;
-  }
-
   .notes-post {
+    flex-direction: column;
+    align-items: flex-start;
     min-height: auto;
   }
 
   .post-img {
+    width: 100%;
+    flex: 0 0 auto;
     max-width: 100%;
   }
 
@@ -3222,6 +3426,94 @@ body.light .notes-panel-close:hover {
   border: 0;
 }
 
+/* Click-to-load facade standing in for the real YouTube <iframe> until
+   a visitor presses play (see initializeYoutubeFacades in main.js) —
+   sized to the exact same 16:9 box `.gallery-item iframe` uses, so
+   swapping one for the other never shifts the gallery layout. The play
+   button reuses the sitewide gilded-glass circular icon-button
+   material (.theme-toggle-btn / .popup-close / .image-modal-close) for
+   visual consistency rather than introducing a new control style. */
+.youtube-facade {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  overflow: hidden;
+  cursor:
+    var(--gothic-cursor-url) 16 5,
+    pointer;
+}
+
+.youtube-facade-thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.youtube-facade-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  padding-left: 0.2rem;
+  border: 1px solid var(--gold-border-card);
+  border-radius: 50%;
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.3),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  color: var(--secondary-gold-colour);
+  font-size: 1.35rem;
+  line-height: 1;
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.35),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.3),
+    0 10px 24px rgba(var(--ink-rgb), 0.35);
+  transition:
+    background-image 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .youtube-facade-play {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
+}
+
+.youtube-facade:hover .youtube-facade-play,
+.youtube-facade:focus-visible .youtube-facade-play {
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.42),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.5),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.26),
+    0 14px 30px rgba(var(--ink-rgb), 0.4),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.35);
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.youtube-facade:focus-visible {
+  outline: 2px solid rgba(255, 215, 120, 0.9);
+  outline-offset: 3px;
+}
+
 @media (max-width: 1100px) {
   .gallery {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3621,7 +3913,6 @@ body.modal-open {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
   text-align: center;
   img {
     width: 100px;
@@ -3631,17 +3922,24 @@ body.modal-open {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* The "January8th" wordmark now lives inside this same link as the
+     logo marks (previously a separate sibling of the anchor, sharing
+     .footer-title's own `gap: 0.75rem` for its spacing from the logo —
+     see the "clickable wordmark" note on .footer-title h3 below) — that
+     gap needs to move here now that the logo images and the heading
+     are flex children of the anchor itself, not of .footer-title. */
+  gap: 0.75rem;
   min-height: 2.8rem;
   padding: 0.4rem 0.7rem;
 }
 
 .footer-title h3 {
   margin: 0;
-  /* The global heading underline was removed everywhere else on the
-     site — footer (and navbar) headings are the one deliberate
-     exception, kept here since the underline no longer comes free from
-     the base h1–h4 rule. */
-  text-decoration-line: underline;
+  /* The "January8th" wordmark sits inside the same <a href="/"> as the
+     logo marks now (clickable, links home, same hit area) — stays
+     plain, no underline, unlike the NAVIGATION/CONTACT column headings
+     below, which keep the deliberate underline exception noted there. */
+  text-decoration-line: none;
 }
 
 .footer-navigation {
@@ -3670,6 +3968,7 @@ body.modal-open {
 
 .footer-navigation ul,
 .footer-contact ul {
+  position: relative;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -3678,6 +3977,7 @@ body.modal-open {
 .footer-navigation a,
 .footer-contact a,
 .footer-title a {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4361,8 +4661,128 @@ body.modal-open {
     font-size: 0.8rem;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    align-self: center;
+    /* flex-start, not center: the row layout below left-aligns the
+       body copy this button sits under, so centering it here would
+       leave it adrift under a left-hugging paragraph block. */
+    align-self: flex-start;
     position: relative;
     z-index: 1;
+  }
+
+  /* ---- Background: icon-left, text-right rows ----------------------
+     Desktop only (this whole block is 1025px+): the 4-across grid
+     below this width gave each of Education/Focus/Influence/Approach a
+     narrow ~230px column, forcing every paragraph to wrap tall and
+     narrow. Restructured as one full-width row per section instead —
+     icon + heading grouped as `.background-icon`, a fixed-width left
+     rail — with the body copy stretched into the remaining width
+     beside it. A simple 2-column grid, one row: `align-items: center`
+     vertically centers the (shorter) icon+heading rail against the
+     (taller) text column beside it, as one unit. */
+  .background {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .background-section {
+    display: grid;
+    grid-template-columns: minmax(160px, 220px) 1fr;
+    column-gap: 3rem;
+    align-items: center;
+    padding-block: 2.75rem;
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid var(--gold-border-hairline);
+  }
+
+  .background-section:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .background-section:last-child {
+    padding-bottom: 0;
+  }
+
+  .background-icon {
+    justify-self: center;
+    /* Desktop-only tighter icon-to-heading gap: the base 3rem (kept
+       for mobile/tablet, where it also separated icon from heading
+       when they were unwrapped flex siblings) reads as too loose now
+       that the pair sits in its own compact rail beside a much wider
+       text column. */
+    gap: 1.25rem;
+  }
+
+  .background-icon img {
+    /* Fixed to the rail's own width now, not 30% of a narrow flex
+       column — the medallion stays a consistent, comfortable size
+       regardless of how wide the text beside it stretches. */
+    width: clamp(96px, 9vw, 132px);
+  }
+
+  .background-icon h4 {
+    margin: 0;
+  }
+
+  .background-section .background-copy {
+    align-self: center;
+    /* Left-aligned, not the sitewide centered default `.section` text
+       inherits — a wide paragraph column reads far more comfortably
+       ragged-right than centered, and matches how every other
+       side-by-side text block on the site (vault cards, contact form)
+       is already set. */
+    text-align: left;
+  }
+
+  .background-copy p {
+    max-width: 72ch;
+  }
+
+  .education-list {
+    align-self: flex-start;
+    max-width: 60ch;
+  }
+}
+
+/* ============================================================
+   Tablet — Portrait orientation
+   ============================================================
+   Targets exactly the CSS viewport band mid-size tablets report in
+   portrait — e.g. a Samsung Galaxy Tab S6 Lite/S9 Lite/S10 (~800px),
+   an iPad mini/Air portrait (~744–834px) — via `orientation: portrait`
+   rather than width alone. Everything else on the site already reacts
+   to width on its own regardless of orientation (the existing
+   max-width: 576/700/820/1024px breakpoints, the 751–1024px tablet
+   block above, the 1025px+ desktop block), so this adds one narrow,
+   additional layer on top *only* for the specific case those weren't
+   built to fully cover — it never removes or overrides any of them,
+   and never fires for phones (well under 600px even in portrait) or
+   for the same tablets held in landscape (~1280px, well outside this
+   band). Every other view stays exactly as-is.
+
+   The one real gap this closes: .effects-card (Aftereffects/Cyborg
+   inside Motion Vault) is a fixed 1fr/3fr row at every width with no
+   narrower breakpoint of its own — unlike its sibling .archive-personal,
+   which already stacks to one column by 820px. At a ~800px portrait
+   width that leaves its 9:16 photo in a column roughly 1/4 the card's
+   width — noticeably more cramped than every other paired image/text
+   section on the site reads at the same width. Stacked to match
+   .archive-personal's own treatment, with the photo capped and
+   centered so a full-width 9:16 image doesn't dominate the screen. */
+@media (min-width: 600px) and (max-width: 920px) and (orientation: portrait) {
+  .effects-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .effects-card-img {
+    display: flex;
+    justify-content: center;
+  }
+
+  .effects-media-link {
+    width: 100%;
+    max-width: 300px;
   }
 }
