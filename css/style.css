@@ -1620,7 +1620,12 @@ body.light .nav-link[aria-current="page"] {
 
 .popup-container p {
   margin: 0;
-  padding: 0.4rem 0.25rem 0.2rem 0;
+  /* Generous room on every side, and deliberately more on the right
+     than anywhere else: this paragraph scrolls internally
+     (overflow-y: auto below), so its own scrollbar renders right at
+     this box's right edge — the old 0.25rem left barely any gap
+     between the last word of a line and the scrollbar track/thumb. */
+  padding: 1rem 2rem 1.25rem 0.75rem;
   max-height: 66vh;
   overflow-y: auto;
   font-family: "Inter", sans-serif;
@@ -1635,6 +1640,46 @@ body.light .nav-link[aria-current="page"] {
   text-rendering: optimizeLegibility;
   scrollbar-width: thin;
   scrollbar-color: rgba(198, 168, 90, 0.9) rgba(255, 255, 255, 0.06);
+}
+
+/* Illuminated first letter — the manifesto is the one passage on the
+   site framed as a single ceremonial declaration, so it gets the one
+   drop cap: giant, gold, and glowing in the same gilded-line-art
+   language as the January8th lion mark (.navbar-brand .icon /
+   .footer-title img) — a gold gradient fill via background-clip: text
+   plus the same warm drop-shadow bloom those glyphs breathe with,
+   just held static-bright here rather than animated, since this sits
+   inside scrolling body copy a visitor is meant to actually read, not
+   a small chrome element where a subtle pulse doesn't compete with
+   anything. Literal gold values (not the --primary-gold-colour token,
+   which flips to near-black in body.light) so the cap stays gold in
+   both themes, matching how the lion mark itself never flips either. */
+.popup-container p:first-of-type::first-letter {
+  float: left;
+  font-family: "Cinzel", serif;
+  font-weight: 800;
+  font-size: 5.5rem;
+  line-height: 0.78;
+  padding: 0.05em 0.14em 0 0;
+  background-image: linear-gradient(
+    180deg,
+    #fff3d6 0%,
+    #ffd778 28%,
+    #d2a425 68%,
+    #9c7a20 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 8px rgba(210, 164, 37, 0.45))
+    drop-shadow(0 0 20px rgba(210, 164, 37, 0.25));
+}
+
+@media (max-width: 576px) {
+  .popup-container p:first-of-type::first-letter {
+    font-size: 4rem;
+    padding: 0.05em 0.1em 0 0;
+  }
 }
 
 .popup-container p::-webkit-scrollbar {
@@ -1780,6 +1825,7 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
 
   .popup-container p {
     line-height: 1.8;
+    padding: 0.75rem 1.25rem 1rem 0.5rem;
   }
 }
 /*==================== About ====================*/
@@ -1826,33 +1872,49 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
 .background {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  /* `stretch` (the grid default) so every column's box — and the
-     hairline border drawn on it below — spans the full shared row
-     height, ending at the same level for all four regardless of how
-     much copy each one holds. Top alignment of the icon/heading is
-     handled inside `.background-section` instead (justify-content:
-     flex-start), so a taller box here no longer means a lower icon —
-     it just means more empty space *below* the shorter columns'
-     content, inside a border that still runs the full row height. */
+  /* `stretch` (the grid default) so every card ends at the same shared
+     row height regardless of how much copy each one holds — same
+     reasoning as every other tile grid on the site
+     (.archive-options-grid, #featured .car-item). */
   align-items: stretch;
   gap: 2rem;
   margin: 0rem 3rem;
 }
+/* Same gilded-glass "iOS26" material as every other card on the site
+   (.archive-personal, #featured .car-item, .notes-post) — identical
+   tokens, blur/gloss recipe and rounded corners — so each of
+   Education/Focus/Influence/Approach reads as its own distinct
+   frosted-glass card instead of four columns sharing hairline
+   dividers. `.background`'s own `gap` above is now the real space
+   between cards, not just a column gutter. */
 .background-section {
+  --tile-radius: 26px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* flex-start, not center: with the row now stretching every column
-     to equal height (see `.background` above), centering would pull
-     each column's icon/heading down by a different amount depending
-     on how much shorter it is than the tallest column — exactly the
+  /* flex-start, not center: with the row stretching every card to
+     equal height (see `.background` above), centering would pull each
+     card's icon/heading down by a different amount depending on how
+     much shorter it is than the tallest card — exactly the
      misalignment this is meant to avoid. flex-start pins content to
      the top of the box regardless of the box's own height. */
   justify-content: flex-start;
   gap: 3rem;
-  padding-inline: 2rem;
-  border-left: 1px solid transparent;
-  border-right: 1px solid transparent;
+  padding: 2.25rem 2rem;
+  border: 1px solid var(--gold-border-card);
+  border-radius: var(--tile-radius);
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.28),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.32),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.32),
+    0 8px 20px rgba(var(--ink-rgb), 0.3);
   img {
     width: 30%;
     aspect-ratio: 1 / 1;
@@ -1867,6 +1929,13 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
       0 4px 14px rgba(0, 0, 0, 0.4);
   }
 }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .background-section {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
+}
+
 /* Wraps the icon + its heading as one unit (was two loose flex children
    sharing the section's own `gap: 3rem` above, spaced identically to
    heading-to-body) — same 3rem gap between icon and heading as before,
@@ -1877,13 +1946,6 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   flex-direction: column;
   align-items: center;
   gap: 3rem;
-}
-
-.background-section:first-child {
-  border-left: none;
-}
-.background-section:last-child {
-  border-right: none;
 }
 /* Influence in particular holds up to six separate paragraphs. The
    parent `.background-section` is a flex column with one large gap
@@ -1897,14 +1959,6 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   flex-direction: column;
   gap: 1.15rem;
   width: 100%;
-}
-/* Influence "Read More" — desktop only (see the min-width: 1025px
-   block below for the actual collapse/expand rules). At mobile/tablet
-   widths the four panels stack into one column and length differences
-   between them are irrelevant, so the button stays hidden there and
-   the full text always shows, same as before. */
-.read-more-btn {
-  display: none;
 }
 /* Education was the only one of the four Background panels set to
    left-align (it originally needed room for the bulleted list below
@@ -4314,27 +4368,19 @@ body.modal-open {
        auto-height rows let each section take only the height its own
        content needs. */
     grid-template-rows: auto;
-    row-gap: 3rem;
+    /* Real breathing room between each stacked gilded card, not a
+       divider line — every card already carries its own full border/
+       radius/glass fill from the base .background-section rule. */
+    row-gap: 1.75rem;
   }
 
-  /* Stacked single column — side-by-side dividers no longer apply, so
-     swap to a horizontal hairline between each panel instead, matching
-     the same muted-gold treatment used at desktop/tablet widths. */
   .background-section {
-    border-left: none;
-    border-right: none;
-    border-top: 1px solid transparent;
-    padding-top: 2.5rem;
-    padding-inline: 0.5rem;
+    padding: 1.75rem 1.25rem;
     /* Icon/heading/body gap can shrink from the desktop 3rem — a phone
        screen is all vertical scroll, so the desktop spacing (tuned for
        a wide single row) reads as excessive dead space stacked. */
     gap: 1.75rem;
     scroll-margin-top: 1.5rem;
-  }
-  .background-section:first-child {
-    border-top: none;
-    padding-top: 0;
   }
 
   /* Body copy stays centered on mobile, matching every other section
@@ -4528,27 +4574,7 @@ body.modal-open {
      reading width, and reads cleanly as an asymmetric 2×2 grid. */
   .background {
     grid-template-columns: repeat(2, 1fr);
-    row-gap: 3rem;
-  }
-
-  /* The vertical hairline dividers were built for a single row of 4 —
-     reapplied to a 2×2 grid, `:first-child`/`:last-child` alone would
-     leave a stray left border floating at the start of row 2. Rekey the
-     dividers to columns (odd = left column, even = right column) and
-     add a matching horizontal hairline between the two rows instead. */
-  .background-section {
-    border-top: 1px solid transparent;
-    border-left: 1px solid transparent;
-    border-right: 1px solid transparent;
-  }
-  .background-section:nth-child(odd) {
-    border-left: none;
-  }
-  .background-section:nth-child(even) {
-    border-right: none;
-  }
-  .background-section:nth-child(-n + 2) {
-    border-top: none;
+    row-gap: 2rem;
   }
 
   /* Same fix as the phone breakpoint: 30% of a tablet-width 2-column
@@ -4601,87 +4627,32 @@ body.modal-open {
 }
 
 /*============================================================
-   Desktop View (1025px+) — About page: Background "Read More"
+   Desktop View (1025px+) — About page: Background section
    ============================================================
-   `.background` lays Education/Focus/Influence/Approach out as four
-   grid columns that share a single row, top-aligned. Influence alone
-   runs to six paragraphs against Approach's one short paragraph, so
-   even top-aligned the columns end at wildly different heights and
-   the row reads as lopsided. Collapsing Influence's copy behind a
-   "Read More" toggle (main.js: initializeReadMoreSections) trims it
-   down near the other columns' natural height so all four end at
-   roughly the same level, while keeping the full text one click away.
-   Scoped to 1025px+ only — at mobile/tablet widths the panels stack
-   into a single column where differing lengths don't misalign
-   anything, so the full text stays visible there untouched. ============================================================ */
+   Influence used to collapse its six paragraphs behind a "Read More"
+   toggle so its card wouldn't run far taller than its siblings — that
+   toggle (and the nested-glass button it needed) was retired in favor
+   of simply showing its full text like every other Background card,
+   so this block is now just the shared icon-left/text-right row
+   layout below. ============================================================ */
 @media (min-width: 1025px) {
-  .background-copy.collapsible {
-    position: relative;
-    /* Tuned by eye against Education/Focus's natural copy height so
-       the collapsed panel reads as roughly the same size as its
-       neighbors rather than an arbitrary crop — adjust this alone if
-       body copy or column width changes materially. */
-    max-height: 17rem;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
-  }
-  .background-copy.collapsible::after {
-    content: "";
-    position: absolute;
-    inset: auto 0 0 0;
-    height: 3.5rem;
-    background: linear-gradient(to bottom, transparent, var(--secondary-black-colour));
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  .background-copy.collapsible.expanded {
-    /* max-height never stretches the box — it only clips content
-       taller than it, so as long as this stays comfortably above any
-       realistic content height the box simply shrinks to fit the
-       actual (shorter) text, same as `max-height: none` would render,
-       but still animatable. 60rem clipped Influence's six paragraphs
-       at the narrow ~230px column this grid gives each panel; 200rem
-       has enough headroom for that copy at any column width. */
-    max-height: 200rem;
-  }
-  .background-copy.collapsible.expanded::after {
-    opacity: 0;
-  }
-
-  /* Same shared button look as everywhere else on the site (sharp
-     corners, gold border) but scaled down — this is a small in-panel
-     control, not a page-level CTA, so it shouldn't compete with the
-     full-size buttons used elsewhere. */
-  .read-more-btn {
-    display: inline-flex;
-    min-width: 0;
-    min-height: 0;
-    margin-top: -1.75rem;
-    padding: 0.4rem 1.1rem;
-    font-size: 0.8rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    /* flex-start, not center: the row layout below left-aligns the
-       body copy this button sits under, so centering it here would
-       leave it adrift under a left-hugging paragraph block. */
-    align-self: flex-start;
-    position: relative;
-    z-index: 1;
-  }
-
   /* ---- Background: icon-left, text-right rows ----------------------
      Desktop only (this whole block is 1025px+): the 4-across grid
      below this width gave each of Education/Focus/Influence/Approach a
      narrow ~230px column, forcing every paragraph to wrap tall and
-     narrow. Restructured as one full-width row per section instead —
-     icon + heading grouped as `.background-icon`, a fixed-width left
-     rail — with the body copy stretched into the remaining width
-     beside it. A simple 2-column grid, one row: `align-items: center`
-     vertically centers the (shorter) icon+heading rail against the
-     (taller) text column beside it, as one unit. */
+     narrow. Restructured as one full-width gilded card per section
+     instead — icon + heading grouped as `.background-icon`, a
+     fixed-width left rail — with the body copy stretched into the
+     remaining width beside it. A simple 2-column grid, one row:
+     `align-items: center` vertically centers the (shorter)
+     icon+heading rail against the (taller) text column beside it, as
+     one unit. `.background`'s own `gap` (base rule) is the real space
+     between each now-standalone card — no shared hairline divider
+     needed, since every card already carries its own full border/
+     radius/glass fill from the base .background-section rule. */
   .background {
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 2rem;
   }
 
   .background-section {
@@ -4689,19 +4660,7 @@ body.modal-open {
     grid-template-columns: minmax(160px, 220px) 1fr;
     column-gap: 3rem;
     align-items: center;
-    padding-block: 2.75rem;
-    border-left: none;
-    border-right: none;
-    border-top: 1px solid var(--gold-border-hairline);
-  }
-
-  .background-section:first-child {
-    border-top: none;
-    padding-top: 0;
-  }
-
-  .background-section:last-child {
-    padding-bottom: 0;
+    padding: 2.75rem clamp(2rem, 3vw, 3.25rem);
   }
 
   .background-icon {

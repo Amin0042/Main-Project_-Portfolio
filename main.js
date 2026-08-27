@@ -461,7 +461,16 @@ function initializeWordHoverEffect() {
   const wrapParagraph = function (p) {
     // Only fragment plain-text paragraphs. Paragraphs that already contain
     // elements (links, icons, etc.) are left alone so we never break markup.
-    if (p.hasAttribute(WRAPPED_ATTR) || p.children.length > 0) {
+    // Also skips anything explicitly opted out via data-no-word-hover — the
+    // manifesto's opening paragraph uses this: wrapping every word in its
+    // own inline-block .word span (see the CSS) breaks CSS ::first-letter's
+    // ability to reach in from the <p> for its illuminated drop cap, since
+    // ::first-letter can't see through an inline-block descendant.
+    if (
+      p.hasAttribute(WRAPPED_ATTR) ||
+      p.children.length > 0 ||
+      p.hasAttribute("data-no-word-hover")
+    ) {
       return;
     }
 
