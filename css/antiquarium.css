@@ -198,7 +198,7 @@ body.light .antiquarium-eyebrow {
   min-height: 2.75rem;
   min-width: 2.75rem;
   font-family: "Inter", sans-serif;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 0.6rem 0.9rem;
@@ -209,7 +209,7 @@ body.light .antiquarium-eyebrow {
   .antiquarium-reset-button {
     right: 1.1rem;
     top: 1.1rem;
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     padding: 0.6rem 0.75rem;
   }
 }
@@ -271,7 +271,7 @@ body.light .antiquarium-caption {
 }
 
 .antiquarium-inspector-title {
-  font-family: "cinzel";
+  font-family: "Cormorant Garamond", serif;
   font-weight: var(--fw-medium);
   font-size: 1.05rem;
   letter-spacing: 0.05em;
@@ -322,7 +322,7 @@ body.light .antiquarium-inspector-description {
 .antiquarium-inspector-hint {
   margin-top: 0.5rem;
   font-family: "Inter", sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   letter-spacing: 0.08em;
   /* Was rgba(143, 122, 62, 0.65) against a near-black scrim — under
      3:1 contrast, unreadable for a lot of visitors. Lightened to sit
@@ -426,7 +426,7 @@ body.light .antiquarium-fallback p {
 }
 
 .antiquarium-selector-title {
-  font-family: "cinzel";
+  font-family: "Cormorant Garamond", serif;
   font-weight: var(--fw-medium);
   letter-spacing: 0.04em;
   text-transform: none;
@@ -435,7 +435,7 @@ body.light .antiquarium-fallback p {
 
 .antiquarium-selector-status {
   font-family: "Inter", sans-serif;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted-gold-colour);

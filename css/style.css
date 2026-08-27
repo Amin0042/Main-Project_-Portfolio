@@ -55,7 +55,7 @@
   --highlight-rgb: 255, 215, 120;
   --primary-ivory-colour: #e8e4d8;
   --body-copy-colour: rgba(255, 255, 255, 0.9);
-  --font-family: "inter", "cinzel", "Playfair Display", "sans-serif";
+  --font-family: "inter", "Cormorant Garamond", "Playfair Display", "sans-serif";
   --fw-medium: 700;
   --fw-small: 500;
   --fw-large: 900;
@@ -621,7 +621,14 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: "cinzel";
+  /* Cormorant Garamond at --fw-medium (700): the family's default 400
+     weight is a delicate, high-contrast old-style serif — elegant at
+     large display sizes but too thin/light to hold up in the small
+     uppercase, letter-spaced labels used across the site (nav, card
+     h4s). 700 keeps every size crisp on the dark gilded background
+     while still reading as refined rather than blocky like the old
+     Cinzel monumental caps did. */
+  font-family: "Cormorant Garamond", serif;
   font-weight: var(--fw-medium);
   color: var(--primary-gold-colour);
   text-align: center;
@@ -1076,8 +1083,13 @@ body.light .theme-icon-moon {
 }
 
 .navbar-brand span {
-  font-family: "Inter", sans-serif;
-  font-weight: 800;
+  /* Matches .footer-title h3 below it — that one is a bare <h3>, so it
+     already inherits Cormorant Garamond from the sitewide h1–h4 rule;
+     this one is a <span>, so it needs the same family/weight spelled
+     out explicitly to read as the same wordmark in both places instead
+     of the old plain-Inter sans-serif treatment. */
+  font-family: "Cormorant Garamond", serif;
+  font-weight: var(--fw-medium);
   color: var(--primary-gold-colour);
   letter-spacing: 0.09em;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
@@ -1544,7 +1556,35 @@ body.light .nav-link[aria-current="page"] {
   justify-content: center;
   align-items: center;
 }
+/* The h1 stays centered as the page's title, but the paragraph under it
+   is several lines of real prose — left-aligned for the same
+   readability reasons as every other intro paragraph on the site
+   (.about-container, .archive-container, etc.).
+   `width` (not just `max-width`) is required: as a flex child with no
+   explicit width, this box would otherwise be sized to its content's
+   max-content width by the flex algorithm and could run past the
+   viewport on phones — see .about-container's own fix for the same
+   issue. */
+#hero > p {
+  width: min(760px, 100%);
+  text-align: left;
+  padding-inline: 1.25rem;
+}
 /*==================== Manifesto ====================*/
+/* The homepage teaser paragraph (not the popup's — that one is scoped
+   separately under .popup-container p) is several lines of real prose,
+   so it gets the same left-align treatment as every other intro
+   paragraph on the site. `#manifesto > p` (direct child) keeps this
+   from also matching the popup's own paragraph, which lives several
+   levels deeper inside `.manifesto-popup .popup-container`. Block
+   layout here (not a flex child like #hero), so a simple max-width +
+   auto margins centers the box without the width-collapse risk that
+   needed fixing on #hero/.about-container. */
+#manifesto > p {
+  max-width: 800px;
+  margin-inline: auto;
+  text-align: left;
+}
 .manifesto-popup {
   position: fixed;
   inset: 0;
@@ -1608,7 +1648,8 @@ body.light .nav-link[aria-current="page"] {
 .popup-container h2 {
   margin: 0 0 1.2rem;
   padding-right: 2.5rem;
-  font-family: "Cinzel", serif;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
   font-size: clamp(2rem, 3vw, 2.8rem);
   line-height: 1.2;
   letter-spacing: 0.08em;
@@ -1653,11 +1694,15 @@ body.light .nav-link[aria-current="page"] {
    a small chrome element where a subtle pulse doesn't compete with
    anything. Literal gold values (not the --primary-gold-colour token,
    which flips to near-black in body.light) so the cap stays gold in
-   both themes, matching how the lion mark itself never flips either. */
+   both themes, matching how the lion mark itself never flips either.
+   font-family stayed pinned through the site's heading-font switch from
+   Cinzel to Cormorant Garamond — at this size and weight Cormorant's
+   own old-style capital "O" carries the illuminated-manuscript feel
+   just as well as Cinzel's inscription-style one did. */
 .popup-container p:first-of-type::first-letter {
   float: left;
-  font-family: "Cinzel", serif;
-  font-weight: 800;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
   font-size: 5.5rem;
   line-height: 0.78;
   padding: 0.05em 0.14em 0 0;
@@ -1846,10 +1891,25 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   width: 100vw;
 }
 .about-container {
-  text-align: center !important;
+  /* The heading stays centered as the page's title, but the intro
+     paragraph below it is 8+ lines of real prose, not a short tagline —
+     centered body copy that long is genuinely hard to read (the eye has
+     to hunt for a new starting x-position on every line), so it reads
+     left-aligned like every other paragraph on the site.
+     `width` (not just `max-width`) is required here: as a flex child of
+     `.about-hero` with no explicit width, this box was sized to its
+     content's max-content width by the flex algorithm — fine for the
+     centered heading, but it let the long paragraph stretch the whole
+     box past the viewport on phones and get centered off both edges. */
+  width: min(700px, 100%);
   max-width: 700px;
+  padding-inline: 1.25rem;
   h2 {
     text-align: center !important;
+  }
+  p {
+    text-align: left;
+    margin-inline: auto;
   }
 }
 .about-background {
@@ -2035,11 +2095,17 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
 .archive-container {
   max-width: 860px;
   margin: 0 auto;
-  text-align: center;
 }
 
 .archive-container h2 {
   text-align: center;
+}
+
+/* The intro paragraph is several lines of real prose, not a short
+   tagline — left-aligned reads as normal professional body copy,
+   same reasoning as .about-container's intro above. */
+.archive-container p {
+  text-align: left;
 }
 
 .archive-container p {
@@ -2506,8 +2572,17 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   width: 100vw;
 }
 .notes-container {
-  text-align: center;
   width: 50%;
+}
+
+.notes-container h2 {
+  text-align: center;
+}
+
+/* Long-form intro prose — left-aligned for readability, same reasoning
+   as .about-container/.archive-container's intros. */
+.notes-container p {
+  text-align: left;
 }
 /* Same gilded-glass "iOS26" material as every other card on the site
    (.archive-personal, #featured .car-item, .archive-category-link) —
@@ -2523,7 +2598,11 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   text-align: left;
   min-height: 100%;
   gap: 1.15rem;
-  padding: 1.4rem;
+  /* Right side trimmed back a bit from the other three — with the
+     shrink-wrap fix on .post-title/.info-body above, the text column
+     now reaches close to the card's edge, so it reads best with a touch
+     less air on that side than the other three keep. */
+  padding: 1.4rem 1.1rem 1.4rem 1.4rem;
   border: 1px solid var(--gold-border-card);
   border-radius: var(--tile-radius);
   background-color: rgba(var(--surface-rgb), 0.55);
@@ -2620,6 +2699,15 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
 }
 
 .notes-post .post-title {
+  /* .post-info's `align-items: flex-start` (needed to keep the button
+     below from stretching full-width) has a side effect on every child:
+     block elements shrink-wrap to their own content width instead of
+     filling the column, same as a flex item with no explicit size
+     always does under flex-start. That let the title/body wrap far
+     narrower than the card actually had room for — many short lines
+     stacked into an unnecessarily tall card. `width: 100%` opts back
+     into using the full column width `.post-info` already reserves. */
+  width: 100%;
   text-align: left;
   text-decoration: none;
   line-height: 1.25;
@@ -2631,6 +2719,11 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
 }
 
 .notes-post .info-body {
+  /* Same shrink-wrap fix as .post-title above. max-width: 64ch is the
+     one that should actually govern line length here — a comfortable
+     reading measure — so it's kept, just no longer overridden by an
+     even narrower shrink-wrapped width arriving first. */
+  width: 100%;
   color: rgba(232, 228, 216, 0.95);
   line-height: 1.62;
   font-size: var(--body-copy-font-size);
@@ -2941,12 +3034,17 @@ body.light .notes-panel-close:hover {
 .contact-container {
   width: min(820px, 80%);
   margin: 0 auto;
+}
+
+.contact-container h2 {
   text-align: center;
 }
 
+/* Long-form intro prose — left-aligned for readability, same reasoning
+   as the other page intros. */
 .contact-container p {
   margin: 0 auto;
-  text-align: center;
+  text-align: left;
   max-width: 760px;
   line-height: 1.95;
   letter-spacing: 0.01em;
@@ -3629,6 +3727,18 @@ body.light .notes-panel-close:hover {
   width: 100%;
   min-width: 0;
   overflow: hidden;
+  /* This clip is what hides the off-track cards to either side so the
+     carousel can slide — needed. But a CSS transform like the
+     `scale(1.02)` hover on .car-item below doesn't change layout, so
+     this window's box stayed sized exactly to the cards' un-scaled
+     height with zero slack, and hovering clipped a sliver off the
+     top/bottom of whichever card grew. (Note: `overflow-x: hidden` +
+     `overflow-y: visible` looks like the fix, but per spec a
+     non-"visible" value on one axis forces the other from "visible" to
+     "auto" — same clipping, just with a scrollbar. A real vertical
+     buffer is the only fix that doesn't fight that.) 1rem clears the
+     largest card's ~2% growth on every breakpoint with room to spare. */
+  padding-block: 1rem;
 }
 
 .carousel-track {
@@ -3721,6 +3831,11 @@ JavaScript selects this shared class.
 #cyborg-vault .traditional-intro {
   max-width: 900px;
   margin: 0 auto 1.5rem;
+}
+
+#traditional-vault .traditional-intro h2,
+#digital-vault .traditional-intro h2,
+#cyborg-vault .traditional-intro h2 {
   text-align: center;
 }
 
@@ -3751,6 +3866,10 @@ JavaScript selects this shared class.
 #dreamers .traditional-intro {
   max-width: 900px;
   margin: 0 auto 1.5rem;
+}
+
+#dreams .traditional-intro h2,
+#dreamers .traditional-intro h2 {
   text-align: center;
 }
 
@@ -4128,7 +4247,12 @@ body.modal-open {
 
 #featured .car-item img,
 #portfolio-vaults .car-item img {
-  border-radius: 0;
+  /* Softened to echo the card's own --tile-radius (28px) so the artwork
+     reads as sitting inside the same rounded gilded frame instead of a
+     hard-cornered rectangle floating in a rounded one. Smaller than the
+     card radius on purpose — it's inset by the card's own padding, so a
+     matching-or-larger radius would look proportionally too round. */
+  border-radius: 14px;
   display: block;
 }
 
@@ -4372,6 +4496,14 @@ body.modal-open {
        divider line — every card already carries its own full border/
        radius/glass fill from the base .background-section rule. */
     row-gap: 1.75rem;
+    /* The base rule's `0 3rem` side margin was built for the desktop/
+       tablet 2–4 column grid, where each column is still wide even
+       after that inset. Stacked to one column on a phone, that same
+       3rem (96px total) was eating a third or more of the viewport
+       before the card's own padding even started — collapsing every
+       line of body copy down to just a few words. A phone-appropriate
+       gutter instead, matching the jumpnav strip below. */
+    margin: 0 1rem;
   }
 
   .background-section {
@@ -4383,26 +4515,22 @@ body.modal-open {
     scroll-margin-top: 1.5rem;
   }
 
-  /* Body copy stays centered on mobile, matching every other section
-     on the site and the icon/heading above it. Still capped to a
-     readable measure and centered as a block (not just the text
-     inside it) via margin-inline: auto, so it doesn't stretch
-     edge-to-edge on wider phones. */
+  /* Icon + heading stay centered above the text as a title block, but
+     the body copy itself switches to left-aligned, ragged-right prose
+     — centered multi-line paragraphs are genuinely harder to read
+     (the eye has to hunt for a different starting x-position on every
+     line), and combined with the cramped width the old 3rem margin
+     left, that's exactly what made this read poorly. Left-aligned with
+     the extra width back reads as normal, professional body copy. */
   .background-copy {
-    text-align: center;
+    text-align: left;
+    align-items: flex-start;
     gap: 1rem;
   }
   .background-copy p {
     max-width: 60ch;
-    margin-inline: auto;
   }
-  /* Center the credentials list as a block too, matching the intro
-     paragraph above it — the bullets themselves stay left-aligned
-     within that centered block (a left-ragged list reads far better
-     than a centered one; see the base .education-list rule), they
-     just sit in the middle of the column rather than pinned to it. */
   .education-list {
-    align-self: center;
     max-width: 60ch;
   }
 
@@ -4478,7 +4606,8 @@ body.modal-open {
     width: 100%;
   }
   .archive-personal {
-    text-align: center;
+    /* Prose body copy reads left-aligned like everywhere else on the
+       site — only the media/icon column still centers via align-items. */
     display: grid;
     grid-template-columns: 1fr;
     align-items: center;
@@ -4490,15 +4619,6 @@ body.modal-open {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-
-  .category-project-copy,
-  .category-project-copy h3 {
-    text-align: center;
-  }
-
-  .header-left {
-    text-align: center;
-  }
   .notes-hero {
     justify-content: center;
     align-items: center;
@@ -4508,7 +4628,6 @@ body.modal-open {
   }
   .contact-container {
     width: 100%;
-    text-align: center;
   }
   .image-grid {
     display: grid;
