@@ -1359,12 +1359,14 @@ body.light .logo-light {
    Top/Width/Height), then left to CSS `transition` to animate the move.
    Inserted as the first child of its list, so it paints behind every
    link's own text in normal DOM stacking order — no z-index needed.
-   Moves on hover/focus (a live preview as you move across options) and
-   on click (see the "chamber" page-transition delay in
+   Moves only on click, gliding from whichever option it was last on to
+   the one just picked (see the "chamber" page-transition delay in
    initializePageTransitions, which holds the current page just long
-   enough for this slide to actually play before navigating away),
-   settling back onto the current page whenever the pointer/focus
-   leaves the list. */
+   enough for this slide to actually play before navigating away). Not
+   hover/focus-reactive — it used to also live-preview as the pointer
+   moved across options and snap back on mouse-leave, but that read as
+   the pill drifting back and forth with ordinary mouse movement rather
+   than a deliberate "you picked this" motion. */
 .nav-pill-indicator {
   position: absolute;
   top: 0;
@@ -1414,10 +1416,6 @@ body.light .logo-light {
     inset 0 1px 0 rgba(var(--highlight-rgb), 0.4),
     inset 0 -6px 10px rgba(var(--ink-rgb), 0.24),
     0 0 0 1px rgba(var(--highlight-rgb), 0.3);
-}
-
-.nav-pill-indicator.is-hovering {
-  border-color: var(--gold-border-card);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2518,14 +2516,64 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   margin: 0 auto;
 }
 
+/* Typography / Graphic Design / Motion Graphics / Computer Graphics —
+   the four Chronological Archive category pages — used to render each
+   project as a flat `var(--secondary-black-colour)` panel with a
+   transparent border: the one holdout still carrying the site's old
+   pre-"iOS26" look, everywhere else already reads as frosted gold
+   glass (.archive-personal, #featured .car-item, .notes-post, the
+   About page's Background cards). Brought in line with that same
+   recipe — identical tokens, blur/gloss layers and --tile-radius —
+   so a visitor's own project showcases get the same considered
+   treatment as the rest of the site, not a leftover plain box. */
 .category-project {
+  --tile-radius: 24px;
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 2rem;
   align-items: center;
-  border: 1px solid transparent;
-  background: var(--secondary-black-colour);
-  padding: 1.5rem;
+  border: 1px solid var(--gold-border-card);
+  border-radius: var(--tile-radius);
+  padding: 1.75rem;
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.26),
+    rgba(var(--surface-rgb), 0.15)
+  );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.3),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.3),
+    0 8px 20px rgba(var(--ink-rgb), 0.28);
+  transition:
+    background-image 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .category-project {
+    background-color: rgba(var(--surface-rgb), 0.92);
+  }
+}
+
+.category-project:hover,
+.category-project:focus-within {
+  transform: translateY(-2px);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.38),
+    rgba(var(--surface-rgb), 0.18)
+  );
+  border-color: rgba(var(--highlight-rgb), 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.48),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.26),
+    0 14px 28px rgba(var(--ink-rgb), 0.32),
+    0 0 0 1px rgba(var(--highlight-rgb), 0.3);
 }
 
 .category-project-copy {
@@ -2543,17 +2591,42 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   margin-bottom: 1rem;
 }
 
+/* Clickable — mirrors the card's own "Read More" link (see
+   initializeCategoryProjectMediaLinks in main.js), so the image is as
+   much an entry point into the project as the button beside it, not a
+   static thumbnail. */
 .category-project-media {
   display: flex;
   justify-content: center;
+  cursor:
+    var(--gothic-cursor-url) 16 5,
+    pointer;
+  transition: transform 0.25s ease;
+}
+
+.category-project-media:hover,
+.category-project-media:focus-visible {
+  transform: translateY(-2px) scale(1.01);
+  outline: none;
+}
+
+.category-project-media:hover img,
+.category-project-media:focus-visible img {
+  border-color: rgba(var(--highlight-rgb), 0.9);
 }
 
 .category-project-media img {
   width: min(100%, 250px);
   aspect-ratio: 1;
   object-fit: cover;
-  border: 1px solid transparent;
+  /* Softened to echo the card's own --tile-radius, same reasoning as
+     the Featured Artworks carousel's image corners — the artwork sits
+     inside the gilded frame instead of a hard-cornered rectangle
+     floating inside a rounded one. */
+  border-radius: 14px;
+  border: 1px solid var(--gold-border-card);
   background-color: rgba(255, 255, 255, 0.05);
+  transition: border-color 0.25s ease;
 }
 /*==================== Notes ====================*/
 .notes-image {
@@ -2754,10 +2827,15 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   justify-content: center;
   gap: 0.6rem;
   margin-top: 2.5rem;
+  /* Breathing room below, same as above — without it the pills sit
+     flush against the footer's own top edge/hairline, reading as
+     crowded together rather than as its own row. */
+  margin-bottom: 2.5rem;
 }
 
 .notes-pagination:empty {
   margin-top: 0;
+  margin-bottom: 0;
 }
 
 .notes-page-btn,
@@ -2799,6 +2877,7 @@ body.light .notes-page-btn.is-active {
   .notes-pagination {
     gap: 0.45rem;
     margin-top: 2rem;
+    margin-bottom: 2rem;
   }
 
   .notes-page-btn,
@@ -3532,6 +3611,34 @@ body.light .notes-panel-close:hover {
   margin-top: 0.6rem;
   max-width: 66ch;
 }
+
+/* The tablet-portrait band above (600–920px) stacks this card to one
+   column, but explicitly stops short of true phone widths — the
+   fixed 1fr/3fr row was still live below 600px, with nothing else on
+   the page to narrow it further. At a 390px phone that left the text
+   column (.effects-card-info, holding the title/body/"Explore More"
+   button) only ~160px wide: not just cramped prose, but narrow enough
+   that "Explore More" — a single two-word button label — wrapped onto
+   two lines inside its own pill, which reads as a clear typo/layout
+   glitch rather than a button. Stacked here the same way the tablet
+   band and .archive-personal both already do, so every phone width
+   gets it too, not just the ~600–920px gap. */
+@media (max-width: 599px) {
+  .effects-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .effects-card-img {
+    display: flex;
+    justify-content: center;
+  }
+
+  .effects-media-link {
+    width: 100%;
+    max-width: 300px;
+  }
+}
 /*==================== Cyborg Vault ====================*/
 .cyborg-image {
   background:
@@ -3548,6 +3655,19 @@ body.light .notes-panel-close:hover {
       no-repeat center center / cover;
   min-height: 80vh;
 }
+/* Aftereffects/Cyborg Vault: unlike every other vault page (Personal/
+   Inspiration/Motion), these two had no page heading at all — a
+   visitor lands straight on a bare grid of video thumbnails with
+   nothing identifying what they're looking at, which reads as broken
+   or unfinished rather than intentionally minimal, especially on a
+   phone where the grid is a single full-width column and there's no
+   surrounding layout to give it context. Gives both the same title
+   treatment the rest of the site already uses. */
+#aftereffects-vault h2,
+#cyborg-vault h2 {
+  margin-bottom: 2.5rem;
+}
+
 .gallery-item {
   width: 100%;
   min-width: 0;
@@ -4110,8 +4230,8 @@ body.modal-open {
   margin: 0;
   /* The "January8th" wordmark sits inside the same <a href="/"> as the
      logo marks now (clickable, links home, same hit area) — stays
-     plain, no underline, unlike the NAVIGATION/CONTACT column headings
-     below, which keep the deliberate underline exception noted there. */
+     plain, no underline, same as the NAVIGATION/CONTACT column headings
+     below (their underline was removed too). */
   text-decoration-line: none;
 }
 
@@ -4136,7 +4256,6 @@ body.modal-open {
 .footer-navigation h4,
 .footer-contact h4 {
   margin: 0 0 0.75rem;
-  text-decoration-line: underline;
 }
 
 .footer-navigation ul,

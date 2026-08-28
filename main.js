@@ -792,7 +792,7 @@ if (typeof document !== "undefined") {
       const opts = options || {};
 
       if (!link) {
-        indicator.classList.remove("is-visible", "is-current", "is-hovering");
+        indicator.classList.remove("is-visible", "is-current");
         return;
       }
 
@@ -806,7 +806,6 @@ if (typeof document !== "undefined") {
       indicator.style.height = `${link.offsetHeight}px`;
       indicator.classList.add("is-visible");
       indicator.classList.toggle("is-current", Boolean(opts.current));
-      indicator.classList.toggle("is-hovering", Boolean(opts.hovering));
 
       if (opts.instant) {
         // Force layout now, synchronously, so the instant jump actually
@@ -822,42 +821,22 @@ if (typeof document !== "undefined") {
       placeIndicator(activeLink, { current: true, ...(options || {}) });
     }
 
+    // Click-only: the pill glides from whichever option it's currently
+    // sitting on straight to the one just clicked, and nothing else ever
+    // moves it — no hover/focus preview, no snapping back when the
+    // pointer leaves the list. Deliberately not wired to mouseenter/
+    // focus/mouseleave/focusout any more; it used to also live-preview
+    // on hover and settle back on the active page when the pointer left,
+    // but that made it drift back and forth with ordinary mouse movement
+    // instead of reading as a deliberate "you picked this" motion.
     links.forEach(function (link) {
-      link.addEventListener("mouseenter", function () {
-        placeIndicator(link, {
-          current: link === getActiveLink(),
-          hovering: link !== getActiveLink(),
-        });
-      });
-
-      link.addEventListener("focus", function () {
-        placeIndicator(link, {
-          current: link === getActiveLink(),
-          hovering: link !== getActiveLink(),
-        });
-      });
-
       // The "chamber" page-transition (initializePageTransitions) holds
       // the current page for ~650ms before actually navigating away, so
       // sliding the pill onto the clicked link here has real time to
       // play out rather than being cut off mid-flight by navigation.
       link.addEventListener("click", function () {
-        placeIndicator(link, { current: true, hovering: false });
+        placeIndicator(link, { current: true });
       });
-    });
-
-    container.addEventListener("mouseleave", function () {
-      settleOnActive();
-    });
-
-    container.addEventListener("focusout", function (event) {
-      const next = event.relatedTarget;
-
-      if (next && container.contains(next)) {
-        return;
-      }
-
-      settleOnActive();
     });
 
     // Initial placement lands on the current page instantly — no slide-in
@@ -883,6 +862,47 @@ if (typeof document !== "undefined") {
   initializeNavPillIndicator(".navbar .navbar-nav");
   initializeNavPillIndicator(".footer-navigation ul");
   initializeNavPillIndicator(".footer-contact ul");
+
+  // Category pages (Typography/Graphic Design/Motion Graphics/Computer
+  // Graphics): each project's image sits beside its own "Read More"
+  // link but wasn't clickable itself, which reads as a dead thumbnail
+  // on a card everything else about visually invites tapping. Wired to
+  // trigger that same link — rather than duplicating its href onto a
+  // second element — so if/when Read More starts pointing at a real
+  // project page instead of today's "#" placeholder, the image follows
+  // automatically with no second place to remember to update.
+  function initializeCategoryProjectMediaLinks() {
+    document.querySelectorAll(".category-project").forEach(function (project) {
+      const media = project.querySelector(".category-project-media");
+      const readMore = project.querySelector(".category-project-copy .btn");
+
+      if (!media || !readMore) {
+        return;
+      }
+
+      const title = project.querySelector(".category-project-copy h3");
+
+      media.setAttribute("role", "link");
+      media.setAttribute("tabindex", "0");
+      media.setAttribute(
+        "aria-label",
+        title ? `Read more: ${title.textContent.trim()}` : "Read more",
+      );
+
+      media.addEventListener("click", function () {
+        readMore.click();
+      });
+
+      media.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          readMore.click();
+        }
+      });
+    });
+  }
+
+  initializeCategoryProjectMediaLinks();
 
   function optimizeImageLoading() {
     const images = document.querySelectorAll("img");
@@ -1440,6 +1460,160 @@ if (typeof document !== "undefined") {
   }
 
   loadNotesMarkdownPosts();
+
+  // Same page-locator feature as the Notes page's Previous/1 2 3/Next
+  // row (loadNotesMarkdownPosts above) — reused for the Chronological
+  // Archive's four category pages (Typography/Graphic Design/Motion
+  // Graphics/Computer Graphics), one independent instance per page since
+  // each has its own `.category-projects` section. Lighter than the
+  // Notes version: those posts are fetched from a JSON index and
+  // rendered from Markdown per page; a category's projects are already
+  // static markup on the page, so "changing page" here just show/hides
+  // the existing `.category-project` articles rather than re-fetching
+  // anything. Reuses the exact same `.notes-pagination` /
+  // `.notes-page-btn` / `.notes-page-nav` classes for a pixel-identical
+  // gilded-glass pill row, and the same `?page=` URL sync so a direct
+  // link/bookmark/the browser's own back-forward buttons land on the
+  // right page here too.
+  function initializeCategoryProjectPagination() {
+    const PAGE_SIZE = 2;
+
+    function getPageFromQuery() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const page = parseInt(params.get("page"), 10);
+        return Number.isFinite(page) && page > 0 ? page : 1;
+      } catch (error) {
+        return 1;
+      }
+    }
+
+    function setPageQuery(page) {
+      try {
+        const url = new URL(window.location.href);
+
+        if (page <= 1) {
+          url.searchParams.delete("page");
+        } else {
+          url.searchParams.set("page", String(page));
+        }
+
+        window.history.pushState({ categoryPage: page }, "", url);
+      } catch (error) {
+        // History/URL API unsupported (or blocked) — pagination still
+        // works via clicks, it just won't be reflected in the address bar.
+      }
+    }
+
+    document.querySelectorAll(".category-projects").forEach(function (section) {
+      const projects = Array.from(
+        section.querySelectorAll(":scope > .category-project"),
+      );
+
+      if (!projects.length) {
+        return;
+      }
+
+      const totalPages = Math.max(1, Math.ceil(projects.length / PAGE_SIZE));
+      const pagination = document.createElement("div");
+      pagination.className = "notes-pagination";
+      section.insertAdjacentElement("afterend", pagination);
+
+      let currentPage = Math.min(Math.max(getPageFromQuery(), 1), totalPages);
+
+      function renderControls() {
+        pagination.innerHTML = "";
+
+        const fragment = document.createDocumentFragment();
+
+        const makeControl = function (label, targetPage, options) {
+          const opts = options || {};
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = opts.className || "btn notes-page-btn";
+          button.textContent = label;
+
+          if (opts.disabled) {
+            button.disabled = true;
+          }
+
+          if (opts.current) {
+            button.classList.add("is-active");
+            button.setAttribute("aria-current", "page");
+          }
+
+          if (opts.ariaLabel) {
+            button.setAttribute("aria-label", opts.ariaLabel);
+          }
+
+          button.addEventListener("click", function () {
+            if (opts.disabled || targetPage === currentPage) {
+              return;
+            }
+
+            renderPage(targetPage, { scrollIntoView: true });
+          });
+
+          return button;
+        };
+
+        fragment.appendChild(
+          makeControl("Previous", currentPage - 1, {
+            className: "btn notes-page-nav",
+            disabled: currentPage <= 1,
+            ariaLabel: "Go to previous page of projects",
+          }),
+        );
+
+        for (let page = 1; page <= totalPages; page += 1) {
+          fragment.appendChild(
+            makeControl(String(page), page, {
+              current: page === currentPage,
+              ariaLabel: `Go to page ${page}`,
+            }),
+          );
+        }
+
+        fragment.appendChild(
+          makeControl("Next", currentPage + 1, {
+            className: "btn notes-page-nav",
+            disabled: currentPage >= totalPages,
+            ariaLabel: "Go to next page of projects",
+          }),
+        );
+
+        pagination.appendChild(fragment);
+      }
+
+      function renderPage(page, options) {
+        const opts = options || {};
+        currentPage = Math.min(Math.max(page, 1), totalPages);
+
+        projects.forEach(function (project, index) {
+          const projectPage = Math.floor(index / PAGE_SIZE) + 1;
+          project.style.display = projectPage === currentPage ? "" : "none";
+        });
+
+        renderControls();
+
+        if (!opts.skipHistory) {
+          setPageQuery(currentPage);
+        }
+
+        if (opts.scrollIntoView) {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      renderPage(currentPage, { skipHistory: true });
+
+      window.addEventListener("popstate", function () {
+        renderPage(getPageFromQuery(), { skipHistory: true });
+      });
+    });
+  }
+
+  initializeCategoryProjectPagination();
 
   // Click-to-load YouTube facade: an embedded YouTube <iframe> pulls in
   // the full player bundle (scripts, styles, its own tracking requests —
