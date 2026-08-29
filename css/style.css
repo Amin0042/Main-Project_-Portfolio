@@ -72,7 +72,7 @@
      `p` rule (was 1.08rem–1.28rem) and every element below now points
      at this single value instead of hand-rolling its own. -------------- */
   --body-copy-font-size: clamp(1.15rem, 0.6vw + 1.02rem, 1.4rem);
-  --normal-font-size: 1.75rem;
+  --normal-font-size: 2.25rem;
   --h1-size: calc(var(--normal-font-size) * 2);
   --h2-size: calc(var(--normal-font-size) * 1.5);
   --h3-size: calc(var(--normal-font-size) * 1.25);
@@ -349,10 +349,26 @@ body.chamber-exit::after {
 .chamber-guardian-art {
   width: 100%;
   height: 100%;
-  background-image: url("../Assets/Background-Image/Lion and Sword without BG .png");
-  background-repeat: no-repeat;
-  background-position: center bottom;
-  background-size: contain;
+  /* The source PNG is flat gold linework on transparent — a single color,
+     no shading — so instead of painting it as a background-image (which
+     bakes that gold in permanently) it's used as a mask: the alpha
+     channel supplies the lion's shape, and background-color paints it.
+     That lets body.light recolor the guardians to near-black for
+     contrast against the light parchment doors without a second export
+     from Illustrator. */
+  -webkit-mask-image: url("../Assets/Background-Image/Lion and Sword without BG .png");
+  mask-image: url("../Assets/Background-Image/Lion and Sword without BG .png");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center bottom;
+  mask-position: center bottom;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  background-color: var(--secondary-gold-colour);
+}
+
+body.light .chamber-guardian-art {
+  background-color: var(--primary-black-colour);
 }
 
 .chamber-guardian-left {
@@ -548,6 +564,16 @@ body {
   letter-spacing: var(--body-letter-spacing);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* No mid-word hyphenation anywhere on the site: the elegant, wide-
+     tracked serif/sans mix reads worse broken across a hyphen than it
+     does wrapping a whole word down. -webkit-/-ms- prefixes cover
+     Safari/older Edge; the unprefixed property is the browsers with
+     no vendor prefix requirement. Nothing sets hyphens: auto anywhere
+     else in the sheet, so this also forecloses it from ever being
+     turned on by a future rule higher in the cascade than body. */
+  -webkit-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
 }
 
 p,
@@ -560,7 +586,14 @@ button,
 a {
   line-height: var(--body-line-height);
   letter-spacing: var(--body-letter-spacing);
+  /* text-wrap: pretty asks supporting browsers (Chromium) to avoid a
+     lone short word stranded on the last line (an orphan) by rebalancing
+     the line breaks above it. orphans/widows below are the paged-media
+     fallback for browsers that honor them, so both mechanisms are aimed
+     at the same problem via whichever path a given engine supports. */
   text-wrap: pretty;
+  orphans: 3;
+  widows: 3;
 }
 
 p {
@@ -632,7 +665,6 @@ h4 {
   font-weight: var(--fw-medium);
   color: var(--primary-gold-colour);
   text-align: center;
-  line-height: 3rem;
 }
 h1 {
   font-size: var(--h1-size);
@@ -1066,7 +1098,7 @@ body.light .theme-icon-moon {
   margin-right: 2rem;
   padding: 0.5rem 0.75rem;
   font-family: "Inter", sans-serif;
-  font-size: clamp(1.02rem, 0.32vw + 0.95rem, 1.22rem);
+  font-size: clamp(1.25rem, 0.5vw + 1.15rem, 1.55rem);
   letter-spacing: 0.08em;
   line-height: 1.2;
   white-space: nowrap;
@@ -1326,7 +1358,7 @@ body.light .logo-light {
   min-height: 2.7rem;
   font-family: "Inter", sans-serif;
   text-transform: uppercase;
-  font-size: clamp(0.96rem, 0.26vw + 0.9rem, 1.08rem);
+  font-size: clamp(1.05rem, 0.35vw + 0.98rem, 1.3rem);
   font-weight: 400;
   letter-spacing: 0.055em;
   line-height: 1.45;
@@ -2451,7 +2483,7 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   color: var(--primary-gold-colour);
   text-transform: uppercase;
   letter-spacing: 0.3em;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
 }
 .archive-back-link {
   display: inline-block;
@@ -2671,11 +2703,13 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   text-align: left;
   min-height: 100%;
   gap: 1.15rem;
-  /* Right side trimmed back a bit from the other three — with the
-     shrink-wrap fix on .post-title/.info-body above, the text column
-     now reaches close to the card's edge, so it reads best with a touch
-     less air on that side than the other three keep. */
-  padding: 1.4rem 1.1rem 1.4rem 1.4rem;
+  /* Even padding on all four sides — with .info-body's line-clamp below
+     capping the summary at three lines, the card no longer needs the
+     old lopsided trim (a tighter right/top/bottom than left) that was
+     tuned for a much longer, uncapped paragraph. 1.75rem reads as a
+     properly cushioned card interior without pushing the row back up
+     to its old height. */
+  padding: 1.75rem;
   border: 1px solid var(--gold-border-card);
   border-radius: var(--tile-radius);
   background-color: rgba(var(--surface-rgb), 0.55);
@@ -2721,11 +2755,23 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
 
 /* One column, three rows: each of a page's 3 posts now spans the full
    width of the section as its own row-card, stacked one after another,
-   instead of sitting three-across in a grid. */
+   instead of sitting three-across in a grid.
+   #notes-list sits directly in `.section.notes`, which (like every
+   `.section`) is width: 100% with no side padding of its own — left
+   unconstrained, the row-cards ran edge-to-edge across the full browser
+   viewport, which is what actually read as "too tall": a card that wide
+   makes even a modest height look stretched thin. max-width + the same
+   clamped side margin .archive-personal uses elsewhere for a full-bleed
+   section keeps the cards comfortably inset and caps how wide any single
+   row gets on an ultra-wide screen, instead of shrinking the cards'
+   actual content. */
 #notes-list {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-inline: clamp(1.25rem, 4vw, 4rem);
 }
 
 /* With the card now a full-width row, the date badge reads better as a
@@ -2735,15 +2781,23 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
 .notes-post {
   flex-direction: row;
   align-items: center;
-  gap: 2rem;
+  gap: 1.6rem;
 }
 
 .post-img {
   border: 0;
   background: transparent;
   min-height: auto;
-  width: 9rem;
-  flex: 0 0 9rem;
+  /* A fixed-width rail is what was wrapping the longer dates: any date
+     column narrow enough to hold "Sunday, July 19, 2026" on one line
+     still isn't wide enough for "Thursday, July 9, 2026" at the same
+     size. Editorial date-first layouts (a byline dateline, not a boxed
+     label) let the date set its own width instead of fighting a fixed
+     column — width: auto + flex-basis: auto lets this column shrink-
+     wrap to whatever its own date needs, and .post-date's white-space:
+     nowrap (below) is what actually forbids the second line. */
+  width: auto;
+  flex: 0 0 auto;
   max-width: none;
   display: flex;
   align-items: center;
@@ -2755,17 +2809,24 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   margin: 0;
   text-align: left;
   text-transform: uppercase;
-  font-size: 0.76rem;
+  white-space: nowrap;
+  /* Bumped up from 0.76rem — at that size the date read as an
+     afterthought next to the title/body, not a piece of information a
+     reader actually needs. 0.95rem plus tightened tracking keeps it
+     legible, holds its own as a real label, and — paired with
+     white-space: nowrap above and the column's shrink-to-fit width —
+     comfortably clears one line for every date this site uses. */
+  font-size: 0.95rem;
   font-weight: 550;
-  letter-spacing: 0.1em;
-  line-height: 1.35;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
   color: rgba(210, 164, 37, 0.92);
 }
 .post-info {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.8rem;
+  gap: 0.6rem;
   width: 100%;
   min-width: 0;
   flex: 1;
@@ -2792,16 +2853,86 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
 }
 
 .notes-post .info-body {
-  /* Same shrink-wrap fix as .post-title above. max-width: 64ch is the
-     one that should actually govern line length here — a comfortable
-     reading measure — so it's kept, just no longer overridden by an
-     even narrower shrink-wrapped width arriving first. */
+  /* Same shrink-wrap fix as .post-title above. max-width is pulled
+     in from a plain reading-measure 64ch to 36ch here on purpose: at
+     64ch, a normal one-sentence summary (the kind every post on this
+     site actually uses) runs out on a single line before it ever has a
+     reason to wrap — so the card read as a title with one thin line of
+     grey text under it, not a proper preview blurb. Narrowing the
+     column wraps that same sentence across two or three lines instead,
+     which is what a "preview paragraph" is supposed to look like before
+     the reader ever opens the post. */
   width: 100%;
   color: rgba(232, 228, 216, 0.95);
-  line-height: 1.62;
+  line-height: 1.5;
   font-size: var(--body-copy-font-size);
   margin: 0;
-  max-width: 64ch;
+  max-width: 36ch;
+  /* Clamped to three lines: a full-length summary previously ran the
+     card's height out to however long that post's blurb happened to be,
+     so the row grid read as an uneven, often very tall stack. The
+     "Read More" button already exists to open the rest in the
+     .notes-panel, so the card itself only needs to preview — capping it
+     here keeps every row a consistent, compact height regardless of
+     how long any one summary is. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+/* Right-side thumbnail — a clickable circular medallion, same gold-ring
+   treatment as the About page's Background/Tools medallions
+   (.background-icon img), so it reads as an established piece of the
+   site's visual language rather than a one-off card thumbnail. Opens
+   the exact same .notes-panel popup as "Read More" (see
+   loadNotesMarkdownPosts in main.js); it's a real <a> for native
+   focus/keyboard support even though the click is always intercepted. */
+.post-thumb {
+  flex: 0 0 auto;
+  margin-left: auto;
+  width: 6.5rem;
+  height: 6.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--secondary-gold-colour);
+  background-color: var(--primary-black-colour);
+  box-shadow:
+    0 0 0 1px rgba(210, 164, 37, 0.25),
+    inset 0 0 12px rgba(210, 164, 37, 0.25),
+    0 4px 14px rgba(0, 0, 0, 0.4);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.post-thumb:hover,
+.post-thumb:focus-visible {
+  transform: scale(1.05);
+  box-shadow:
+    0 0 0 1px rgba(255, 215, 120, 0.4),
+    inset 0 0 14px rgba(210, 164, 37, 0.35),
+    0 6px 18px rgba(0, 0, 0, 0.45);
+  outline: none;
+}
+
+.post-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The fallback lion mark isn't a photo — it needs to sit inset on its
+   own dark medallion field rather than crop edge-to-edge like a real
+   photo would. */
+.post-thumb-mark .post-thumb-img {
+  object-fit: contain;
+  padding: 1.1rem;
+}
+
+body.light .post-thumb {
+  background-color: var(--primary-ivory-colour);
 }
 
 /* Inherits the sitewide gilded-glass pill (button, .btn) as-is — just
@@ -3062,6 +3193,13 @@ body.light .notes-panel-close:hover {
     width: 100%;
     flex: 0 0 auto;
     max-width: 100%;
+  }
+
+  /* margin-left: auto only makes sense pushing the thumbnail to the row's
+     far edge in the desktop row layout above — in the stacked column
+     layout here it would just shove the medallion off-center. */
+  .post-thumb {
+    margin-left: 0;
   }
 
   .notes-panel-shell {
@@ -4527,7 +4665,7 @@ body.modal-open {
 
 @media (max-width: 750px) {
   body {
-    --normal-font-size: 1.25rem;
+    --normal-font-size: 1.6rem;
     --h1-size: calc(var(--normal-font-size) * 2);
     --h2-size: calc(var(--normal-font-size) * 1.5);
     --h3-size: calc(var(--normal-font-size) * 1.25);

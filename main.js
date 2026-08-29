@@ -1159,19 +1159,32 @@ if (typeof document !== "undefined") {
     });
   }
 
+  // Posts can optionally carry an "image" path in posts/index.json for a
+  // real photo; any post without one falls back to the site's own lion
+  // mark (the same light/dark-swapped pair the navbar/footer use) so
+  // every card still gets a thumbnail instead of an empty gap.
   function createNotesPostElement(post) {
     const article = document.createElement("article");
     article.className = "notes-post";
+
+    const title = post.title || "Untitled Note";
+    const thumbMarkup = post.image
+      ? `<img class="post-thumb-img" src="${post.image}" alt="" />`
+      : `<img class="post-thumb-img logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg" alt="" />
+         <img class="post-thumb-img logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg" alt="" />`;
 
     article.innerHTML = `
       <div class="post-img">
         <h4 class="post-date">${formatPostDate(post.date)}</h4>
       </div>
       <div class="post-info">
-        <h3 class="post-title">${post.title || "Untitled Note"}</h3>
+        <h3 class="post-title">${title}</h3>
         <p class="info-body">${post.summary || ""}</p>
         <button class="btn info-btn" type="button">Read More</button>
       </div>
+      <a class="post-thumb${post.image ? "" : " post-thumb-mark"}" href="#" aria-label="Open full note: ${title}">
+        ${thumbMarkup}
+      </a>
     `;
 
     return article;
@@ -1403,11 +1416,13 @@ if (typeof document !== "undefined") {
         pagePosts.forEach(function (post) {
           const article = createNotesPostElement(post);
           const button = article.querySelector(".info-btn");
+          const thumb = article.querySelector(".post-thumb");
 
-          button.addEventListener("click", async function () {
-            button.disabled = true;
-            button.textContent = "Loading...";
-
+          // Shared by the "Read More" button and the thumbnail on the
+          // card's right side — both open the exact same post panel, so
+          // the fetch/cache/render logic lives in one place instead of
+          // being duplicated per trigger.
+          async function openThisPost() {
             try {
               let renderedHtml = postCache.get(post.file);
 
@@ -1428,11 +1443,26 @@ if (typeof document !== "undefined") {
               openNotesPanel(post, renderedHtml);
             } catch (error) {
               openNotesPanel(post, "<p>Unable to load this post right now.</p>");
-            } finally {
-              button.disabled = false;
-              button.textContent = "Read More";
             }
+          }
+
+          button.addEventListener("click", async function () {
+            button.disabled = true;
+            button.textContent = "Loading...";
+            await openThisPost();
+            button.disabled = false;
+            button.textContent = "Read More";
           });
+
+          if (thumb) {
+            thumb.addEventListener("click", function (event) {
+              // It's an <a href="#"> purely so it's a real link (native
+              // keyboard/focus/cursor semantics) — the click always
+              // opens the panel in place, never navigates.
+              event.preventDefault();
+              openThisPost();
+            });
+          }
 
           notesList.appendChild(article);
         });
