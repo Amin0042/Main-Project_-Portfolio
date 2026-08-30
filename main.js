@@ -287,7 +287,28 @@ function initializePageTransitions() {
   // so the doors are open, not stuck sealed, on the restored page.
   window.addEventListener("pageshow", function () {
     document.body.classList.remove("chamber-exit");
+    settleChamber();
   });
+
+  // Safety net: the opening reveal is a CSS animation left to play on its
+  // own, and mobile browsers can pause or drop it mid-frame — the tab gets
+  // backgrounded, the OS takes a screenshot, Low Power Mode throttles it —
+  // with nothing to resume it, leaving the doors/guardians frozen part-open
+  // over the real page forever instead of finishing their swing. Once
+  // enough time has passed for the reveal to have genuinely finished,
+  // .chamber-settled forces the true "fully open" end state directly (see
+  // style.css), overriding whatever frame the animation actually stalled
+  // on. It has no effect on a later chamber-exit close, since an *active*
+  // animation's transform always outranks this static fallback.
+  function settleChamber() {
+    window.setTimeout(function () {
+      if (!document.body.classList.contains("chamber-exit")) {
+        document.body.classList.add("chamber-settled");
+      }
+    }, CHAMBER_DURATION_MS + 100);
+  }
+
+  settleChamber();
 }
 
 function initializeChamberGuardians() {
@@ -948,10 +969,12 @@ if (typeof document !== "undefined") {
       <div class="image-modal-dialog" role="dialog" aria-modal="true" aria-label="Artwork preview">
         <button class="image-modal-close" type="button" aria-label="Close image preview">X</button>
         <figure class="image-modal-figure">
-          <img class="image-modal-image" alt="" />
+          <div class="image-modal-image-wrap" title="Scroll to zoom in and out">
+            <img class="image-modal-image" alt="" />
+          </div>
           <figcaption class="image-modal-caption">
             <h3 class="image-modal-title"></h3>
-            <p class="image-modal-description"></p>
+            <p class="image-modal-description" title="Scroll to read more"></p>
           </figcaption>
         </figure>
       </div>
@@ -962,6 +985,7 @@ if (typeof document !== "undefined") {
     return {
       modal,
       dialog: modal.querySelector(".image-modal-dialog"),
+      imageWrap: modal.querySelector(".image-modal-image-wrap"),
       image: modal.querySelector(".image-modal-image"),
       title: modal.querySelector(".image-modal-title"),
       description: modal.querySelector(".image-modal-description"),
@@ -974,6 +998,144 @@ if (typeof document !== "undefined") {
   const defaultImageModalDescription =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
+  // Hovering the artwork itself zooms it (mouse wheel / trackpad scroll),
+  // while hovering the caption text below scrolls that text instead — two
+  // similar-looking scroll gestures, kept deliberately distinct so neither
+  // area steals the other's input. Zoom and pan are tracked as an explicit
+  // translate+scale pair (rather than leaning on native scroll) so every
+  // part of the artwork — corners included — stays reachable by dragging,
+  // and zooming always keeps whatever point is under the cursor in place.
+  const IMAGE_MODAL_MIN_ZOOM = 1;
+  const IMAGE_MODAL_MAX_ZOOM = 4;
+  const IMAGE_MODAL_ZOOM_STEP = 0.35;
+  let imageModalZoom = IMAGE_MODAL_MIN_ZOOM;
+  let imageModalPanX = 0;
+  let imageModalPanY = 0;
+
+  // Keeps the image centered/contained in the wrap at low zoom, and — once
+  // the scaled image is bigger than the wrap — stops panning from dragging
+  // the artwork's edge past the wrap's edge, so it never flies off into
+  // empty space.
+  function clampImageModalPan(scale, x, y) {
+    const wrapWidth = imageModal.imageWrap.clientWidth;
+    const wrapHeight = imageModal.imageWrap.clientHeight;
+    const baseWidth = imageModal.image.offsetWidth;
+    const baseHeight = imageModal.image.offsetHeight;
+    const scaledWidth = baseWidth * scale;
+    const scaledHeight = baseHeight * scale;
+
+    const clampedX =
+      scaledWidth <= wrapWidth
+        ? (wrapWidth - scaledWidth) / 2
+        : Math.min(0, Math.max(wrapWidth - scaledWidth, x));
+    const clampedY =
+      scaledHeight <= wrapHeight
+        ? (wrapHeight - scaledHeight) / 2
+        : Math.min(0, Math.max(wrapHeight - scaledHeight, y));
+
+    return { x: clampedX, y: clampedY };
+  }
+
+  function applyImageModalTransform() {
+    imageModal.image.style.transform = `translate(${imageModalPanX}px, ${imageModalPanY}px) scale(${imageModalZoom})`;
+    imageModal.imageWrap.classList.toggle(
+      "is-zoomed",
+      imageModalZoom > IMAGE_MODAL_MIN_ZOOM
+    );
+  }
+
+  // Zooms toward a given point (the cursor, a touch, or — with no point
+  // given — the wrap's center) so that exact point on the artwork stays
+  // under the cursor as the scale changes, instead of always zooming from
+  // a fixed corner and drifting other areas out of reach.
+  function setImageModalZoom(nextZoom, anchorClientX, anchorClientY) {
+    const clampedZoom = Math.min(
+      IMAGE_MODAL_MAX_ZOOM,
+      Math.max(IMAGE_MODAL_MIN_ZOOM, nextZoom)
+    );
+    const wrapRect = imageModal.imageWrap.getBoundingClientRect();
+    const anchorX =
+      (anchorClientX != null ? anchorClientX : wrapRect.left + wrapRect.width / 2) -
+      wrapRect.left;
+    const anchorY =
+      (anchorClientY != null ? anchorClientY : wrapRect.top + wrapRect.height / 2) -
+      wrapRect.top;
+
+    const pointX = (anchorX - imageModalPanX) / imageModalZoom;
+    const pointY = (anchorY - imageModalPanY) / imageModalZoom;
+
+    const nextPanX = anchorX - pointX * clampedZoom;
+    const nextPanY = anchorY - pointY * clampedZoom;
+    const clampedPan = clampImageModalPan(clampedZoom, nextPanX, nextPanY);
+
+    imageModalZoom = clampedZoom;
+    imageModalPanX = clampedPan.x;
+    imageModalPanY = clampedPan.y;
+    applyImageModalTransform();
+  }
+
+  function resetImageModalZoom() {
+    imageModalZoom = IMAGE_MODAL_MIN_ZOOM;
+    const centered = clampImageModalPan(IMAGE_MODAL_MIN_ZOOM, 0, 0);
+    imageModalPanX = centered.x;
+    imageModalPanY = centered.y;
+    applyImageModalTransform();
+  }
+
+  // Click-and-drag panning, reachable across the whole artwork once zoomed
+  // in. Each artwork gets a clean slate — imageModalDrag is reset to null
+  // on every open/close (below) and only ever tracks the one artwork
+  // currently open in this shared popup, so a drag started on one piece
+  // can never bleed into another.
+  let imageModalDrag = null;
+
+  imageModal.imageWrap.addEventListener("pointerdown", function (event) {
+    if (imageModalZoom <= IMAGE_MODAL_MIN_ZOOM || event.button !== 0) {
+      return;
+    }
+
+    imageModalDrag = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startPanX: imageModalPanX,
+      startPanY: imageModalPanY,
+    };
+
+    imageModal.imageWrap.setPointerCapture(event.pointerId);
+    imageModal.imageWrap.classList.add("is-dragging");
+    event.preventDefault();
+  });
+
+  imageModal.imageWrap.addEventListener("pointermove", function (event) {
+    if (!imageModalDrag || event.pointerId !== imageModalDrag.pointerId) {
+      return;
+    }
+
+    const nextPanX =
+      imageModalDrag.startPanX + (event.clientX - imageModalDrag.startX);
+    const nextPanY =
+      imageModalDrag.startPanY + (event.clientY - imageModalDrag.startY);
+    const clampedPan = clampImageModalPan(imageModalZoom, nextPanX, nextPanY);
+
+    imageModalPanX = clampedPan.x;
+    imageModalPanY = clampedPan.y;
+    applyImageModalTransform();
+  });
+
+  function endImageModalDrag(event) {
+    if (!imageModalDrag || event.pointerId !== imageModalDrag.pointerId) {
+      return;
+    }
+
+    imageModal.imageWrap.releasePointerCapture(imageModalDrag.pointerId);
+    imageModal.imageWrap.classList.remove("is-dragging");
+    imageModalDrag = null;
+  }
+
+  imageModal.imageWrap.addEventListener("pointerup", endImageModalDrag);
+  imageModal.imageWrap.addEventListener("pointercancel", endImageModalDrag);
+
   function closeImageModal() {
     imageModal.modal.classList.remove("is-open");
     imageModal.modal.setAttribute("aria-hidden", "true");
@@ -982,6 +1144,9 @@ if (typeof document !== "undefined") {
     imageModal.image.alt = "";
     imageModal.title.textContent = "";
     imageModal.description.textContent = "";
+    imageModalDrag = null;
+    imageModal.imageWrap.classList.remove("is-dragging");
+    resetImageModalZoom();
   }
 
   function openImageModal(image) {
@@ -993,6 +1158,7 @@ if (typeof document !== "undefined") {
     imageModal.image.alt = imageTitle;
     imageModal.title.textContent = imageTitle;
     imageModal.description.textContent = imageDescription;
+    resetImageModalZoom();
     imageModal.modal.classList.add("is-open");
     imageModal.modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
@@ -1005,6 +1171,59 @@ if (typeof document !== "undefined") {
       closeImageModal();
     }
   });
+
+  // Scrolling over the artwork zooms it in/out — toward the cursor — instead
+  // of scrolling the dialog behind it.
+  imageModal.imageWrap.addEventListener(
+    "wheel",
+    function (event) {
+      event.preventDefault();
+      const direction = event.deltaY > 0 ? -1 : 1;
+      setImageModalZoom(
+        imageModalZoom + direction * IMAGE_MODAL_ZOOM_STEP,
+        event.clientX,
+        event.clientY
+      );
+    },
+    { passive: false }
+  );
+
+  imageModal.imageWrap.addEventListener("dblclick", function (event) {
+    setImageModalZoom(
+      imageModalZoom > IMAGE_MODAL_MIN_ZOOM
+        ? IMAGE_MODAL_MIN_ZOOM
+        : IMAGE_MODAL_MIN_ZOOM + IMAGE_MODAL_ZOOM_STEP * 3,
+      event.clientX,
+      event.clientY
+    );
+  });
+
+  // The wrap resizing (e.g. the viewport rotating or resizing) can leave the
+  // current pan out of bounds for the new dimensions — re-clamp it in place.
+  window.addEventListener("resize", function () {
+    if (!imageModal.modal.classList.contains("is-open")) {
+      return;
+    }
+    const clampedPan = clampImageModalPan(
+      imageModalZoom,
+      imageModalPanX,
+      imageModalPanY
+    );
+    imageModalPanX = clampedPan.x;
+    imageModalPanY = clampedPan.y;
+    applyImageModalTransform();
+  });
+
+  // Scrolling over the caption text scrolls the text within its own box,
+  // never the wider dialog — stop the wheel event there too so it can't
+  // leak through to the page/dialog scroll behind it.
+  imageModal.description.addEventListener(
+    "wheel",
+    function (event) {
+      event.stopPropagation();
+    },
+    { passive: true }
+  );
 
   document.addEventListener("keydown", function (event) {
     if (

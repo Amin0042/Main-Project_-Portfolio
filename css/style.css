@@ -229,7 +229,17 @@ body::after {
   content: "";
   position: fixed;
   top: 0;
+  /* top:0 + bottom:0 lets mobile browsers' dynamic address-bar toolbar
+     (which shrinks/grows the visible viewport during the very scroll/tap
+     that triggers a page transition) leave the door short of the true
+     screen height, so a sliver of the old page shows through at the
+     bottom mid-transition. An explicit dvh height tracks the actual
+     visible viewport instead; the plain-vh line above it is the fallback
+     for browsers that don't support dvh (dvh silently overrides it where
+     supported since it comes second). */
   bottom: 0;
+  height: 100vh;
+  height: 100dvh;
   width: 50vw;
   z-index: 100000;
   pointer-events: none;
@@ -321,6 +331,23 @@ body.chamber-exit::after {
   }
 }
 
+/* Safety net (see main.js's settleChamber): once the opening reveal has
+   had enough time to genuinely finish, this forces the doors to their true
+   fully-open position outright, regardless of what frame the CSS animation
+   actually stalled on. A currently-*active* animation (e.g. the closing
+   swing once .chamber-exit is added) always overrides a plain, non-!important
+   transform like this one, so it never fights a real transition — it only
+   ever catches a reveal that got stuck. */
+body.chamber-settled:not(.chamber-exit)::before {
+  animation: none;
+  transform: translateX(-100%);
+}
+
+body.chamber-settled:not(.chamber-exit)::after {
+  animation: none;
+  transform: translateX(100%);
+}
+
 /* ==========================================================================
    Cathedral door guardians — a lion rampant, sword raised, carved into each
    door as if standing sentry at the threshold. main.js's
@@ -336,9 +363,15 @@ body.chamber-exit::after {
    ========================================================================== */
 .chamber-guardian {
   position: fixed;
+  /* Same dvh-over-vh fallback as the doors above — vh alone gets measured
+     against a mobile browser's toolbar-collapsed viewport, so the guardian
+     can sit/size itself against a taller screen than is actually visible
+     mid-transition and appear to run short of it. */
   bottom: 4vh;
+  bottom: 4dvh;
   width: 36vw;
   height: 64vh;
+  height: 64dvh;
   z-index: 100001;
   pointer-events: none;
   animation-duration: var(--chamber-duration);
@@ -429,6 +462,17 @@ body.chamber-exit .chamber-guardian-right {
   }
 }
 
+/* Same stuck-animation safety net as the doors above, for the guardians. */
+body.chamber-settled:not(.chamber-exit) .chamber-guardian-left {
+  animation: none;
+  transform: translateX(-50vw);
+}
+
+body.chamber-settled:not(.chamber-exit) .chamber-guardian-right {
+  animation: none;
+  transform: translateX(50vw);
+}
+
 /* Desktop sizing (36vw / 64vh, 12vw / 52vw insets) reads as bold guardian
    figures on a wide door. On a 50vw-wide door that's already only a few
    hundred px, the same proportions read as oversized and crowd the seam —
@@ -440,7 +484,9 @@ body.chamber-exit .chamber-guardian-right {
   .chamber-guardian {
     width: 30vw;
     height: 50vh;
+    height: 50dvh;
     bottom: 3vh;
+    bottom: 3dvh;
   }
 
   .chamber-guardian-left {
@@ -456,7 +502,9 @@ body.chamber-exit .chamber-guardian-right {
   .chamber-guardian {
     width: 26vw;
     height: 32vh;
+    height: 32dvh;
     bottom: 2vh;
+    bottom: 2dvh;
   }
 
   .chamber-guardian-left {
@@ -4272,12 +4320,52 @@ button:disabled {
   align-content: start;
 }
 
+/* Hovering the artwork lets the visitor scroll to zoom it in/out toward the
+   cursor, and once zoomed past 1x, click-and-drag pans freely to any part
+   of the enlarged image — corners included (panning is driven entirely by
+   the translate()/scale() JS above, not native scroll, so every part of the
+   artwork is reachable regardless of zoom level or aspect ratio). This is
+   deliberately a distinct gesture area from .image-modal-description below,
+   which scrolls its own text instead — and each open artwork gets a clean
+   slate, since zoom/pan state resets on every open/close of this shared
+   popup. */
+.image-modal-image-wrap {
+  max-height: min(62vh, 820px);
+  overflow: hidden;
+  border-radius: 16px;
+  cursor: zoom-in;
+  touch-action: none;
+}
+
+.image-modal-image-wrap.is-zoomed {
+  cursor: grab;
+}
+
+.image-modal-image-wrap.is-zoomed.is-dragging {
+  cursor: grabbing;
+}
+
 .image-modal-image {
   width: 100%;
   max-height: min(62vh, 820px);
   object-fit: contain;
   display: block;
   border-radius: 16px;
+  transform-origin: 0 0;
+  transition: transform 120ms ease;
+  /* Keep the browser's high-quality resampling on scale-up instead of a
+     blocky/pixelated nearest-neighbor scale, and promote the image to its
+     own compositor layer so zooming re-rasterizes it crisply rather than
+     stretching an already-downscaled bitmap into a blurry one. */
+  image-rendering: auto;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.image-modal-image-wrap.is-dragging .image-modal-image {
+  /* Panning re-renders every frame; drop the easing while dragging so the
+     image tracks the pointer instead of trailing behind it. */
+  transition: none;
 }
 
 .image-modal-caption {
@@ -4293,12 +4381,19 @@ button:disabled {
   letter-spacing: 0.03em;
 }
 
+/* Its own scrollable box (distinct from the artwork's zoom-on-scroll above)
+   so a long description can be read in place without growing the dialog or
+   fighting the image for the wheel/trackpad gesture. */
 .image-modal-description {
   margin: 0;
   color: rgba(244, 238, 222, 0.9);
   line-height: 1.7;
   max-width: 75ch;
   width: min(75ch, 100%);
+  max-height: 22vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.4rem;
   overflow-wrap: anywhere;
   justify-self: center;
 }
