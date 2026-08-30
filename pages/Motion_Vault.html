@@ -15,7 +15,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400..700;1,400..600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400..700;1,400..600&display=swap"
+        rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -36,29 +38,31 @@
 
 
 <body>
-  <script>
-    // Applies the saved light/dark preference synchronously, before the
-    // browser paints anything — main.js does the same thing but only
-    // loads at the very bottom of the page, so without this the door
-    // transition (and everything themed off body.light) would flash the
-    // wrong palette on every navigation before main.js caught up.
-    (function () {
-      try {
-        if (window.localStorage.getItem("january8th-theme") === "light") {
-          document.body.classList.add("light");
-        }
-      } catch (error) {
-        // Private browsing / disabled storage — default dark applies,
-        // same fallback main.js already uses.
-      }
-    })();
-  </script>
+    <script>
+        // Applies the saved light/dark preference synchronously, before the
+        // browser paints anything — main.js does the same thing but only
+        // loads at the very bottom of the page, so without this the door
+        // transition (and everything themed off body.light) would flash the
+        // wrong palette on every navigation before main.js caught up.
+        (function () {
+            try {
+                if (window.localStorage.getItem("january8th-theme") === "light") {
+                    document.body.classList.add("light");
+                }
+            } catch (error) {
+                // Private browsing / disabled storage — default dark applies,
+                // same fallback main.js already uses.
+            }
+        })();
+    </script>
     <header>
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/">
-                    <img class="icon logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg" alt="">
-                    <img class="icon logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg" alt="">
+                    <img class="icon logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg"
+                        alt="">
+                    <img class="icon logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg"
+                        alt="">
                     <span>
                         January8th
                     </span>
@@ -101,16 +105,36 @@
         <section class="section motion-hero" id="motion-hero">
             <div class="notes-container">
                 <h2>Motion Vault</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minus reprehenderit reiciendis rerum
-                    dolores
-                    aspernatur magni quibusdam. Sint, ratione ut voluptatem ipsum maxime quae quam libero nostrum
-                    voluptatibus, necessitatibus eveniet distinctio.</p>
+                <p>
+                    This is no ordinary gateway.
+
+                    These are the gates of the Inferno—the Inferno that takes shape upon entering this endless chamber,
+                    the very beating
+                    heart that gives life to the myth known as “I.”
+
+                    Meaningless forms are perpetually becoming entangled with one another, until, at last, they give
+                    birth to utterly
+                    coherent images of the mind, laden with human interpretations, before the eyes of those who are
+                    still “seeing.”
+
+                    In truth, these images arise within the unconscious of myself—the wandering Iranian artist,
+                    connected to the “collective
+                    unconscious of a world moving toward collapse”—and, more precisely, upon the walls that serve as the
+                    vital arteries of
+                    this almost entirely uploaded and digitized body of mine. There, they give birth to images that are
+                    profoundly strange,
+                    perpetually moving, and, at times, unmistakably infernal.
+
+                    I, the gatekeeper of this Inferno, invite you to draw ever closer to, and become ever more
+                    intimately united with, the
+                    wandering collective unconscious of my Iranian self, far from its homeland.</p>
             </div>
         </section>
         <section class="aftereffects section" id="aftereffects">
             <div class="effects-card">
                 <div class="effects-card-img">
-                    <a class="effects-media-link" href="/pages/aftereffects_vault.html" aria-label="Open Aftereffects Vault">
+                    <a class="effects-media-link" href="/pages/aftereffects_vault.html"
+                        aria-label="Open Aftereffects Vault">
                         <img src="../Assets/Webp/WebP Background images/Aftereffects Vault _result.webp" alt=""
                             loading="lazy" decoding="async">
                     </a>
@@ -149,7 +173,8 @@
         <div class="footer">
             <div class="footer-title">
                 <a href="/">
-                    <img class="logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg" alt="">
+                    <img class="logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg"
+                        alt="">
                     <img class="logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg" alt="">
                     <h3>January8th</h3>
                 </a>
