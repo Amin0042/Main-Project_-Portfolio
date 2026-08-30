@@ -2931,8 +2931,18 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   padding: 1.1rem;
 }
 
-body.light .post-thumb {
-  background-color: var(--primary-ivory-colour);
+/* --primary-ivory-colour flips to near-black in body.light (it's a text
+   token elsewhere), so reusing it here was quietly turning the fallback
+   medallion's field black-on-black behind the (also black in light mode)
+   lion mark — the logo effectively disappeared. This wants a real,
+   literal white field instead: a white circle, the --secondary-gold-
+   colour border (already near-black in light mode, so no change needed
+   there) reading as the stroke, and the mark itself as plain black
+   line-art sitting on top — the same "black ink on parchment" logic the
+   navbar/footer's own logo swap uses, just spelled out literally since
+   the ivory token doesn't mean "white" any more once light mode is on. */
+body.light .post-thumb-mark {
+  background-color: #ffffff;
 }
 
 /* Inherits the sitewide gilded-glass pill (button, .btn) as-is — just
