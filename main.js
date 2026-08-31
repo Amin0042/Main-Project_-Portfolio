@@ -698,6 +698,22 @@ if (typeof document !== "undefined") {
     return normalized || "/";
   }
 
+  // Pages that live "inside" the Archive section but have no nav-link of
+  // their own (category pages, vault pages nested under Archive) — these
+  // should still light up "Archive" in the navbar/footer instead of
+  // falling through to the "Home" default below.
+  var ARCHIVE_FAMILY_PATHS = [
+    "/pages/typography.html",
+    "/pages/motion-graphics.html",
+    "/pages/computer-graphics.html",
+    "/pages/graphic-design.html",
+    "/pages/Personl_Vault.html",
+    "/pages/Inspiration_Vault.html",
+    "/pages/Motion_Vault.html",
+    "/pages/aftereffects_vault.html",
+    "/pages/Cyborg_vault.html",
+  ];
+
   // Shared by the navbar's .nav-link list and the footer's NAVIGATION
   // column — same "which link matches the current page" logic, same
   // active/aria-current bookkeeping, just pointed at a different list
@@ -754,6 +770,12 @@ if (typeof document !== "undefined") {
         activeLink = link;
       }
     });
+
+    if (!activeLink && ARCHIVE_FAMILY_PATHS.indexOf(currentPath) !== -1) {
+      activeLink = document.querySelector(
+        `${linkSelector}[href="/pages/archive.html"]`,
+      );
+    }
 
     if (!activeLink) {
       activeLink = document.querySelector(`${linkSelector}[href="/"]`);
