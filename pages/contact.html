@@ -27,29 +27,31 @@
 
 
 <body>
-  <script>
-    // Applies the saved light/dark preference synchronously, before the
-    // browser paints anything — main.js does the same thing but only
-    // loads at the very bottom of the page, so without this the door
-    // transition (and everything themed off body.light) would flash the
-    // wrong palette on every navigation before main.js caught up.
-    (function () {
-      try {
-        if (window.localStorage.getItem("january8th-theme") === "light") {
-          document.body.classList.add("light");
-        }
-      } catch (error) {
-        // Private browsing / disabled storage — default dark applies,
-        // same fallback main.js already uses.
-      }
-    })();
-  </script>
+    <script>
+        // Applies the saved light/dark preference synchronously, before the
+        // browser paints anything — main.js does the same thing but only
+        // loads at the very bottom of the page, so without this the door
+        // transition (and everything themed off body.light) would flash the
+        // wrong palette on every navigation before main.js caught up.
+        (function () {
+            try {
+                if (window.localStorage.getItem("january8th-theme") === "light") {
+                    document.body.classList.add("light");
+                }
+            } catch (error) {
+                // Private browsing / disabled storage — default dark applies,
+                // same fallback main.js already uses.
+            }
+        })();
+    </script>
     <header>
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/">
-                    <img class="icon logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg" alt="">
-                    <img class="icon logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg" alt="">
+                    <img class="icon logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg"
+                        alt="">
+                    <img class="icon logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg"
+                        alt="">
                     <span>
                         January8th
                     </span>
@@ -106,7 +108,7 @@
                     spiritual communion between humanity and whatever lies beyond the human that renders everything
                     meaningless.
                     For centuries, we sacrificed ourselves to our overwhelming desire to break free from the subjugation
-                    of the gods, while
+                    of the God, while
                     the savage spirit of Cain had already taken root within us. And yet, after the blades of the
                     guillotine descended
                     without end, we found ourselves searching through the rubbish for our lost God.
@@ -135,9 +137,11 @@
                              page had before. This holds regardless of exactly
                              how wide the column ends up at a given viewport. -->
                         <li class=""><img src="../Assets/Icons/Instagram Icon.svg" alt="Instagram" class=""><a
-                                href="https://www.instagram.com/january8thproject/" class="">January8th<wbr>project</a></li>
+                                href="https://www.instagram.com/january8thproject/" class="">January8th<wbr>project</a>
+                        </li>
                         <li class=""><img src="../Assets/Icons/Youtube Icon.svg" alt="YouTube" class=""><a
-                                href="https://www.youtube.com/@January8thProject" class="">January8th<wbr>project</a></li>
+                                href="https://www.youtube.com/@January8thProject" class="">January8th<wbr>project</a>
+                        </li>
 
                         <li class=""><img src="../Assets/Icons/Linkedin Icon.svg" alt="LinkedIn" class=""><a
                                 href="https://www.linkedin.com/in/kave-amini-khanimani-10127b2b0/?skipRedirect=true"
@@ -196,8 +200,8 @@
                         </div>
                         <div class="mb-3 contact-field" data-field="message">
                             <label for="message" class="form-label">Message</label>
-                            <textarea class="form-control contact-message" id="message" name="Message" rows="6"
-                                required aria-describedby="message-hint"></textarea>
+                            <textarea class="form-control contact-message" id="message" name="Message" rows="6" required
+                                aria-describedby="message-hint"></textarea>
                             <div id="message-hint" class="form-text contact-hint" aria-hidden="true">Please write down
                                 your message!</div>
                         </div>
@@ -214,7 +218,8 @@
         <div class="footer">
             <div class="footer-title">
                 <a href="/">
-                    <img class="logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg" alt="">
+                    <img class="logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg"
+                        alt="">
                     <img class="logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg" alt="">
                     <h3>January8th</h3>
                 </a>
