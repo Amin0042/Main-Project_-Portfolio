@@ -1133,8 +1133,8 @@ body.light .theme-icon-moon {
   margin: 0 auto;
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  padding-inline: clamp(1rem, 2.2vw, 2.75rem);
+  gap: clamp(0.75rem, 1vw, 1.5rem);
+  padding-inline: clamp(1rem, 1.8vw, 2.25rem);
   min-height: 76px;
 }
 
@@ -1142,11 +1142,11 @@ body.light .theme-icon-moon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.9rem;
-  margin-right: 2rem;
+  gap: 0.7rem;
+  margin-right: clamp(0.75rem, 1.4vw, 2rem);
   padding: 0.5rem 0.75rem;
   font-family: "Inter", sans-serif;
-  font-size: clamp(1.25rem, 0.5vw + 1.15rem, 1.55rem);
+  font-size: clamp(1.1rem, 0.4vw + 1rem, 1.4rem);
   letter-spacing: 0.08em;
   line-height: 1.2;
   white-space: nowrap;
@@ -1395,7 +1395,8 @@ body.light .logo-light {
   position: relative;
   margin-left: auto;
   align-items: center;
-  gap: clamp(0.8rem, 1.25vw, 1.7rem);
+  gap: clamp(0.35rem, 0.9vw, 1.15rem);
+  flex-wrap: nowrap;
 }
 
 .nav-link {
@@ -1406,11 +1407,12 @@ body.light .logo-light {
   min-height: 2.7rem;
   font-family: "Inter", sans-serif;
   text-transform: uppercase;
-  font-size: clamp(1.05rem, 0.35vw + 0.98rem, 1.3rem);
+  font-size: clamp(0.92rem, 0.3vw + 0.82rem, 1.1rem);
   font-weight: 400;
-  letter-spacing: 0.055em;
+  letter-spacing: 0.045em;
   line-height: 1.45;
-  padding: 0.56rem 0.68rem !important;
+  white-space: nowrap;
+  padding: 0.56rem 0.5rem !important;
   color: var(--secondary-gold-colour) !important;
   opacity: 1;
   transition:
@@ -1569,7 +1571,7 @@ body.light .nav-link[aria-current="page"] {
   text-decoration: none !important;
 }
 
-@media (max-width: 991.98px) {
+@media (max-width: 1199.98px) {
   body {
     padding-top: 74px;
   }
@@ -1622,7 +1624,7 @@ body.light .nav-link[aria-current="page"] {
 .hero-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url("../Assets/Webp/WebP Background images/Home Page Final Version _result.webp")
+    url("../Assets/Webp/WebP Background images/Webp version Of New Hero Image for all pages/Home Page _result.webp")
       no-repeat center center / cover;
   width: 100%;
   min-height: 80vh;
@@ -2166,7 +2168,7 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
 .archive-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Webp/WebP Background images/Archive Four BG_result.webp")
+    url("../Assets/Webp/WebP Background images/Webp version Of New Hero Image for all pages/Archive_result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
@@ -2712,7 +2714,7 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
 .notes-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Webp/WebP Background images/Notes example _result.webp")
+    url("../Assets/Webp/WebP Background images/Webp version Of New Hero Image for all pages/Notes Page _result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
@@ -3280,7 +3282,7 @@ body.light .notes-panel-close:hover {
 .contact-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Webp/WebP Background images/Best for Contact Page _result.webp")
+    url("../Assets/Webp/WebP Background images/Webp version Of New Hero Image for all pages/Contact Page _result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
@@ -3620,7 +3622,7 @@ body.light .notes-panel-close:hover {
 .personal-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Webp/WebP Background images/Best for Personal Vault _result.webp")
+    url("../Assets/Webp/WebP Background images/Webp version Of New Hero Image for all pages/Personal Vault _result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
@@ -3652,7 +3654,7 @@ body.light .notes-panel-close:hover {
 .motion-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Webp/WebP Background images/Best for Motion BG Example _result.webp")
+    url("../Assets/Webp/WebP Background images/Webp version Of New Hero Image for all pages/Motion Vault _result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
@@ -3839,7 +3841,7 @@ body.light .notes-panel-close:hover {
 .cyborg-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Webp/WebP Background images/Cyborg Vault _result.webp")
+    url("../Assets/Webp/WebP Background images/Webp version Of New Hero Image for all pages/Cyborg Vault _result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
@@ -3847,7 +3849,7 @@ body.light .notes-panel-close:hover {
 .aftereffects-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Webp/WebP Background images/Aftereffects Vault _result.webp")
+    url("../Assets/Webp/WebP Background images/Webp version Of New Hero Image for all pages/Aftereffects Vault _result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
@@ -3998,7 +4000,7 @@ body.light .notes-panel-close:hover {
 .inspiration-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Webp/WebP Background images/Inspirations Vault BG _result.webp")
+    url("../Assets/Webp/WebP Background images/Webp version Of New Hero Image for all pages/Inspirations Vault _result.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
