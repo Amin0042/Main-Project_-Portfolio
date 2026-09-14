@@ -27,29 +27,31 @@
 
 
 <body>
-  <script>
-    // Applies the saved light/dark preference synchronously, before the
-    // browser paints anything — main.js does the same thing but only
-    // loads at the very bottom of the page, so without this the door
-    // transition (and everything themed off body.light) would flash the
-    // wrong palette on every navigation before main.js caught up.
-    (function () {
-      try {
-        if (window.localStorage.getItem("january8th-theme") === "light") {
-          document.body.classList.add("light");
-        }
-      } catch (error) {
-        // Private browsing / disabled storage — default dark applies,
-        // same fallback main.js already uses.
-      }
-    })();
-  </script>
+    <script>
+        // Applies the saved light/dark preference synchronously, before the
+        // browser paints anything — main.js does the same thing but only
+        // loads at the very bottom of the page, so without this the door
+        // transition (and everything themed off body.light) would flash the
+        // wrong palette on every navigation before main.js caught up.
+        (function () {
+            try {
+                if (window.localStorage.getItem("january8th-theme") === "light") {
+                    document.body.classList.add("light");
+                }
+            } catch (error) {
+                // Private browsing / disabled storage — default dark applies,
+                // same fallback main.js already uses.
+            }
+        })();
+    </script>
     <header>
         <nav class="navbar navbar-expand-xl">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/">
-                    <img class="icon logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg" alt="">
-                    <img class="icon logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg" alt="">
+                    <img class="icon logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg"
+                        alt="">
+                    <img class="icon logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg"
+                        alt="">
                     <span>
                         January8th
                     </span>
@@ -93,64 +95,46 @@
             <div class="gallery">
                 <div class="gallery-item">
 
-                    <div class="youtube-facade" data-video-id="inf1xMuB06s" role="button" tabindex="0" aria-label="Play video">
-                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/inf1xMuB06s/hqdefault.jpg" alt="" loading="lazy" decoding="async">
+                    <div class="youtube-facade" data-video-id="inf1xMuB06s" role="button" tabindex="0"
+                        aria-label="Play video">
+                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/inf1xMuB06s/hqdefault.jpg" alt=""
+                            loading="lazy" decoding="async">
                         <span class="youtube-facade-play" aria-hidden="true">&#9658;</span>
                     </div>
                 </div>
                 <div class="gallery-item">
 
-                    <div class="youtube-facade" data-video-id="2QVOQwPHxpE" role="button" tabindex="0" aria-label="Play video">
-                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/2QVOQwPHxpE/hqdefault.jpg" alt="" loading="lazy" decoding="async">
+                    <div class="youtube-facade" data-video-id="2QVOQwPHxpE" role="button" tabindex="0"
+                        aria-label="Play video">
+                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/2QVOQwPHxpE/hqdefault.jpg" alt=""
+                            loading="lazy" decoding="async">
                         <span class="youtube-facade-play" aria-hidden="true">&#9658;</span>
                     </div>
                 </div>
                 <div class="gallery-item">
 
-                    <div class="youtube-facade" data-video-id="wcrQ4DhzimE" role="button" tabindex="0" aria-label="Play video">
-                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/wcrQ4DhzimE/hqdefault.jpg" alt="" loading="lazy" decoding="async">
+                    <div class="youtube-facade" data-video-id="wcrQ4DhzimE" role="button" tabindex="0"
+                        aria-label="Play video">
+                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/wcrQ4DhzimE/hqdefault.jpg" alt=""
+                            loading="lazy" decoding="async">
                         <span class="youtube-facade-play" aria-hidden="true">&#9658;</span>
                     </div>
                 </div>
                 <div class="gallery-item">
 
-                    <div class="youtube-facade" data-video-id="IKJM3yvPwFE" role="button" tabindex="0" aria-label="Play video">
-                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/IKJM3yvPwFE/hqdefault.jpg" alt="" loading="lazy" decoding="async">
+                    <div class="youtube-facade" data-video-id="IKJM3yvPwFE" role="button" tabindex="0"
+                        aria-label="Play video">
+                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/IKJM3yvPwFE/hqdefault.jpg" alt=""
+                            loading="lazy" decoding="async">
                         <span class="youtube-facade-play" aria-hidden="true">&#9658;</span>
                     </div>
                 </div>
                 <div class="gallery-item">
 
-                    <div class="youtube-facade" data-video-id="zIMSCUfwd_g" role="button" tabindex="0" aria-label="Play video">
-                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/zIMSCUfwd_g/hqdefault.jpg" alt="" loading="lazy" decoding="async">
-                        <span class="youtube-facade-play" aria-hidden="true">&#9658;</span>
-                    </div>
-                </div>
-                <div class="gallery-item">
-
-                    <div class="youtube-facade" data-video-id="zIMSCUfwd_g" role="button" tabindex="0" aria-label="Play video">
-                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/zIMSCUfwd_g/hqdefault.jpg" alt="" loading="lazy" decoding="async">
-                        <span class="youtube-facade-play" aria-hidden="true">&#9658;</span>
-                    </div>
-                </div>
-                <div class="gallery-item">
-
-                    <div class="youtube-facade" data-video-id="zIMSCUfwd_g" role="button" tabindex="0" aria-label="Play video">
-                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/zIMSCUfwd_g/hqdefault.jpg" alt="" loading="lazy" decoding="async">
-                        <span class="youtube-facade-play" aria-hidden="true">&#9658;</span>
-                    </div>
-                </div>
-                <div class="gallery-item">
-
-                    <div class="youtube-facade" data-video-id="zIMSCUfwd_g" role="button" tabindex="0" aria-label="Play video">
-                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/zIMSCUfwd_g/hqdefault.jpg" alt="" loading="lazy" decoding="async">
-                        <span class="youtube-facade-play" aria-hidden="true">&#9658;</span>
-                    </div>
-                </div>
-                <div class="gallery-item">
-
-                    <div class="youtube-facade" data-video-id="zIMSCUfwd_g" role="button" tabindex="0" aria-label="Play video">
-                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/zIMSCUfwd_g/hqdefault.jpg" alt="" loading="lazy" decoding="async">
+                    <div class="youtube-facade" data-video-id="Dr1sWnu_BUo" role="button" tabindex="0"
+                        aria-label="Play video">
+                        <img class="youtube-facade-thumb" src="https://i.ytimg.com/vi/Dr1sWnu_BUo/hqdefault.jpg" alt=""
+                            loading="lazy" decoding="async">
                         <span class="youtube-facade-play" aria-hidden="true">&#9658;</span>
                     </div>
                 </div>
@@ -163,7 +147,8 @@
         <div class="footer">
             <div class="footer-title">
                 <a href="/">
-                    <img class="logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg" alt="">
+                    <img class="logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg"
+                        alt="">
                     <img class="logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg" alt="">
                     <h3>January8th</h3>
                 </a>
