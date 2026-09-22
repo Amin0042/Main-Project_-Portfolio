@@ -1157,9 +1157,23 @@ body.light .theme-icon-moon {
 
 .navbar-brand:hover,
 .navbar-brand:focus-visible {
-  opacity: 0.92;
   transform: translateY(-1px);
   outline: none;
+}
+
+/* The hover dim is applied to the lion and wordmark rather than the
+   whole link, so it doesn't also fade the .brand-flag hanging inside it
+   — at 0.92 the page showed through the cloth and washed out the emblem. */
+.navbar-brand .icon,
+.navbar-brand > span:not(.brand-mark) {
+  transition: opacity 0.2s ease;
+}
+
+.navbar-brand:hover .icon,
+.navbar-brand:focus-visible .icon,
+.navbar-brand:hover > span:not(.brand-mark),
+.navbar-brand:focus-visible > span:not(.brand-mark) {
+  opacity: 0.92;
 }
 
 .navbar-brand span {
@@ -1179,6 +1193,205 @@ body.light .theme-icon-moon {
   width: 46px;
   min-width: 46px;
   max-width: none;
+}
+
+/*==================== Brand Flag (hover unfurl) ====================*/
+/* The lion mark and the flag share one positioning context so the flag
+   can hang beneath the navbar without taking part in the brand's flex
+   row — the bar's height and the wordmark's position stay exactly as
+   they were whether the flag is furled or unfurled. */
+.brand-mark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+/* Geometry of Assets/Icons/Iran Real Flag_result.webp, a 1516x2577
+   vertical flag: red/white/green run as vertical stripes, the lion-and-
+   sun sits between rows 518-1560, and the swallowtail hem is cut from
+   row 2031 down. Those four horizontal slices are what the bands below
+   draw, so every number here traces back to the source pixels:
+     sky     rows 0-430     plain stripes above the emblem
+     emblem  rows 430-1610  the lion and sun, never stretched
+     field   rows 1610-2031 plain stripes below the emblem
+     tail    rows 2031-2577 the notched hem, never stretched
+   --brand-mark-w (the mark's rendered width) and --brand-flag-drop (the
+   gap from the mark down to the bar's lower border) are measured in
+   main.js, since neither is knowable in CSS — the lion is an SVG of
+   unstated aspect ratio and the bar's height varies with breakpoint and
+   with the mobile menu opening. Both have fallbacks so the flag still
+   hangs correctly if the script never runs. */
+.brand-flag {
+  /* Width of the lion mark, measured in main.js. */
+  --brand-mark-w: 46px;
+  --brand-flag-drop: 0px;
+  /* The flag hangs wider than the mark it hangs from. At the mark's own
+     46px the lion-and-sun would be drawn about 24px across — the emblem
+     only occupies the middle stripe, roughly 53% of the flag's width —
+     which reads as a gold smudge rather than a lion. Widening the cloth
+     is the one way to enlarge the emblem without distorting it or
+     breaking the stripes' alignment, since every band is cut from the
+     same image at the same width. */
+  --brand-flag-scale: 2;
+  --brand-flag-w: calc(var(--brand-mark-w) * var(--brand-flag-scale));
+  /* Natural (unstretched) length: 2577/1516 of the flag's width. */
+  --flag-natural-h: calc(var(--brand-flag-w) * 1.69987);
+  /* How far the flag draws out on hover. Deliberately tied to the mark's
+     width, not the flag's, so widening the cloth above leaves the hang
+     length alone. Capped against the viewport so it can't reach past the
+     fold on a short screen. */
+  --flag-stretch: 7;
+  --flag-length: min(
+    calc(var(--brand-mark-w) * 1.69987 * var(--flag-stretch)),
+    62vh
+  );
+  --flag-emblem-h: calc(var(--brand-flag-w) * 0.77839);
+  --flag-tail-h: calc(var(--brand-flag-w) * 0.36016);
+
+  position: absolute;
+  top: calc(100% + var(--brand-flag-drop));
+  /* Centred with plain arithmetic rather than translateX(-50%): a
+     percentage transform can land the flag on a half pixel, which blurs
+     every line of the emblem. Mark and flag widths are both even, so this
+     offset is a whole number. */
+  left: calc(50% - var(--brand-flag-w) / 2);
+  width: var(--brand-flag-w);
+  /* Furled: the cloth is rolled up against the underside of its staff
+     until only the swallowtail hem shows — exactly one --flag-tail-h of
+     it, the height the hem was drawn at, so its three points stay the
+     shape they are at full length rather than squashing to a flat edge.
+     Every band has flex-shrink: 0, so nothing is ever compressed: the
+     stack simply overflows this box and is clipped. justify-content:
+     flex-end anchors that overflow to the bottom, which is what puts the
+     hem — the last band — in the visible strip at rest and keeps it at
+     the leading edge all the way down: the hem falls first and the lion
+     emerges above it, the way cloth unrolls off a staff. Once the flag
+     is longer than its bands' natural sum the two plain stripes take
+     over the growth and it draws out to length. */
+  height: var(--flag-tail-h);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 14px rgba(var(--ink-rgb), 0.45));
+  /* Its own compositing layer: without it, Chrome rasterizes the
+     drop-shadow filter off the device-pixel grid at fractional display
+     scaling (125%, 175%) and blurs the emblem's line work. */
+  will-change: transform;
+  /* Furling (the state the flag returns to when the pointer leaves) is a
+     continuous roll-up on height alone, in the same easing family as the
+     drop, so the cloth gathers smoothly back up to the hem instead of
+     stopping short. Nothing fades — there is no opacity step left to
+     blink the flag out mid-roll. */
+  transition:
+    height 0.62s cubic-bezier(0.32, 0, 0.24, 1),
+    transform 0.2s ease;
+}
+
+/* Whole-pixel band heights and hang length where round() is supported,
+   so the emblem sits on the pixel grid and its pre-scaled image (below)
+   is drawn 1:1 rather than resampled by a fraction of a pixel. */
+@supports (width: round(1.5px, 1px)) {
+  .brand-flag {
+    --flag-length: round(
+      min(calc(var(--brand-mark-w) * 1.69987 * var(--flag-stretch)), 62vh),
+      1px
+    );
+    --flag-emblem-h: round(calc(var(--brand-flag-w) * 0.77839), 1px);
+    --flag-tail-h: round(calc(var(--brand-flag-w) * 0.36016), 1px);
+  }
+}
+
+.brand-flag-band {
+  display: block;
+  width: 100%;
+  background-image: url("../Assets/Icons/Iran Real Flag_result.webp");
+  background-repeat: no-repeat;
+}
+
+/* Each band shows one horizontal slice of the single source image.
+   For a slice that starts at fraction `s` of the image and is `f` tall:
+   background-size-y is 100/f%, and background-position-y is s/(1-f)%.
+   Stated as percentages, both hold at any band height — which is what
+   lets the two plain bands stretch while the emblem and hem keep the
+   proportions they were drawn at. */
+.brand-flag-band--sky {
+  /* s = 0, f = 0.16686 */
+  flex: 1 0 var(--flag-tail-h);
+  background-size: 100% 599.3%;
+  background-position: center 0%;
+}
+
+.brand-flag-band--emblem {
+  /* s = 0.16686, f = 0.45790 — fixed height, so the lion and sun are
+     never distorted no matter how far the flag is drawn out. */
+  flex: 0 0 var(--flag-emblem-h);
+  background-size: 100% 218.39%;
+  background-position: center 30.78%;
+}
+
+/* The lion and sun are fine line art, and asking the browser to shrink
+   the full 1516px-wide flag ~16x on the fly smears its outlines into a
+   gold blur. So the emblem slice (rows 430-1610) is pre-scaled offline
+   with Lanczos and a light unsharp mask to the flag's 92px width at each
+   common pixel density (1.25x-1.75x are typical Windows laptop
+   scaling), so each screen draws one at close to its native size. The
+   slice fills the band exactly, so no size/position offsets apply. */
+@supports (background-image: image-set(url("x.webp") 1x)) {
+  .brand-flag-band--emblem {
+    background-image: image-set(
+      url("../Assets/Icons/Iran Flag Emblem@1x.webp") 1x,
+      url("../Assets/Icons/Iran Flag Emblem@1.25x.webp") 1.25x,
+      url("../Assets/Icons/Iran Flag Emblem@1.5x.webp") 1.5x,
+      url("../Assets/Icons/Iran Flag Emblem@1.75x.webp") 1.75x,
+      url("../Assets/Icons/Iran Flag Emblem@2x.webp") 2x,
+      url("../Assets/Icons/Iran Flag Emblem@3x.webp") 3x
+    );
+    background-size: 100% 100%;
+    background-position: center;
+  }
+}
+
+.brand-flag-band--field {
+  /* s = 0.62476, f = 0.16337. The sky band above carries an extra
+     flex-basis of exactly one hem height; with both bands growing
+     equally from there, the cloth above the emblem ends up matching the
+     cloth below it *plus* the hem, which leaves the emblem centred on
+     the flag's full length at every stage of the stretch. */
+  flex: 1 0 0;
+  background-size: 100% 612.11%;
+  background-position: center 74.67%;
+}
+
+.brand-flag-band--tail {
+  /* s = 0.78812, f = 0.21188 — the notched hem, also fixed. */
+  flex: 0 0 var(--flag-tail-h);
+  background-size: 100% 472%;
+  background-position: center 100%;
+}
+
+.navbar-brand:hover .brand-flag,
+.navbar-brand:focus-visible .brand-flag {
+  height: var(--flag-length);
+  /* Cancels the brand's 1px hover lift (in step with its 0.2s ease), so
+     the flag stays hung from the border and on whole device pixels. */
+  transform: translateY(1px);
+  /* Slight overshoot on the way down, so the cloth drops and settles
+     rather than sliding to a mechanical stop; the way back up (above)
+     is a plain ease so it furls without bouncing. */
+  transition:
+    height 0.75s cubic-bezier(0.22, 1.2, 0.36, 1),
+    transform 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-flag,
+  .navbar-brand:hover .brand-flag,
+  .navbar-brand:focus-visible .brand-flag {
+    transition: none;
+  }
 }
 
 /*==================== Signature Logo Animation ====================*/

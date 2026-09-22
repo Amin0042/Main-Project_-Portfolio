@@ -557,6 +557,107 @@ function initializeWordHoverEffect() {
   }
 }
 
+// Navbar brand: the Iranian flag that unfurls from the bar's lower
+// border on hover. The unfurl itself is CSS (see .brand-flag in
+// style.css); this only feeds it the two lengths CSS cannot work out on
+// its own, as custom properties on each flag:
+//   --brand-mark-w     the rendered width of the lion mark, which the
+//                      flag's own width and hang length are both derived
+//                      from. The mark is an SVG whose height follows an
+//                      aspect ratio the stylesheet never states, and its
+//                      width changes across four breakpoints.
+//   --brand-flag-drop  the distance from the bottom of the mark down to
+//                      the inside of the bar's lower border, so the
+//                      flag hangs from the border rather than from the
+//                      logo. It shifts with the bar's height — which
+//                      grows when the mobile menu opens.
+// Both have CSS fallbacks, so a page where this never runs still shows
+// the flag in a sensible place.
+function initializeBrandFlag() {
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    return;
+  }
+
+  const flags = Array.prototype.slice.call(
+    document.querySelectorAll(".navbar-brand .brand-flag")
+  );
+
+  if (!flags.length) {
+    return;
+  }
+
+  function measure() {
+    flags.forEach(function (flag) {
+      const mark = flag.parentElement;
+      const navbar = flag.closest(".navbar");
+
+      if (!mark || !navbar) {
+        return;
+      }
+
+      // Whichever lion is showing for the current theme — the other is
+      // display: none and reports a width of 0.
+      const icon = Array.prototype.slice
+        .call(mark.querySelectorAll(".icon"))
+        .filter(function (img) {
+          return img.offsetWidth > 0;
+        })[0];
+
+      const markRect = mark.getBoundingClientRect();
+      const navRect = navbar.getBoundingClientRect();
+      const border =
+        parseFloat(window.getComputedStyle(navbar).borderBottomWidth) || 0;
+      const drop = navRect.bottom - border - markRect.bottom;
+
+      if (icon && icon.offsetWidth) {
+        flag.style.setProperty("--brand-mark-w", icon.offsetWidth + "px");
+      }
+
+      // Not rounded: the mark can sit at a fractional offset, and it's the
+      // unrounded drop that lands the flag's top exactly on the border's
+      // whole-pixel edge, keeping the emblem crisp.
+      flag.style.setProperty("--brand-flag-drop", Math.max(0, drop) + "px");
+    });
+  }
+
+  let queued = false;
+
+  function scheduleMeasure() {
+    if (queued) {
+      return;
+    }
+
+    queued = true;
+    window.requestAnimationFrame(function () {
+      queued = false;
+      measure();
+    });
+  }
+
+  measure();
+  window.addEventListener("resize", scheduleMeasure);
+
+  // Cormorant Garamond loading can change the brand's height, and so the
+  // drop, after first paint.
+  if (document.fonts && typeof document.fonts.ready?.then === "function") {
+    document.fonts.ready.then(scheduleMeasure);
+  }
+
+  // The bar itself grows and shrinks when the mobile menu collapses open
+  // or shut, which moves the border the flag hangs from.
+  if (typeof window.ResizeObserver === "function") {
+    const observer = new ResizeObserver(scheduleMeasure);
+
+    flags.forEach(function (flag) {
+      const navbar = flag.closest(".navbar");
+
+      if (navbar) {
+        observer.observe(navbar);
+      }
+    });
+  }
+}
+
 // About page — Background section: expands/collapses the truncated
 // "Influence" panel (the only column long enough to need a "Read More"
 // toggle; see .background-copy.collapsible in style.css, scoped to
@@ -596,6 +697,7 @@ if (typeof module !== "undefined") {
     initializeLogoSignatureAnimation,
     initializeChamberGuardians,
     initializeReadMoreSections,
+    initializeBrandFlag,
   };
 }
 
@@ -613,6 +715,7 @@ if (typeof document !== "undefined") {
   initializeLogoSignatureAnimation();
   initializeChamberGuardians();
   initializeReadMoreSections();
+  initializeBrandFlag();
 
   if (openButton) {
     const focusableSelector =
