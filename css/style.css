@@ -2278,21 +2278,209 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
   }
 }
 /*==================== About ====================*/
-.about-image {
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Webp/WebP Background images/Webp version Of New Hero Image for all pages/About Page_result.webp")
-      no-repeat center center / cover;
-  min-height: 80vh;
-}
+/* Two-column hero: intro text on the left, portrait frame on the right.
+   The old full-bleed banner image above this section is gone, so the
+   top padding clears the fixed navbar instead. Collapses to one column
+   (text first, portrait below) on narrow screens. */
 .about-hero {
   min-height: 80vh;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 700px) minmax(0, 420px);
   justify-content: center;
   align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+  padding-top: clamp(6rem, 14vh, 9rem);
+  width: 100%;
+}
+/* Same gilded-glass frame as the vault images (.archive-media-link):
+   identical tokens and gloss recipe, in a 4:5 portrait ratio. */
+.about-portrait {
+  margin: 0;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid var(--gold-border-card);
+  border-radius: 28px;
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.28),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.32),
+    inset 0 -10px 16px rgba(var(--ink-rgb), 0.32),
+    0 8px 20px rgba(var(--ink-rgb), 0.3);
+}
+.about-portrait-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+@media screen and (max-width: 820px) {
+  .about-hero {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+  .about-portrait {
+    max-width: 360px;
+  }
+}
 
-  width: 100vw;
+/*==================== About — Canada Map ====================*/
+/* A still, explanatory counterpart to the Antiquarium's "Iran —
+   Cartography of Memory": the same recipe translated to a flat drawing —
+   dark land under a glowing gold coastline (0.8 opacity), two fainter
+   muted-gold contour echoes inset to 93% and 84% and lifted as if they
+   were raised layers seen from above (a depth cue only, not elevation
+   data), drifting gold dust, and the capital as a solid gold core inside
+   a soft gold halo. Not interactive: no hover, no pointer events. */
+.about-map {
+  display: flex;
+  justify-content: center;
+  padding-top: clamp(2rem, 6vw, 5rem);
+}
+
+.about-map-figure {
+  margin: 0;
+  width: min(1000px, 100%);
+}
+
+.about-map-canvas {
+  position: relative;
+  pointer-events: none;
+}
+
+.about-map-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.about-map-land {
+  fill: rgba(var(--ink-rgb), 0.5);
+  stroke: rgba(var(--gold-rgb), 0.8);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 3px rgba(var(--gold-rgb), 0.35));
+}
+
+.about-map-contour {
+  fill: none;
+  stroke: #8f7a3e;
+  stroke-width: 0.9;
+  stroke-linejoin: round;
+}
+
+.about-map-contour--near {
+  stroke-opacity: 0.32;
+}
+
+.about-map-contour--far {
+  stroke-opacity: 0.16;
+}
+
+.about-map-dust {
+  fill: #8f7a3e;
+  opacity: 0.35;
+}
+
+/* Marker and label are HTML rather than SVG so they keep one legible
+   size on every screen instead of shrinking with the map. Positioned in
+   percent of the map, from Ottawa's projected coordinates. */
+.about-map-marker {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: #c6a85a;
+  box-shadow:
+    0 0 0 7px rgba(var(--gold-rgb), 0.28),
+    0 0 18px 8px rgba(var(--gold-rgb), 0.35);
+}
+
+.about-map-label {
+  position: absolute;
+  transform: translate(16px, -50%);
+  font-family: "Cormorant Garamond", serif;
+  font-weight: var(--fw-medium);
+  font-size: clamp(0.95rem, 0.6vw + 0.8rem, 1.2rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary-gold-colour);
+  white-space: nowrap;
+}
+
+.about-map-caption {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-style: italic;
+  color: rgba(var(--gold-rgb), 0.85);
+}
+
+/* The beam of light from Ottawa to the portrait. Positioned and sized to the
+   curve's own bounds in page coordinates by initializeAboutConnector()
+   (main.js), so it never widens the page; hidden until then. */
+.about-connector {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* The beam's layers blend like light (screen) on the dark theme, so
+   where they overlap they brighten instead of stacking up opaque. */
+.about-connector > * {
+  mix-blend-mode: screen;
+}
+
+.about-beam-rays line {
+  stroke: #ffe3a0;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+
+.about-beam-motes circle {
+  fill: #fff0c8;
+}
+
+/* Light theme: the dark land would read as a heavy grey slab on cream,
+   so it becomes a pale gold wash under a deeper gold line, and the
+   caption and connector deepen to keep their contrast. */
+body.light .about-map-land {
+  fill: rgba(var(--gold-rgb), 0.16);
+  stroke: rgba(150, 118, 40, 0.9);
+  filter: none;
+}
+
+body.light .about-map-contour {
+  stroke: #9a7f35;
+}
+
+body.light .about-map-caption {
+  color: rgb(125, 98, 32);
+}
+
+/* Light theme: "screen" would wash out to nothing on cream, so the
+   beam paints normally, in deeper golds that hold up on a pale page. */
+body.light .about-connector > * {
+  mix-blend-mode: normal;
+}
+
+body.light .about-beam-rays line {
+  stroke: #b8923a;
+}
+
+body.light .about-beam-motes circle {
+  fill: #b8923a;
 }
 .about-container {
   /* The heading stays centered as the page's title, but the intro
@@ -5042,7 +5230,6 @@ body.modal-open {
    for genuine scroll-parallax (background-attachment: fixed is unreliable
    on mobile browsers, so mobile keeps the same zoom/drift motion without it). */
 .hero-image,
-.about-image,
 .archive-image,
 .notes-image,
 .contact-image,
@@ -5067,7 +5254,6 @@ body.modal-open {
 
 @media (min-width: 751px) {
   .hero-image,
-  .about-image,
   .archive-image,
   .notes-image,
   .contact-image,
@@ -5080,7 +5266,6 @@ body.modal-open {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-image,
-  .about-image,
   .archive-image,
   .notes-image,
   .contact-image,
@@ -5103,7 +5288,6 @@ body.modal-open {
     --h4-size: calc(var(--normal-font-size) * 1.125);
   }
   .hero-image,
-  .about-image,
   .archive-image,
   .notes-image,
   .contact-image,

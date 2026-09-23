@@ -778,6 +778,218 @@ function initializeFooterFlag() {
   }
 }
 
+// About page: the beam of gold light that rises from the Ottawa point
+// on the Canada map (.about-map-marker) to the bottom of the portrait frame
+// (.about-portrait), as if the portrait emerges out of Ottawa. The two
+// sit in different sections and move independently with the layout (two
+// columns on desktop, stacked on phones), so the curve is measured in
+// page coordinates and redrawn whenever the layout can change. The SVG
+// is sized to the curve's own bounds so it never widens the page.
+function initializeAboutConnector() {
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    return;
+  }
+
+  const connector = document.querySelector(".about-connector");
+  const marker = document.querySelector(".about-map-marker");
+  const portrait = document.querySelector(".about-portrait");
+
+  if (!connector || !marker || !portrait) {
+    return;
+  }
+
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const bloom = connector.querySelector(".about-beam-bloom");
+  const glow = connector.querySelector(".about-beam-glow");
+  const core = connector.querySelector(".about-beam-core");
+  const source = connector.querySelector(".about-beam-source");
+  const rays = connector.querySelector(".about-beam-rays");
+  const motes = connector.querySelector(".about-beam-motes");
+  const flare = connector.querySelector(".about-beam-flare");
+  const gradients = connector.querySelectorAll("linearGradient");
+  // Room around the curve for the widest, softest layer's blur.
+  const PAD = 90;
+  const SAMPLES = 64;
+
+  // Fixed pseudo-random sequence, so the motes and rays land in the same
+  // places on every visit rather than reshuffling on each load.
+  function seeded(seed) {
+    return function () {
+      seed = (seed * 16807) % 2147483647;
+      return (seed - 1) / 2147483646;
+    };
+  }
+
+  function cubic(p0, p1, p2, p3, t) {
+    const u = 1 - t;
+    return (
+      u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3
+    );
+  }
+
+  // A closed shape that follows the curve, `from` wide at Ottawa and `to`
+  // wide at the frame: the taper is what turns a line into a beam of
+  // light spreading out as it rises.
+  function taper(points, from, to, easing) {
+    const leftSide = [];
+    const rightSide = [];
+
+    points.forEach(function (point, i) {
+      const prev = points[Math.max(0, i - 1)];
+      const next = points[Math.min(points.length - 1, i + 1)];
+      const dx = next[0] - prev[0];
+      const dy = next[1] - prev[1];
+      const length = Math.hypot(dx, dy) || 1;
+      const half =
+        (from + (to - from) * Math.pow(i / (points.length - 1), easing)) / 2;
+      const nx = (-dy / length) * half;
+      const ny = (dx / length) * half;
+      leftSide.push(
+        (point[0] + nx).toFixed(1) + " " + (point[1] + ny).toFixed(1)
+      );
+      rightSide.unshift(
+        (point[0] - nx).toFixed(1) + " " + (point[1] - ny).toFixed(1)
+      );
+    });
+
+    return "M" + leftSide.join("L") + "L" + rightSide.join("L") + "Z";
+  }
+
+  function measure() {
+    const markerRect = marker.getBoundingClientRect();
+    const portraitRect = portrait.getBoundingClientRect();
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+
+    // Ottawa (start) and the middle of the frame's lower edge (end).
+    const sx = markerRect.left + markerRect.width / 2 + scrollX;
+    const sy = markerRect.top + markerRect.height / 2 + scrollY;
+    const ex = portraitRect.left + portraitRect.width / 2 + scrollX;
+    const ey = portraitRect.bottom + scrollY;
+
+    if (!markerRect.width || !portraitRect.width || sy <= ey) {
+      connector.style.display = "none";
+      return;
+    }
+
+    connector.style.display = "";
+
+    const left = Math.min(sx, ex) - PAD;
+    const top = ey - PAD;
+    const width = Math.abs(sx - ex) + PAD * 2;
+    const height = sy - ey + PAD * 2;
+    const x0 = sx - left;
+    const y0 = sy - top;
+    const x1 = ex - left;
+    const y1 = ey - top;
+    // Leave Ottawa heading straight up and arrive straight up into the
+    // frame, easing between the two in a single S-curve.
+    const bend = (y0 - y1) * 0.5;
+    const points = [];
+
+    for (let i = 0; i <= SAMPLES; i += 1) {
+      const t = i / SAMPLES;
+      points.push([
+        cubic(x0, x0, x1, x1, t),
+        cubic(y0, y0 - bend, y1 + bend, y1, t),
+      ]);
+    }
+
+    // The beam's reach at the frame scales with the frame, within limits.
+    const reach = Math.max(40, Math.min(portraitRect.width * 0.42, 140));
+
+    connector.style.left = left + "px";
+    connector.style.top = top + "px";
+    connector.style.width = width + "px";
+    connector.style.height = height + "px";
+    connector.setAttribute("viewBox", "0 0 " + width + " " + height);
+
+    bloom.setAttribute("d", taper(points, 10, reach, 1.6));
+    glow.setAttribute("d", taper(points, 5, reach * 0.3, 1.4));
+    core.setAttribute("d", taper(points, 2.2, 3.2, 1));
+
+    gradients.forEach(function (gradient) {
+      gradient.setAttribute("x1", x0);
+      gradient.setAttribute("y1", y0);
+      gradient.setAttribute("x2", x1);
+      gradient.setAttribute("y2", y1);
+    });
+
+    // Where the light is born: a glowing source and a starburst of rays,
+    // longer upward, as if the light is being thrown toward the frame.
+    source.setAttribute("cx", x0);
+    source.setAttribute("cy", y0);
+    source.setAttribute("r", 34);
+
+    const random = seeded(19);
+    rays.textContent = "";
+
+    for (let i = 0; i < 12; i += 1) {
+      const angle = (i / 12) * Math.PI * 2 + (random() - 0.5) * 0.25;
+      const upward = Math.max(0, -Math.sin(angle));
+      const length = 10 + random() * 8 + upward * 22;
+      const ray = document.createElementNS(SVG_NS, "line");
+      ray.setAttribute("x1", (x0 + Math.cos(angle) * 7).toFixed(1));
+      ray.setAttribute("y1", (y0 + Math.sin(angle) * 7).toFixed(1));
+      ray.setAttribute("x2", (x0 + Math.cos(angle) * (7 + length)).toFixed(1));
+      ray.setAttribute("y2", (y0 + Math.sin(angle) * (7 + length)).toFixed(1));
+      ray.setAttribute("stroke-opacity", (0.35 + random() * 0.45).toFixed(2));
+      rays.appendChild(ray);
+    }
+
+    // Motes of light suspended in the beam, spreading with it.
+    motes.textContent = "";
+
+    for (let i = 0; i < 46; i += 1) {
+      const t = Math.pow(random(), 0.8);
+      const index = Math.round(t * SAMPLES);
+      const spread = (10 + (reach - 10) * Math.pow(t, 1.6)) * 0.5;
+      const mote = document.createElementNS(SVG_NS, "circle");
+      mote.setAttribute(
+        "cx",
+        (points[index][0] + (random() - 0.5) * 2 * spread * 0.8).toFixed(1)
+      );
+      mote.setAttribute("cy", (points[index][1] + (random() - 0.5) * 6).toFixed(1));
+      mote.setAttribute("r", (0.6 + random() * 1.5).toFixed(1));
+      mote.setAttribute("fill-opacity", (0.3 + random() * 0.6).toFixed(2));
+      motes.appendChild(mote);
+    }
+
+    // The light pooling along the frame's lower edge.
+    flare.setAttribute("cx", x1);
+    flare.setAttribute("cy", y1);
+    flare.setAttribute("rx", Math.min(portraitRect.width * 0.4, 150));
+    flare.setAttribute("ry", 12);
+  }
+
+  let queued = false;
+
+  function scheduleMeasure() {
+    if (queued) {
+      return;
+    }
+
+    queued = true;
+    window.requestAnimationFrame(function () {
+      queued = false;
+      measure();
+    });
+  }
+
+  measure();
+  window.addEventListener("resize", scheduleMeasure);
+  window.addEventListener("load", scheduleMeasure);
+
+  if (document.fonts && typeof document.fonts.ready?.then === "function") {
+    document.fonts.ready.then(scheduleMeasure);
+  }
+
+  // Text reflowing or images loading above either end moves them.
+  if (typeof window.ResizeObserver === "function") {
+    new ResizeObserver(scheduleMeasure).observe(document.body);
+  }
+}
+
 // About page — Background section: expands/collapses the truncated
 // "Influence" panel (the only column long enough to need a "Read More"
 // toggle; see .background-copy.collapsible in style.css, scoped to
@@ -819,6 +1031,7 @@ if (typeof module !== "undefined") {
     initializeReadMoreSections,
     initializeBrandFlag,
     initializeFooterFlag,
+    initializeAboutConnector,
   };
 }
 
@@ -838,6 +1051,7 @@ if (typeof document !== "undefined") {
   initializeReadMoreSections();
   initializeBrandFlag();
   initializeFooterFlag();
+  initializeAboutConnector();
 
   if (openButton) {
     const focusableSelector =
