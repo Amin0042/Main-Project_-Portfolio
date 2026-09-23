@@ -1091,6 +1091,117 @@ body.light .theme-icon-moon {
     background-color: rgba(var(--surface-rgb), 0.94);
   }
 }
+
+/*==================== Footer Flag ====================*/
+/* The Lion and Sun flag laid horizontally along the very bottom of every
+   footer — green over white over red, the lion upright on its base in the
+   centre, facing the hoist with the sword raised and the sun at its back.
+   It's drawn in two layers so it can span any width without distorting
+   the emblem:
+     - the three stripes are a plain gradient, so they stretch freely;
+     - the emblem is a pre-made tile cut from the same artwork as the
+       navbar flag (Assets/Icons/Iran Real Flag_result.webp), rotated to
+       horizontal, cleaned to exact stripe colours and pre-scaled with
+       Lanczos to the strip's exact size at each pixel density, so the
+       browser draws it 1:1 instead of resampling fine line art.
+   The stripe stops match the artwork's own proportions (its white band is
+   slightly wider than the red and green), in px from the top so the
+   tile's stripes continue straight into the gradient's. A pseudo-element,
+   so no page markup changes and screen readers skip it. */
+#footer {
+  --footer-flag-h: 112px;
+  /* Tile width at the flag's true aspect for this height. Both stay
+     multiples of 4, so every density in the image-set lands on whole
+     device pixels. */
+  --footer-flag-emblem-w: 88px;
+  --footer-flag-emblem: url("../Assets/Icons/Iran Flag Footer@2x.webp");
+  --footer-flag-stripes: linear-gradient(
+    to bottom,
+    #23a149 0 calc(var(--footer-flag-h) * 0.324538),
+    #ffffff calc(var(--footer-flag-h) * 0.324538)
+      calc(var(--footer-flag-h) * 0.677441),
+    #dd1f26 calc(var(--footer-flag-h) * 0.677441)
+  );
+  position: relative;
+  /* --footer-flag-pad (under one device pixel, from main.js) makes the
+     page end on a whole device pixel; see #footer::before below. */
+  padding-bottom: calc(
+    3rem + var(--footer-flag-h) + var(--footer-flag-pad, 0px)
+  );
+  /* #footer also carries .footer, whose 0.2rem vertical margin left a
+     sliver of page below the flag; the flag belongs on the very edge. */
+  margin-bottom: 0;
+}
+
+@supports (background-image: image-set(url("x.webp") 1x)) {
+  #footer {
+    --footer-flag-emblem: image-set(
+      url("../Assets/Icons/Iran Flag Footer@1x.webp") 1x,
+      url("../Assets/Icons/Iran Flag Footer@1.25x.webp") 1.25x,
+      url("../Assets/Icons/Iran Flag Footer@1.5x.webp") 1.5x,
+      url("../Assets/Icons/Iran Flag Footer@1.75x.webp") 1.75x,
+      url("../Assets/Icons/Iran Flag Footer@2x.webp") 2x,
+      url("../Assets/Icons/Iran Flag Footer@3x.webp") 3x
+    );
+  }
+}
+
+/* The stripes: full width, flush with the page's bottom edge. */
+#footer::before,
+#footer::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* --footer-flag-pad / -nx / -ny are set by initializeFooterFlag() in
+     main.js: sub-pixel nudges that put the emblem on whole device pixels
+     at fractional display scaling (125%, 150%, 175%), where the page
+     otherwise ends between pixels and the emblem blurs. The flag only
+     ever grows upward (never more than one device pixel), so it stays
+     flush with the page's bottom edge. */
+  height: calc(var(--footer-flag-h) + var(--footer-flag-ny, 0px));
+  pointer-events: none;
+  background-repeat: no-repeat;
+}
+
+#footer::before {
+  left: 0;
+  right: 0;
+  background-image: var(--footer-flag-stripes);
+}
+
+/* The emblem: its own box rather than a background position on the
+   strip, because browsers round background positions to whole CSS pixels
+   — half a device pixel off at 125% — while a box can be placed exactly. */
+#footer::after {
+  left: calc(
+    50% - var(--footer-flag-emblem-w) / 2 + var(--footer-flag-nx, 0px)
+  );
+  width: var(--footer-flag-emblem-w);
+  background-image: var(--footer-flag-emblem);
+  background-position: top;
+  background-size: var(--footer-flag-emblem-w) var(--footer-flag-h);
+}
+
+/* Phones: a shorter strip with its own exact-size tiles. */
+@media (max-width: 576px) {
+  #footer {
+    --footer-flag-h: 88px;
+    --footer-flag-emblem-w: 68px;
+  }
+
+  @supports (background-image: image-set(url("x.webp") 1x)) {
+    #footer {
+      --footer-flag-emblem: image-set(
+        url("../Assets/Icons/Iran Flag Footer Small@1x.webp") 1x,
+        url("../Assets/Icons/Iran Flag Footer Small@1.25x.webp") 1.25x,
+        url("../Assets/Icons/Iran Flag Footer Small@1.5x.webp") 1.5x,
+        url("../Assets/Icons/Iran Flag Footer Small@1.75x.webp") 1.75x,
+        url("../Assets/Icons/Iran Flag Footer Small@2x.webp") 2x,
+        url("../Assets/Icons/Iran Flag Footer Small@3x.webp") 3x
+      );
+    }
+  }
+}
 /*==================== Nav ====================*/
 
 /* Same gilded-glass "iOS26" material as every card/button on the site —

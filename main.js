@@ -658,6 +658,126 @@ function initializeBrandFlag() {
   }
 }
 
+// Footer: the Lion and Sun flag along the bottom edge (#footer::before
+// and ::after in style.css). Its emblem is a pre-scaled tile meant to be
+// drawn 1:1, but at fractional display scaling (125%, 150%, 175%) the
+// page usually ends between device pixels. Scrolled to the bottom, the
+// whole page then sits a fraction of a pixel off the screen's grid and
+// the browser resamples — and softens — the tile. This measures those
+// remainders and hands CSS three small corrections:
+//   --footer-flag-pad  extra footer padding (under 8px) so the page ends
+//                      on a pixel whole in both CSS and device pixels
+//   --footer-flag-nx   horizontal shift of the emblem tile
+//   --footer-flag-ny   how far the flag grows upward so its top, where
+//                      the tile is anchored, lands on a whole pixel
+// All fall back to 0px in CSS, which is already exact at 100%/200%/300%.
+function initializeFooterFlag() {
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    return;
+  }
+
+  const footer = document.getElementById("footer");
+
+  if (!footer) {
+    return;
+  }
+
+  function measure() {
+    const dpr = window.devicePixelRatio || 1;
+    const styles = window.getComputedStyle(footer);
+    const flagHeight = parseFloat(styles.getPropertyValue("--footer-flag-h"));
+    const emblemWidth = parseFloat(
+      styles.getPropertyValue("--footer-flag-emblem-w")
+    );
+
+    if (!flagHeight || !emblemWidth) {
+      return;
+    }
+
+    const rect = footer.getBoundingClientRect();
+    const currentPad =
+      parseFloat(footer.style.getPropertyValue("--footer-flag-pad")) || 0;
+    // Page coordinates, without the padding this function added last time.
+    const pageEnd = rect.bottom + window.scrollY - currentPad;
+    // The browser's furthest scroll position is always a whole CSS pixel,
+    // so the page has to end on a whole CSS pixel that is *also* a whole
+    // device pixel (a multiple of 4px at 125%/175%, 2px at 150%) for the
+    // flag to land on the screen's grid when scrolled to the bottom. At
+    // unusual zoom levels with no such pixel close by, a whole CSS pixel
+    // is the best available.
+    let end = Math.ceil(pageEnd - 0.001);
+
+    for (let candidate = end; candidate < end + 8; candidate += 1) {
+      const devicePixels = candidate * dpr;
+
+      if (Math.abs(devicePixels - Math.round(devicePixels)) < 0.01) {
+        end = candidate;
+        break;
+      }
+    }
+
+    const top = (end - flagHeight) * dpr;
+    // Same rule sideways: the browser places boxes on whole CSS pixels, so
+    // the emblem takes the nearest one that's also a whole device pixel —
+    // never more than 2px off true centre.
+    const centred =
+      rect.left + window.scrollX + (rect.width - emblemWidth) / 2;
+    let left = Math.round(centred);
+
+    for (let step = 0; step <= 4; step += 1) {
+      const options = [Math.round(centred) - step, Math.round(centred) + step];
+      const match = options.filter(function (candidate) {
+        const devicePixels = candidate * dpr;
+        return Math.abs(devicePixels - Math.round(devicePixels)) < 0.01;
+      })[0];
+
+      if (match !== undefined) {
+        left = match;
+        break;
+      }
+    }
+
+    footer.style.setProperty(
+      "--footer-flag-pad",
+      Math.max(0, end - pageEnd) + "px"
+    );
+    footer.style.setProperty(
+      "--footer-flag-ny",
+      (top - Math.floor(top + 0.001)) / dpr + "px"
+    );
+    footer.style.setProperty("--footer-flag-nx", left - centred + "px");
+  }
+
+  let queued = false;
+
+  function scheduleMeasure() {
+    if (queued) {
+      return;
+    }
+
+    queued = true;
+    window.requestAnimationFrame(function () {
+      queued = false;
+      measure();
+    });
+  }
+
+  measure();
+  // Resize also fires on browser zoom, which changes devicePixelRatio.
+  window.addEventListener("resize", scheduleMeasure);
+  window.addEventListener("load", scheduleMeasure);
+
+  if (document.fonts && typeof document.fonts.ready?.then === "function") {
+    document.fonts.ready.then(scheduleMeasure);
+  }
+
+  // Anything above the footer changing height (images and videos
+  // loading, panels expanding) moves the footer's offset on the page.
+  if (typeof window.ResizeObserver === "function") {
+    new ResizeObserver(scheduleMeasure).observe(document.body);
+  }
+}
+
 // About page — Background section: expands/collapses the truncated
 // "Influence" panel (the only column long enough to need a "Read More"
 // toggle; see .background-copy.collapsible in style.css, scoped to
@@ -698,6 +818,7 @@ if (typeof module !== "undefined") {
     initializeChamberGuardians,
     initializeReadMoreSections,
     initializeBrandFlag,
+    initializeFooterFlag,
   };
 }
 
@@ -716,6 +837,7 @@ if (typeof document !== "undefined") {
   initializeChamberGuardians();
   initializeReadMoreSections();
   initializeBrandFlag();
+  initializeFooterFlag();
 
   if (openButton) {
     const focusableSelector =
