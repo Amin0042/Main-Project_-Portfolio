@@ -1101,9 +1101,13 @@ body.light .theme-icon-moon {
      - the three stripes are a plain gradient, so they stretch freely;
      - the emblem is a pre-made tile cut from the same artwork as the
        navbar flag (Assets/Icons/Iran Real Flag_result.webp), rotated to
-       horizontal, cleaned to exact stripe colours and pre-scaled with
-       Lanczos to the strip's exact size at each pixel density, so the
-       browser draws it 1:1 instead of resampling fine line art.
+       horizontal and pre-scaled with Lanczos to the strip's exact size at
+       each pixel density, so the browser draws it 1:1 instead of
+       resampling fine line art. Its stripe background is transparent
+       (lossless WebP with alpha): only the lion, sun and sword are
+       painted, so every stripe pixel comes from the gradient and the
+       tile can't show as a separate box (the resize had left dark and
+       bright lines along its stripe edges).
    The stripe stops match the artwork's own proportions (its white band is
    slightly wider than the red and green), in px from the top so the
    tile's stripes continue straight into the gradient's. A pseudo-element,
