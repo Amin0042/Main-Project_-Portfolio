@@ -1322,7 +1322,8 @@ body.light .theme-icon-moon {
   flex: 0 0 auto;
 }
 
-/* Geometry of Assets/Icons/Iran Real Flag_result.webp, a 1516x2577
+/* Geometry of Assets/Icons/Iran Real Flag.svg (drawn from the 1516x2577
+   raster Iran Real Flag_result.webp, whose rows are quoted below), a
    vertical flag: red/white/green run as vertical stripes, the lion-and-
    sun sits between rows 518-1560, and the swallowtail hem is cut from
    row 2031 down. Those four horizontal slices are what the bands below
@@ -1348,8 +1349,11 @@ body.light .theme-icon-moon {
      is the one way to enlarge the emblem without distorting it or
      breaking the stripes' alignment, since every band is cut from the
      same image at the same width. */
-  --brand-flag-scale: 2;
-  --brand-flag-w: calc(var(--brand-mark-w) * var(--brand-flag-scale));
+  /* Pinned to 92px rather than derived from the mark: the emblem images
+     are pre-scaled for exactly this width, and any other width (the mark
+     shrinks to 42px below 1200px) would make the browser resample the
+     lion's line work and soften it. */
+  --brand-flag-w: 92px;
   /* Natural (unstretched) length: 2577/1516 of the flag's width. */
   --flag-natural-h: calc(var(--brand-flag-w) * 1.69987);
   /* How far the flag draws out on hover. Deliberately tied to the mark's
@@ -1422,7 +1426,7 @@ body.light .theme-icon-moon {
 .brand-flag-band {
   display: block;
   width: 100%;
-  background-image: url("../Assets/Icons/Iran Real Flag_result.webp");
+  background-image: url("../Assets/Icons/Iran Flag Bands.svg");
   background-repeat: no-repeat;
 }
 
@@ -1441,32 +1445,23 @@ body.light .theme-icon-moon {
 
 .brand-flag-band--emblem {
   /* s = 0.16686, f = 0.45790 — fixed height, so the lion and sun are
-     never distorted no matter how far the flag is drawn out. */
+     never distorted no matter how far the flag is drawn out. The slice is
+     its own SVG (the flag's vector with its viewBox cropped to rows
+     430-1610), so it fills the band exactly and is drawn as vector shapes
+     — crisp at any pixel density or browser zoom. The stripes underneath
+     are a fallback: the SVG is only fetched on first hover, and until it
+     arrives the band would otherwise be a transparent hole. */
   flex: 0 0 var(--flag-emblem-h);
-  background-size: 100% 218.39%;
-  background-position: center 30.78%;
-}
-
-/* The lion and sun are fine line art, and asking the browser to shrink
-   the full 1516px-wide flag ~16x on the fly smears its outlines into a
-   gold blur. So the emblem slice (rows 430-1610) is pre-scaled offline
-   with Lanczos and a light unsharp mask to the flag's 92px width at each
-   common pixel density (1.25x-1.75x are typical Windows laptop
-   scaling), so each screen draws one at close to its native size. The
-   slice fills the band exactly, so no size/position offsets apply. */
-@supports (background-image: image-set(url("x.webp") 1x)) {
-  .brand-flag-band--emblem {
-    background-image: image-set(
-      url("../Assets/Icons/Iran Flag Emblem@1x.webp") 1x,
-      url("../Assets/Icons/Iran Flag Emblem@1.25x.webp") 1.25x,
-      url("../Assets/Icons/Iran Flag Emblem@1.5x.webp") 1.5x,
-      url("../Assets/Icons/Iran Flag Emblem@1.75x.webp") 1.75x,
-      url("../Assets/Icons/Iran Flag Emblem@2x.webp") 2x,
-      url("../Assets/Icons/Iran Flag Emblem@3x.webp") 3x
+  background-image:
+    url("../Assets/Icons/Iran Flag Emblem.svg"),
+    linear-gradient(
+      to right,
+      #dc1f26 0 32.45%,
+      #ffffff 32.45% 67.74%,
+      #23a149 67.74%
     );
-    background-size: 100% 100%;
-    background-position: center;
-  }
+  background-size: 100% 100%;
+  background-position: center;
 }
 
 .brand-flag-band--field {
