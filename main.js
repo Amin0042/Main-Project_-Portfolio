@@ -2377,3 +2377,344 @@ if (typeof document !== "undefined") {
 
   initializeYoutubeFacades();
 }
+
+// Liquid-glass cursor: a tiny glass bead that follows the mouse exactly
+// (no easing lag, so its centre is always the true click point). Only
+// runs on real mice/trackpads; touch devices keep their native behaviour.
+// Styles live under "Liquid-glass cursor" in style.css.
+(function initializeGlassCursor() {
+  if (
+    typeof window === "undefined" ||
+    !window.matchMedia("(hover: hover) and (pointer: fine)").matches
+  ) {
+    return;
+  }
+
+  const start = function () {
+    if (document.querySelector(".glass-cursor")) {
+      return;
+    }
+
+    const cursor = document.createElement("div");
+    cursor.className = "glass-cursor";
+    cursor.setAttribute("aria-hidden", "true");
+    const drop = document.createElement("div");
+    drop.className = "glass-cursor-drop";
+    cursor.appendChild(drop);
+    document.body.appendChild(cursor);
+    document.documentElement.classList.add("glass-cursor-active");
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    // The liquid lens. Everything is in objectBoundingBox units so it
+    // scales with the drop as it grows over links. Two passes over the
+    // page behind the drop:
+    //   1. ripple — slowly drifting turbulence nudges the pixels, so the
+    //      words beneath wobble as if seen through moving water;
+    //   2. lens — a red/green gradient map pulls every pixel toward the
+    //      centre, magnifying the text like a drop of water on paper.
+    // Chromium is currently the only engine that applies an SVG filter
+    // inside backdrop-filter, so the liquid is switched on only there.
+    const lensMap =
+      "data:image/svg+xml," +
+      encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">' +
+          '<defs><linearGradient id="r" x2="1"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#f00"/></linearGradient>' +
+          '<linearGradient id="g" y2="1" x2="0"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#0f0"/></linearGradient></defs>' +
+          '<rect width="100" height="100" fill="#000080"/>' +
+          '<rect width="100" height="100" fill="url(#r)" style="mix-blend-mode:screen"/>' +
+          '<rect width="100" height="100" fill="url(#g)" style="mix-blend-mode:screen"/>' +
+          "</svg>",
+      );
+    const svgNS = "http://www.w3.org/2000/svg";
+    const filterHost = document.createElementNS(svgNS, "svg");
+    filterHost.setAttribute("width", "0");
+    filterHost.setAttribute("height", "0");
+    filterHost.setAttribute("aria-hidden", "true");
+    filterHost.style.position = "absolute";
+    filterHost.innerHTML = `
+      <filter id="glass-cursor-liquid" x="0" y="0" width="1" height="1"
+        primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="2.4 2.8" numOctaves="2" seed="8" result="noise">
+          ${reduceMotion ? "" : '<animate attributeName="baseFrequency" dur="7s" repeatCount="indefinite" values="2.4 2.8;3 2.3;2.2 3.1;2.4 2.8"/>'}
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.07"
+          xChannelSelector="R" yChannelSelector="G" result="ripple"/>
+        <feImage href="${lensMap}" x="0" y="0" width="1" height="1"
+          preserveAspectRatio="none" result="lens"/>
+        <feDisplacementMap in="ripple" in2="lens" scale="-0.32"
+          xChannelSelector="R" yChannelSelector="G"/>
+      </filter>`;
+    document.body.appendChild(filterHost);
+    const ripple = filterHost.querySelector("feDisplacementMap");
+
+    const brands =
+      (navigator.userAgentData && navigator.userAgentData.brands) || [];
+    if (brands.some((entry) => /Chromium/.test(entry.brand))) {
+      cursor.classList.add("is-liquid");
+    }
+
+    // Safari/Firefox: build the same effect from a mirror — a static copy
+    // of the page kept inside the drop and shifted every frame so the
+    // point under the pointer sits at the drop's centre. The liquid
+    // filter then runs on that copy as an ordinary element filter, which
+    // both engines support.
+    let lens = null;
+    let mirror = null;
+    let fixedCopies = [];
+    let mirrorDirty = true;
+    let lastBuild = 0;
+    let buildTimer = 0;
+    let observer = null;
+
+    const buildMirror = function () {
+      const body = document.body;
+      // Detach the cursor while copying so the mirror never copies itself.
+      cursor.remove();
+      filterHost.remove();
+
+      const copy = body.cloneNode(true);
+      const originals = body.querySelectorAll("*");
+      const copies = copy.querySelectorAll("*");
+      fixedCopies = [];
+
+      for (let i = 0; i < originals.length; i += 1) {
+        const original = originals[i];
+        const clone = copies[i];
+        const tag = original.tagName;
+
+        if (tag === "SCRIPT" || tag === "NOSCRIPT" || tag === "TEMPLATE") {
+          clone.remove();
+          continue;
+        }
+
+        // Never re-load embedded players/media inside the mirror — a
+        // dark box of the same size stands in for them.
+        if (/^(IFRAME|VIDEO|AUDIO|OBJECT|EMBED)$/.test(tag)) {
+          const rect = original.getBoundingClientRect();
+          const stand = document.createElement("div");
+          stand.className = original.className;
+          stand.style.cssText = `width:${rect.width}px;height:${rect.height}px;background:#0a0a0b;`;
+          clone.replaceWith(stand);
+          continue;
+        }
+
+        if (tag === "CANVAS") {
+          try {
+            clone.getContext("2d").drawImage(original, 0, 0);
+          } catch (error) {
+            // Tainted or WebGL canvas: leave the copy blank.
+          }
+        } else if (tag === "IMG" && original.complete) {
+          // Already downloaded, so the copy can show it straight from cache.
+          clone.loading = "eager";
+        }
+
+        // Fixed elements (navbar, popups) are pinned to the viewport, but
+        // inside the mirror they'd pin to the mirror's top-left instead —
+        // so they're re-placed absolutely where they currently sit.
+        if (getComputedStyle(original).position === "fixed") {
+          const rect = original.getBoundingClientRect();
+          const style = clone.style;
+          style.setProperty("position", "absolute", "important");
+          style.setProperty("right", "auto", "important");
+          style.setProperty("bottom", "auto", "important");
+          style.setProperty("margin", "0", "important");
+          style.setProperty("transform", "none", "important");
+          style.setProperty("width", `${rect.width}px`, "important");
+          style.setProperty("height", `${rect.height}px`, "important");
+          fixedCopies.push({ el: clone, top: rect.top, left: rect.left });
+        }
+      }
+
+      body.appendChild(cursor);
+      body.appendChild(filterHost);
+
+      copy.setAttribute("aria-hidden", "true");
+      copy.inert = true;
+      mirror.style.width = `${document.documentElement.clientWidth}px`;
+      mirror.replaceChildren(copy);
+      lastScrollX = NaN;
+      mirrorDirty = false;
+      lastBuild = Date.now();
+      if (observer) {
+        observer.takeRecords();
+      }
+    };
+
+    // Rebuilt at most about once a second, and only while the drop is on
+    // screen, so carousels/popups/theme changes show up in the lens
+    // without the copy being rebuilt constantly.
+    const scheduleMirror = function () {
+      if (!mirror || buildTimer || !mirrorDirty) {
+        return;
+      }
+      if (!cursor.classList.contains("is-visible")) {
+        return;
+      }
+      buildTimer = setTimeout(
+        function () {
+          buildTimer = 0;
+          buildMirror();
+          requestRender();
+        },
+        Math.max(16, 1000 - (Date.now() - lastBuild)),
+      );
+    };
+
+    if (!cursor.classList.contains("is-liquid")) {
+      cursor.classList.add("is-mirror");
+      lens = document.createElement("div");
+      lens.className = "glass-cursor-lens";
+      mirror = document.createElement("div");
+      mirror.className = "glass-cursor-mirror";
+      lens.appendChild(mirror);
+      drop.insertBefore(lens, drop.firstChild);
+
+      observer = new MutationObserver(function (records) {
+        const relevant = records.some(function (record) {
+          return (
+            !cursor.contains(record.target) &&
+            !filterHost.contains(record.target)
+          );
+        });
+        if (relevant) {
+          mirrorDirty = true;
+          scheduleMirror();
+        }
+      });
+      observer.observe(document.body, {
+        subtree: true,
+        childList: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: ["class", "src", "hidden", "open", "aria-expanded"],
+      });
+      window.addEventListener("resize", function () {
+        mirrorDirty = true;
+        scheduleMirror();
+      });
+      window.addEventListener(
+        "scroll",
+        function () {
+          requestRender();
+        },
+        { passive: true },
+      );
+    }
+
+    const interactiveSelector =
+      'a, button, summary, label, select, [role="button"], [tabindex]:not([tabindex="-1"]), .btn, .carousel-link, .category-project-media';
+    const textSelector =
+      'input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, [contenteditable="true"]';
+
+    let x = 0;
+    let y = 0;
+    let lastX = 0;
+    let lastY = 0;
+    let speed = 0;
+    let angle = 0;
+    let frame = 0;
+    let lastScrollX = NaN;
+    let lastScrollY = NaN;
+
+    // Runs while the mouse is moving and for a moment after: the drop
+    // stretches along its direction of travel and the ripple sloshes
+    // harder the faster it goes, then both settle back to a calm bead.
+    const render = function () {
+      const dx = x - lastX;
+      const dy = y - lastY;
+      lastX = x;
+      lastY = y;
+      // Capped so re-entering the window doesn't register as a huge fling.
+      const instant = Math.min(Math.hypot(dx, dy), 60);
+      speed += (instant - speed) * 0.25;
+      if (instant > 0.5) {
+        angle = Math.atan2(dy, dx);
+      }
+
+      cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      if (mirror) {
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+        mirror.style.transform = `translate3d(${-(x + scrollX)}px, ${-(y + scrollY)}px, 0)`;
+        if (scrollX !== lastScrollX || scrollY !== lastScrollY) {
+          lastScrollX = scrollX;
+          lastScrollY = scrollY;
+          fixedCopies.forEach(function (fixed) {
+            fixed.el.style.setProperty("top", `${fixed.top + scrollY}px`, "important");
+            fixed.el.style.setProperty("left", `${fixed.left + scrollX}px`, "important");
+          });
+        }
+      }
+      if (!reduceMotion) {
+        const stretch = 1 + Math.min(speed / 70, 0.32);
+        drop.style.setProperty("--drop-stretch", stretch.toFixed(3));
+        drop.style.setProperty("--drop-angle", `${angle}rad`);
+        ripple.setAttribute(
+          "scale",
+          (0.07 + Math.min(speed / 400, 0.1)).toFixed(3),
+        );
+      }
+
+      frame = speed > 0.05 ? requestAnimationFrame(render) : 0;
+    };
+
+    const requestRender = function () {
+      if (!frame) {
+        frame = requestAnimationFrame(render);
+      }
+    };
+
+    document.addEventListener(
+      "mousemove",
+      function (event) {
+        x = event.clientX;
+        y = event.clientY;
+        if (!cursor.classList.contains("is-visible")) {
+          lastX = x;
+          lastY = y;
+        }
+        if (!frame) {
+          frame = requestAnimationFrame(render);
+        }
+
+        const target = event.target instanceof Element ? event.target : null;
+        // Over text fields the native I-beam takes over; over iframes the
+        // embedded page owns the pointer, so the bead steps aside.
+        const hidden =
+          !target || target.closest(textSelector) || target.closest("iframe");
+        cursor.classList.toggle("is-visible", !hidden);
+        scheduleMirror();
+        cursor.classList.toggle(
+          "is-hovering",
+          Boolean(target && target.closest(interactiveSelector)),
+        );
+      },
+      { passive: true },
+    );
+
+    document.addEventListener("mousedown", function () {
+      cursor.classList.add("is-pressed");
+    });
+    document.addEventListener("mouseup", function () {
+      cursor.classList.remove("is-pressed");
+    });
+    document.addEventListener("mouseout", function (event) {
+      if (!event.relatedTarget) {
+        cursor.classList.remove("is-visible", "is-pressed");
+      }
+    });
+    window.addEventListener("blur", function () {
+      cursor.classList.remove("is-visible", "is-pressed");
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
+})();

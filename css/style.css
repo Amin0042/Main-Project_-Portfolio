@@ -5719,3 +5719,177 @@ body.modal-open {
     max-width: 300px;
   }
 }
+
+/* ==========================================================================
+   Liquid-glass cursor
+   A tiny glass bead that replaces the pointer on real mice/trackpads.
+   main.js (initializeGlassCursor) creates the .glass-cursor element and
+   only then adds .glass-cursor-active to <html>, so without JS the gothic
+   triangle cursor above still applies. The bead's centre is the exact
+   click point. Text fields keep the native I-beam for typing.
+   ========================================================================== */
+@media (hover: hover) and (pointer: fine) {
+  html.glass-cursor-active,
+  html.glass-cursor-active * {
+    cursor: none !important;
+  }
+
+  html.glass-cursor-active input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  html.glass-cursor-active textarea,
+  html.glass-cursor-active [contenteditable="true"] {
+    cursor: text !important;
+  }
+}
+
+/* Two layers: .glass-cursor only tracks the pointer (pure translate, so
+   its centre is always the true click point); .glass-cursor-drop inside
+   it is the liquid itself — it stretches along the direction of travel
+   (main.js sets --drop-stretch/--drop-angle from mouse velocity), its
+   outline slowly "breathes" like a droplet, and its backdrop is run
+   through the #glass-cursor-liquid SVG filter, which magnifies the text
+   beneath like a lens and ripples it with animated turbulence. */
+.glass-cursor {
+  --glass-cursor-size: 22px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 100002;
+  opacity: 0;
+  will-change: transform;
+  transition: opacity 0.2s ease;
+}
+
+.glass-cursor.is-visible {
+  opacity: 1;
+}
+
+.glass-cursor-drop {
+  --drop-stretch: 1;
+  --drop-angle: 0deg;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--glass-cursor-size);
+  height: var(--glass-cursor-size);
+  margin: calc(var(--glass-cursor-size) / -2) 0 0 calc(var(--glass-cursor-size) / -2);
+  border-radius: 50%;
+  transform:
+    rotate(var(--drop-angle))
+    scale(var(--drop-stretch), calc(1 / var(--drop-stretch)))
+    rotate(calc(var(--drop-angle) * -1));
+  /* A clear lens, not frosted: just enough brightness/saturation to read
+     as glass, with no blur so the words stay legible through it. */
+  backdrop-filter: saturate(160%) brightness(1.1) contrast(1.05);
+  -webkit-backdrop-filter: saturate(160%) brightness(1.1) contrast(1.05);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 0.5px rgba(var(--ink-rgb), 0.4),
+    0 3px 8px rgba(var(--ink-rgb), 0.3);
+  animation: glass-cursor-breathe 3.2s ease-in-out infinite;
+  transition:
+    width 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    height 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    margin 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.2s ease;
+}
+
+/* Gloss, gold edge tint and the glass's inner depth sit on a layer above
+   whatever is refracted inside the drop (backdrop or mirror). */
+.glass-cursor-drop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.75) 0 7%, rgba(255, 255, 255, 0) 24%),
+    radial-gradient(circle at 70% 78%, rgba(var(--highlight-rgb), 0.28) 0 6%, rgba(var(--highlight-rgb), 0) 22%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 58%, rgba(var(--gold-rgb), 0.22) 100%);
+  box-shadow:
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.65),
+    inset 0 -3px 4px rgba(var(--ink-rgb), 0.28),
+    inset 0 0 6px rgba(var(--highlight-rgb), 0.18);
+}
+
+/* Chromium can run an SVG filter on the backdrop itself: that's what
+   bends the text into a magnified, rippling liquid. */
+.glass-cursor.is-liquid .glass-cursor-drop {
+  backdrop-filter: url(#glass-cursor-liquid) saturate(160%) brightness(1.1);
+  -webkit-backdrop-filter: url(#glass-cursor-liquid) saturate(160%) brightness(1.1);
+}
+
+/* Safari and Firefox can't filter a backdrop with SVG, so main.js keeps
+   a live copy of the page (.glass-cursor-mirror) inside the drop, lined
+   up with the real page under the pointer, and the same liquid filter
+   is run on that copy instead — same lens, same ripple. */
+.glass-cursor-lens {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  filter: url(#glass-cursor-liquid) saturate(160%) brightness(1.1);
+}
+
+.glass-cursor-mirror {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.glass-cursor-mirror *,
+.glass-cursor-mirror *::before,
+.glass-cursor-mirror *::after {
+  transition: none !important;
+}
+
+/* The page-transition doors are fixed overlays on the real <body>; the
+   mirror never needs them. */
+.glass-cursor-mirror > body::before,
+.glass-cursor-mirror > body::after,
+.glass-cursor-mirror .chamber-guardian {
+  display: none !important;
+}
+
+/* The droplet's outline gently wobbles so it never sits perfectly still. */
+@keyframes glass-cursor-breathe {
+  0%, 100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+  25% { border-radius: 54% 46% 52% 48% / 47% 53% 47% 53%; }
+  50% { border-radius: 47% 53% 46% 54% / 53% 47% 52% 48%; }
+  75% { border-radius: 52% 48% 55% 45% / 48% 52% 46% 54%; }
+}
+
+/* Over anything clickable the drop swells into a reading lens with a gold rim. */
+.glass-cursor.is-hovering {
+  --glass-cursor-size: 36px;
+}
+
+.glass-cursor.is-hovering .glass-cursor-drop {
+  border-color: rgba(var(--highlight-rgb), 0.85);
+}
+
+/* Pressing squeezes the drop like liquid under a fingertip. */
+.glass-cursor.is-pressed {
+  --glass-cursor-size: 16px;
+}
+
+.glass-cursor.is-hovering.is-pressed {
+  --glass-cursor-size: 28px;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-cursor:not(.is-mirror) .glass-cursor-drop {
+    background-color: rgba(var(--gold-rgb), 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-cursor-drop {
+    animation: none;
+    transition: none;
+  }
+}
