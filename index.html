@@ -23,7 +23,15 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
   <link rel="stylesheet" href="./css/style.css" />
-  <link rel="icon" type="image/svg+xml" href="./Assets/Icons/Favicon Lion Icon yellow color with eyes .svg" />
+  <!-- The hero is a CSS background, so the browser would only find it after
+       downloading and parsing style.css. Preloading starts it straight away;
+       the media queries match the CSS breakpoint, so each device downloads
+       only one of the two files. -->
+  <link rel="preload" as="image" fetchpriority="high" media="(min-width: 751px)"
+    href="./Assets/Webp/WebP Background images/Home Page - Tomb of Cyrus 2560.webp" />
+  <link rel="preload" as="image" fetchpriority="high" media="(max-width: 750px)"
+    href="./Assets/Webp/WebP Background images/Home Page - Tomb of Cyrus 1280.webp" />
+  <link rel="icon" type="image/svg+xml" href="./Assets/Icons/Favicon Lion Icon red color with eyes.svg" />
   <title>Kave Amini Khanimani</title>
 </head>
 

@@ -1944,11 +1944,16 @@ body.light .nav-link[aria-current="page"] {
   }
 }
 /*==================== Hero ====================*/
+/* 2560px export so the photo stays sharp on large screens; phones get the
+   1280px copy (see the max-width: 750px rule under Hero Motion). Both are
+   preloaded from index.html. The roof peak and sunburst sit ~12% down the
+   photo, so the crop is anchored there instead of dead centre. */
 .hero-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url("../Assets/Webp/WebP Background images/Webp version Of September 2026 Hero Images/Home Page - Tomb of Cyrus.webp")
-      no-repeat center center / cover;
+    url("../Assets/Webp/WebP Background images/Home Page - Tomb of Cyrus 2560.webp")
+      no-repeat center 12% / cover;
+  background-position: center 12%;
   width: 100%;
   min-height: 80vh;
 }
@@ -5246,6 +5251,23 @@ body.modal-open {
   .motion-image,
   .inspiration-image {
     background-attachment: fixed;
+  }
+}
+
+/* The home hero opts out of the parallax: a fixed background is sized to
+   the whole browser window, so its top edge sits hidden behind the navbar
+   and the tomb's roof gets cut off. Placed after the rule above so it wins;
+   the other pages' hero strips keep their parallax. */
+.hero-image {
+  background-attachment: scroll;
+}
+
+/* Phones download the 1280px copy instead of the 2560px one. */
+@media (max-width: 750px) {
+  .hero-image {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+      url("../Assets/Webp/WebP Background images/Home Page - Tomb of Cyrus 1280.webp");
   }
 }
 
