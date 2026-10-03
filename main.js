@@ -1056,11 +1056,15 @@ if (typeof document !== "undefined") {
   if (openButton) {
     const focusableSelector =
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    // <html> has its own overflow-x in style.css, so the body's overflow no
+    // longer propagates to the viewport — the lock has to go on <html> too.
     const lockBodyScroll = function () {
+      document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
     };
 
     const unlockBodyScroll = function () {
+      document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
     };
 

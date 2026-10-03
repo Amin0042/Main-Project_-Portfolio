@@ -2077,6 +2077,9 @@ body.light .nav-link[aria-current="page"] {
   padding: 1rem 2rem 1.25rem 0.75rem;
   max-height: 66vh;
   overflow-y: auto;
+  /* Stop wheel/touch scroll from chaining to the page once the text
+     hits its top or bottom. */
+  overscroll-behavior: contain;
   font-family: "Inter", sans-serif;
   font-size: var(--body-copy-font-size);
   line-height: 1.9;
