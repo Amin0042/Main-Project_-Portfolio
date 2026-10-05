@@ -2967,6 +2967,15 @@ body.light .about-beam-motes circle {
   outline: none;
 }
 
+/* Intro paragraphs under the Portfolio Vaults and Chronological Archive
+   headings: same measure and left-aligned prose as the archive hero
+   (.archive-container p), centered as a block above the grid. */
+.archive-section-intro {
+  max-width: 860px;
+  margin: 0 auto clamp(2rem, 4vw, 3rem);
+  text-align: left;
+}
+
 .archive-options-grid {
   width: min(1200px, calc(100vw - 4rem));
   margin: 0 auto;
@@ -3022,9 +3031,16 @@ body.light .about-beam-motes circle {
      pushed in from the edge twice over instead of reading as one centered
      column. Zeroing it here lets the grid's own centered width be the
      only inset, so the tiles sit centered with a single, even gutter. */
-  #chronological-archive {
+  #chronological-archive,
+  #portfolio-vaults {
     padding-left: 0;
     padding-right: 0;
+  }
+
+  /* With the section padding zeroed above, give the intro prose its
+     own gutter so it doesn't touch the screen edge. */
+  .archive-section-intro {
+    padding: 0 1rem;
   }
 }
 .archive-detail-page {
