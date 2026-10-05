@@ -5934,3 +5934,48 @@ body.modal-open {
     transition: none;
   }
 }
+
+/* Case study pages: the archive detail shell, widened for long-form
+   reading with an embedded video. */
+.case-study {
+  align-items: flex-start;
+}
+.case-study .archive-detail-shell {
+  max-width: 900px;
+  /* Long-form reading: left-aligned like the rest of the site's prose,
+     not centered like the short archive detail cards. Hyphens and
+     orphans are already handled globally on body and p/li. */
+  text-align: left;
+}
+/* One shared left edge: every block in the shell starts flush at the
+   same x, so the left rag runs in a single vertical line. The site hides
+   list bullets globally, so the list gets no indent either. */
+.case-study .archive-detail-shell > :not(.btn),
+.case-study li {
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: 0;
+  text-indent: 0;
+}
+.case-study .archive-detail-shell > .btn {
+  margin-inline: 0;
+}
+.case-study ul {
+  margin-bottom: 1rem;
+}
+.case-study li {
+  font-size: var(--body-copy-font-size);
+  color: var(--body-copy-colour);
+}
+.case-study h3 {
+  margin-top: 2rem;
+}
+.case-study .case-study-media {
+  display: block;
+  width: 100%;
+  margin: 1.5rem 0;
+  background: #000;
+}
+.case-study .btn {
+  margin-top: 2rem;
+}
