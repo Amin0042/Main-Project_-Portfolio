@@ -4692,6 +4692,27 @@ JavaScript selects this shared class.
   text-align: center;
 }
 
+/* Vault intros: flush-left / ragged-right book setting. ~62ch keeps the
+   rag gentle (no long-short-long sawtooth), words never break or hyphenate,
+   and text-wrap: pretty plus the &nbsp; tying each paragraph's last two
+   words together in the HTML keep a lone word off the final line.
+   The Personal Vault hero intro above them shares the same setting. */
+#personal-hero .notes-container p,
+#traditional-vault .traditional-intro p,
+#digital-vault .traditional-intro p,
+#cyborg-vault .traditional-intro p {
+  max-width: 62ch;
+  text-align: left;
+  -webkit-hyphens: none;
+  hyphens: none;
+  word-break: normal;
+  overflow-wrap: normal;
+  text-wrap: pretty;
+  hanging-punctuation: first last;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures;
+}
+
 #traditional-vault .carousel-content,
 #digital-vault .carousel-content,
 #cyborg-vault .carousel-content {
@@ -4925,14 +4946,26 @@ button:disabled {
   margin: 0;
   color: rgba(244, 238, 222, 0.9);
   line-height: 1.7;
-  max-width: 75ch;
-  width: min(75ch, 100%);
   max-height: 22vh;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding-right: 0.4rem;
-  overflow-wrap: anywhere;
   justify-self: center;
+  /* Same flush-left book setting as the vault intros: whole words only
+     (overflow-wrap: anywhere used to split words mid-line), no hyphens,
+     and the last two words of every description are joined by a
+     non-breaking space in the HTML so no orphan is left alone. */
+  max-width: 65ch;
+  width: min(65ch, 100%);
+  text-align: left;
+  -webkit-hyphens: none;
+  hyphens: none;
+  word-break: normal;
+  overflow-wrap: normal;
+  text-wrap: pretty;
+  hanging-punctuation: first last;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures;
 }
 
 /* Light mode: the image lightbox, like the manifesto card, is a deliberately
