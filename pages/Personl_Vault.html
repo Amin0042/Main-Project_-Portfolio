@@ -31,6 +31,13 @@
 
   <link rel="stylesheet" href="../css/style.css" />
 
+  <!-- Starts the hero background download before the CSS is parsed; each
+       media query matches the one file style.css will actually use. -->
+  <link rel="preload" as="image" fetchpriority="high" media="(min-width: 751px)"
+    href="../Assets/Webp/WebP Background images/Webp version Of September 2026 Hero Images/Personal Vault - Vakil Columns.webp" />
+  <link rel="preload" as="image" fetchpriority="high" media="(max-width: 750px)"
+    href="../Assets/Webp/WebP Background images/Webp version Of September 2026 Hero Images/Personal Vault - Vakil Columns-mobile.webp" />
+
   <link rel="icon" type="image/svg+xml" href="../Assets/Icons/Favicon Lion Icon red color with eyes.svg" />
 
   <title>Personal Vault</title>
@@ -134,6 +141,9 @@
       </div>
     </section>
 
+    <!-- Vault grids load small WebP thumbnails (Assets/Webp/Thumbnails/Personal Vault/);
+         data-full keeps the original for the enlarged popup, and width/height
+         reserve space so the medallions don't shift while loading. -->
     <!-- Traditional Vault grid carousel -->
     <section class="section traditional carousel" id="traditional-vault">
       <div class="traditional-intro">
@@ -156,39 +166,48 @@
           <div class="carousel-track">
             <article class="car-item grid-slide">
               <div class="image-grid">
-                <img src="../Assets/Webp/WEBP of Ink made works/Solzhenitsyn .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Solzhenitsyn .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Solzhenitsyn .webp" width="420" height="557"
                   data-description="The old dissident is drawn as a continent of unbroken line, his body bleeding into the borders of the land that exiled him. Like Odysseus, he came home after twenty years, only to find that the country he loved no longer recognised his voice. The pen never lifts from the page, as memory never lifts from the witness: ‘the line dividing good and evil cuts through the heart of every human being.’ Beneath him lies a second face, mouth open—the prisoner he once was, or the Shadow, as Jung would say, that every nation refuses to look at." alt="Solzhenitsyn"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Nowruz Edition .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Nowruz Edition .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Nowruz Edition .webp" width="420" height="420"
                   data-description="Nowruz, the Persian New Day, arrives with its ancient table: the sprouting sabzeh, the goldfish, the red apple. But at its centre beats an anatomical heart, and beneath it grins a skull. Khayyam would have smiled: the clay of this wine cup, he said, was once a lover's hand, a king's brow. Legend says Jamshid founded this feast when light first triumphed over the long winter; yet the drawing remembers that every renewal is built upon an ending. Life and death share one table here, and the heart is the host who seats them both." alt="Nowruz Composition"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Cathedral of Hope .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Cathedral of Hope .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Cathedral of Hope .webp" width="420" height="489"
                   data-description="Gothic spires, a Byzantine dome and a thin crescent moon gather around a single light bulb—the modern sun humanity built for itself. Beneath the colonnade sleeps a jester, and from the cracked pillars a triangle keeps watch. It is Plato's cave turned inside out: the fire no longer flickers behind us but hangs overhead, and still we sleep. Nietzsche feared that once the old lights went out, we would wander as through an infinite nothing. This drawing answers him quietly: the arches still stand, and hope is the bridge between the old light and the new." alt="The Cathedral"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/China .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/China .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/China .webp" width="420" height="525"
                   data-description="A man bearing the hammer and the crescent blade crouches over the map of a vast country, his body poured into its coastline as though the land itself had grown a face. In Jung's language he is the Shadow of collective power: the father who promises bread and demands the soul in return. Dostoevsky's Grand Inquisitor offered humanity the same bargain—freedom exchanged for bread and certainty. Yet the same trembling line that draws him draws every human being; even the colossus is only ink on paper, and paper has outlived every empire." alt="Jimmy" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Egyptian .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Egyptian .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Egyptian .webp" width="573" height="420"
                   data-description="Faces dissolve into faces, as in the papyri of the Book of the Dead, where the heart is weighed against the feather of Ma'at. Behind them a pyramid rises—the most ambitious tomb humanity ever built against oblivion. Shelley's Ozymandias stands somewhere nearby, still commanding, ‘Look on my works, ye Mighty, and despair!’ while only the sand answers. These open mouths are neither screaming nor singing; they are the endless murmuring of the dead, still pleading before the scale. Only a heart with nothing left to hide weighs less than a feather." alt="Egyptian Composition"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Colorful Bottom .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Colorful Bottom .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Colorful Bottom .webp" width="420" height="594"
                   data-description="Rodin's Thinker sat in silence at the Gates of Hell; this one has exploded. A sun crowns a skull crowded with cigarettes, gaping lips, a single staring eye and red arrows circling endlessly like the wheel of Ixion. Inside the body stands a city of grey towers and a box with one red eye: the mind has become a metropolis that never sleeps. Pascal called man a thinking reed—fragile, yet nobler than the universe that crushes him, because he knows that he dies. The stitched wound on the shoulder is that knowledge: a scar proving the thinker is still flesh." alt="The Thinker"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Volly Match .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Volly Match .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Volly Match .webp" width="420" height="525"
                   data-description="A ball rises, hands reach, bodies twist into one another until teammate and opponent can no longer be told apart. Huizinga called us Homo Ludens, the playing creature, and Heraclitus wrote that time is a child at play, moving pieces on a board. In the Shahnameh, young Siyavash played polo before the court of Afrasiab, and for the length of a game the long tragedy of Iran and Turan seemed to hold its breath. Play is serious precisely because it is useless: it is the one hour in which we are entirely free." alt="The Game" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Cow .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Cow .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Cow .webp" width="420" height="532"
                   data-description="Horned, patterned and patient, she gazes out with two different eyes—one almost human, one animal—while a third rises from her brow. In the Gathas of Zarathustra, the Soul of the Cow cried out against the cruelty of men; in the Bundahishn, the primordial bull falls, and from its body spring the plants and creatures of the earth. Gholam-Hossein Sa'edi wrote of a villager who, after losing his cow, slowly became her. She is the oldest witness of our hunger and our tenderness—the mother whose body became the world." alt="The Cow" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Global .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Global .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Global .webp" width="420" height="499"
                   data-description="A rotary telephone rings across the borders of a fractured map. A dome, the tormented head of a horse, a bird with a gaping beak, a chained wrist, a key: every summons of history crowds into a single receiver. In Kafka's Castle, the land surveyor K. lifts the receiver and hears only a distant humming, countless voices blurring into one. Some calls are temptations, others are vocations; the tragedy of the modern soul is that it can no longer tell them apart—and so it learns to let every phone ring." alt="Don't Answer The Phone!"
                   loading="lazy" decoding="async" />
 
@@ -198,38 +217,47 @@
             <article class="car-item grid-slide">
               <div class="image-grid">
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Confused Cat .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Confused Cat .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Confused Cat .webp" width="420" height="483"
                   data-description="Ears raised like a sphinx, eyes split in two, the cat is built of drawers, tongues and ladders tumbling into one another. Egypt worshipped her as Bastet; Bulgakov sent her through Moscow as Behemoth; Poe walled her up alive, and still she cried out. Here she is neither goddess nor demon, only bewildered—the instinctive self that Freud called the id, unsure which master to obey. Drawn in the longest nights of winter, she waits, as every creature does, for the light to return." alt="The Confused Cat"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Naseredin .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Naseredin .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Naseredin .webp" width="420" height="490"
                   data-description="Crowned with flames, the Qajar king hovers between centuries: an airplane bursts from his shoulder, a candelabrum burns in the folds of his robe, a staircase spirals toward nowhere. Below him a woman's eye is pierced by a thorned branch, and a locked book keeps its secret. Naser al-Din Shah journeyed to Europe and fell in love with the camera, yet never truly saw his own people. Like Kay Kavus, the vain king of the Shahnameh who tried to reach the heavens on a throne carried by eagles, he rose toward the sky and fell back into the dust." alt="The Sultan" loading="lazy"
                   decoding="async" />
-                <img src="../Assets/Webp/WEBP of Ink made works/Guernica of Kave .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Guernica of Kave .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Guernica of Kave .webp" width="420" height="629"
                   data-description="Picasso's screaming horse returns, now in the colours of a Persian miniature—turquoise, saffron and pomegranate red. A woman's hair spills over the beast, a candle burns from a severed arm, and the body is studded with staring eyes like the hundred eyes of Argus. Every land has its Guernica; this one is signed with the name of Kaveh, the blacksmith who raised his leather apron as a banner against the serpent-shouldered Zahhak. And the candle stays lit, because memory is the last fire no tyrant can extinguish." alt="Guernica"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Negotiate .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Negotiate .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Negotiate .webp" width="420" height="569"
                   data-description="Two old men raise their palms—one in protest, one in welcome—while beneath their feet a map is quietly divided. Their bodies flow from the same restless line: they are made of the very flesh they are bargaining over. Fereydun once divided the world among his three sons, and from that single division grew a thousand years of war between Iran and Turan. Machiavelli would admire their gestures; Kafka would notice that neither man ever lowers his hands. Every treaty is a confession that we have not yet learned how to share the earth." alt="The Negotiation"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Guitarist .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Guitarist .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Guitarist .webp" width="420" height="525"
                   data-description="Head thrown back, eyes closed, he lets the instrument play him. A single note floats above him like a small bird. Orpheus's lyre softened even the stones of Hades; Barbad, the minstrel of Khosrow Parviz, sang the death of the king's beloved horse Shabdiz when no one else dared to speak it. Schopenhauer believed music is the only art that utters the will of the world directly, without images. Here the line coils like a vibrating string, and the whole body becomes a sounding board." alt="The Guitarist" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Observational drawing final assignment _result.webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Observational drawing final assignment _result.webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Observational drawing final assignment _result.webp" width="526" height="420"
                   data-description="No curling line here, no mask and no myth—only graphite, a mirror and the long patience of observation. The eyes are tired, the jaw is set, the collar buttoned like a man waiting to be judged. Socrates spent his life obeying two words carved at Delphi: know thyself. Kierkegaard added that the self is a relation that relates itself to itself. This drawing is that relation made visible—the questioning man looking back at the questioning man, refusing, unlike Narcissus, to fall in love with what he sees."
                   alt="Self Portrait Number Two" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Former Representator .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Former Representator .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Former Representator .webp" width="420" height="420"
                   data-description="He dances with his arms flung upward, as if still campaigning before a crowd that has long since gone home. A second, smaller face whispers at his shoulder—the adviser, or the conscience he once silenced. Beneath his feet the borders of his province dissolve like a shoreline at high tide. Like Gogol's Inspector General, he was once received with trembling honours; now the carriage has gone and the town knows the truth. Khayyam foresaw the end of every reign: the lion and the lizard keep the courts where Jamshid once gloried." alt="The Representator"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Pedar .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Pedar .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Pedar .webp" width="420" height="526"
                   data-description="Pedar is the Persian word for father. He stands like a watchtower, belt buckled, a cigarette breathing a small cloud above his head, his feet planted on a shore the water keeps eroding. Behind him rise two pale cards bearing faces—papers, passports, the documents of a life lived between borders. Every son carries this figure, as Aeneas carried Anchises on his shoulders out of burning Troy. Yet Ferdowsi left a warning too: Rostam and Sohrab met as strangers on the battlefield. To recognise the father in time is the beginning of wisdom." alt="The Father" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Ink made works/Watercolor Two .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Ink made works/Watercolor Two .webp"
+                  data-full="../Assets/Webp/WEBP of Ink made works/Watercolor Two .webp" width="605" height="420"
                   data-description="A hand presses against the face but cannot cover the eye: blue, bloodshot and wide awake. It is the sleeplessness of Hedayat's narrator in The Blind Owl, who wrote that there are wounds in life which, like a canker, slowly erode the soul in solitude. Yet the watercolour bleeds softly beyond its ink, green and violet flowing past every outline, as if colour were trying to console the line. Oedipus tore out his eyes so as not to see; this man refuses that escape. His eye has wept, and still it will not close." alt="Watercolour Number Two"
                   loading="lazy" decoding="async" />
 
@@ -266,31 +294,40 @@
           <div class="carousel-track">
             <article class="car-item grid-slide">
               <div class="image-grid">
-                <img src="../Assets/Webp/WEBP of Traditional works/Yellow Self Portrait _result.webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Yellow Self Portrait _result.webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Yellow Self Portrait _result.webp" width="420" height="679"
                   alt="Self Portrait" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Corruption _result.webp" alt="In The Sunny Day"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Corruption _result.webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Corruption _result.webp" width="471" height="420" alt="In The Sunny Day"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Black Hero .webp" alt="Hero" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Black Hero .webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Black Hero .webp" width="747" height="420" alt="Hero" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Green Persepolis .webp" alt="Mr. Green"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Green Persepolis .webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Green Persepolis .webp" width="465" height="420" alt="Mr. Green"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Turquoise Poet .webp" alt="Poet" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Turquoise Poet .webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Turquoise Poet .webp" width="420" height="430" alt="Poet" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Yukio Mishima Japanese Version_result.webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Yukio Mishima Japanese Version_result.webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Yukio Mishima Japanese Version_result.webp" width="460" height="420"
                   alt="Yukio Mishima" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Yuval Noah Harrari _result.webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Yuval Noah Harrari _result.webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Yuval Noah Harrari _result.webp" width="420" height="518"
                   alt="The Historian" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Sleepy .webp" alt="Sleepy" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Sleepy .webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Sleepy .webp" width="421" height="420" alt="Sleepy" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Bird _result.webp" alt="The Bird" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Bird _result.webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Bird _result.webp" width="471" height="420" alt="The Bird" loading="lazy"
                   decoding="async" />
 
               </div>
@@ -299,30 +336,39 @@
             <article class="car-item grid-slide">
               <div class="image-grid">
 
-                <img src="../Assets/Webp/WEBP of Traditional works/48_result.webp" alt="The King" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/48_result.webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/48_result.webp" width="420" height="522" alt="The King" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/AC .webp" alt="The Beauty" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/AC .webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/AC .webp" width="525" height="420" alt="The Beauty" loading="lazy"
                   decoding="async" />
-                <img src="../Assets/Webp/WEBP of Traditional works/General .webp" alt="The Comrade" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/General .webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/General .webp" width="420" height="474" alt="The Comrade" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Jim Caviezel as the Savior-1_result.webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Jim Caviezel as the Savior-1_result.webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Jim Caviezel as the Savior-1_result.webp" width="595" height="420"
                   alt="The Savior" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Jumping_result.webp" alt="The Curious Mind"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Jumping_result.webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Jumping_result.webp" width="420" height="653" alt="The Curious Mind"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Cioran .webp" alt="The Philosopher"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Cioran .webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Cioran .webp" width="420" height="420" alt="The Philosopher"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Elon Musk Blue Twitter's Maestro-2_result.webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Elon Musk Blue Twitter's Maestro-2_result.webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Elon Musk Blue Twitter's Maestro-2_result.webp" width="583" height="420"
                   alt="Twitter" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Fish and N_result.webp" alt="The Fish"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Fish and N_result.webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Fish and N_result.webp" width="444" height="420" alt="The Fish"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Traditional works/Oppenheimer _result.webp" alt="Oppenheimer"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Traditional works/Oppenheimer _result.webp"
+                  data-full="../Assets/Webp/WEBP of Traditional works/Oppenheimer _result.webp" width="550" height="420" alt="Oppenheimer"
                   loading="lazy" decoding="async" />
               </div>
             </article>
@@ -357,31 +403,40 @@
           <div class="carousel-track">
             <article class="car-item grid-slide">
               <div class="image-grid">
-                <img src="../Assets/Webp/WEBP of Digital works/Camus Ai .webp" alt="Albert Camus" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Camus Ai .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Camus Ai .webp" width="420" height="630" alt="Albert Camus" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/French Divinity Ai version _result.webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/French Divinity Ai version _result.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/French Divinity Ai version _result.webp" width="420" height="420"
                   alt="French Revolution" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Haydeh _result.webp" alt="Hayedeh" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Haydeh _result.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Haydeh _result.webp" width="420" height="630" alt="Hayedeh" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/caravaggio Inflated .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/caravaggio Inflated .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/caravaggio Inflated .webp" width="420" height="420"
                   alt="The Caravaggio Composition" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Lamasu _result.webp" alt="Lamassu" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Lamasu _result.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Lamasu _result.webp" width="420" height="420" alt="Lamassu" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Cat .webp" alt="Mysticism In Cats" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Cat .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Cat .webp" width="420" height="420" alt="Mysticism In Cats" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Oscar Wilde_ Copilot _result.webp" alt="Oscar Wilde"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Oscar Wilde_ Copilot _result.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Oscar Wilde_ Copilot _result.webp" width="420" height="420" alt="Oscar Wilde"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Iranian Music Festival In Ottawa _result.webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Iranian Music Festival In Ottawa _result.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Iranian Music Festival In Ottawa _result.webp" width="420" height="420"
                   alt="Iranian Music Festival In Ottawa" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Bukowski Gladiator .webp" alt="Bukowski In Roma"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Bukowski Gladiator .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Bukowski Gladiator .webp" width="420" height="460" alt="Bukowski In Roma"
                   loading="lazy" decoding="async" />
 
               </div>
@@ -390,62 +445,80 @@
             <article class="car-item grid-slide">
               <div class="image-grid">
 
-                <img src="../Assets/Webp/WEBP of Digital works/Big Hope _result.webp" alt="The Dreamer"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Big Hope _result.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Big Hope _result.webp" width="630" height="420" alt="The Dreamer"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Lions of Iran Ai version _result.webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Lions of Iran Ai version _result.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Lions of Iran Ai version _result.webp" width="630" height="420"
                   alt="The Lions Of Iran" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Explorer _result.webp" alt="The Explorer"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Explorer _result.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Explorer _result.webp" width="630" height="420" alt="The Explorer"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Marx AI .webp" alt="Karl Marx" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Marx AI .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Marx AI .webp" width="420" height="420" alt="Karl Marx" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Russia Ai Version _result.webp" alt="The Order"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Russia Ai Version _result.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Russia Ai Version _result.webp" width="420" height="420" alt="The Order"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Marie _result.webp" alt="Marie Antoinette"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Marie _result.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Marie _result.webp" width="420" height="420" alt="Marie Antoinette"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Persepolis .webp" alt="Persepolis" loading="lazy"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Persepolis .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Persepolis .webp" width="630" height="420" alt="Persepolis" loading="lazy"
                   decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/January8th composition .webp" alt="The Guardian"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/January8th composition .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/January8th composition .webp" width="477" height="420" alt="The Guardian"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Catasrophe _result.webp" alt="The Catastrophe"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Catasrophe _result.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Catasrophe _result.webp" width="420" height="631" alt="The Catastrophe"
                   loading="lazy" decoding="async" />
               </div>
             </article>
             <article class="car-item grid-slide">
               <div class="image-grid">
 
-                <img src="../Assets/Webp/WEBP of Digital works/Webp Second Round/Bonhoffer Bio .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Webp Second Round/Bonhoffer Bio .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Webp Second Round/Bonhoffer Bio .webp" width="420" height="420"
                   alt="Bonhoeffer" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Webp Second Round/China Gray.webp" alt="Grey"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Webp Second Round/China Gray.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Webp Second Round/China Gray.webp" width="420" height="525" alt="Grey"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Webp Second Round/Empire states Bio .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Webp Second Round/Empire states Bio .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Webp Second Round/Empire states Bio .webp" width="420" height="509"
                   alt="Empire States Building" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Webp Second Round/Gaav Bio .webp" alt="The Cow"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Webp Second Round/Gaav Bio .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Webp Second Round/Gaav Bio .webp" width="420" height="533" alt="The Cow"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Webp Second Round/Nasser Bio .webp" alt="Naser Al-Din Shah Qajar
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Webp Second Round/Nasser Bio .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Webp Second Round/Nasser Bio .webp" width="420" height="604" alt="Naser Al-Din Shah Qajar
 " loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Webp Second Round/Washington  G .webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Webp Second Round/Washington  G .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Webp Second Round/Washington  G .webp" width="630" height="420"
                   alt="Washington" loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Webp Second Round/Shah Bio.webp" alt="Shah"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Webp Second Round/Shah Bio.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Webp Second Round/Shah Bio.webp" width="420" height="420" alt="Shah"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Webp Second Round/Shah Bio II .webp" alt="Father"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Webp Second Round/Shah Bio II .webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Webp Second Round/Shah Bio II .webp" width="420" height="594" alt="Father"
                   loading="lazy" decoding="async" />
 
-                <img src="../Assets/Webp/WEBP of Digital works/Webp Second Round/Nasser.webp"
+                <img src="../Assets/Webp/Thumbnails/Personal Vault/WEBP of Digital works/Webp Second Round/Nasser.webp"
+                  data-full="../Assets/Webp/WEBP of Digital works/Webp Second Round/Nasser.webp" width="420" height="630"
                   alt="Nasser's Composition" loading="lazy" decoding="async" />
               </div>
             </article>

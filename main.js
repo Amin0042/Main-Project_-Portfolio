@@ -1621,7 +1621,9 @@ if (typeof document !== "undefined") {
     const imageDescription =
       image.dataset.description || defaultImageModalDescription;
 
-    imageModal.image.src = image.currentSrc || image.src;
+    // Grids that load thumbnails keep the original in data-full, so the
+    // popup always shows the full-resolution artwork.
+    imageModal.image.src = image.dataset.full || image.currentSrc || image.src;
     imageModal.image.alt = imageTitle;
     imageModal.title.textContent = imageTitle;
     imageModal.description.textContent = imageDescription;
@@ -1815,6 +1817,19 @@ if (typeof document !== "undefined") {
       image.addEventListener("click", function () {
         openImageModal(image);
       });
+
+      // Warm the cache with the full-size original on hover/focus (once per
+      // image), so the popup usually opens with it already downloaded.
+      function prefetchFullImage() {
+        if (!image.dataset.full || image.dataset.prefetched) {
+          return;
+        }
+        image.dataset.prefetched = "true";
+        new Image().src = image.dataset.full;
+      }
+
+      image.addEventListener("pointerenter", prefetchFullImage);
+      image.addEventListener("focus", prefetchFullImage);
 
       image.addEventListener("keydown", function (event) {
         if (event.key === "Enter" || event.key === " ") {

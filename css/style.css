@@ -5225,6 +5225,10 @@ body.modal-open {
 #digital-vault .image-grid img,
 #cyborg-vault .image-grid img {
   width: 72%;
+  /* The Personal Vault thumbnails carry width/height attributes to reserve
+     space; height: auto stops that attribute height from stretching them,
+     so aspect-ratio keeps every medallion square. */
+  height: auto;
   margin: 0 auto;
   display: block;
 }
@@ -5287,6 +5291,13 @@ body.modal-open {
     background-image:
       linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
       url("../Assets/Webp/WebP Background images/Home Page - Tomb of Cyrus 1280.webp");
+  }
+
+  /* Personal Vault hero: phones get the 960px copy instead of the 1920px one. */
+  .personal-image {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+      url("../Assets/Webp/WebP Background images/Webp version Of September 2026 Hero Images/Personal Vault - Vakil Columns-mobile.webp");
   }
 }
 
