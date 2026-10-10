@@ -3205,8 +3205,12 @@ body.light .about-beam-motes circle {
     padding-right: 0;
   }
 
-  /* With the section padding zeroed above, give the intro prose its
-     own gutter so it doesn't touch the screen edge. */
+  /* With the section padding zeroed above, give the section headings
+     and intro prose their own gutter so they don't touch the screen
+     edge. The heading's text-wrap: balance then splits "Chronological
+     Archive" into two even lines instead of running edge to edge. */
+  #chronological-archive > h2,
+  #portfolio-vaults > h2,
   .archive-section-intro {
     padding: 0 1rem;
   }

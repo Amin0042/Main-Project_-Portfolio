@@ -152,7 +152,12 @@ body.light .antiquarium-eyebrow {
        a thumb can land in — outside the installation's own territory —
        to keep scrolling the page past it without ever touching it. */
     width: min(92vw, 640px);
-    margin-inline: auto;
+    /* Not `auto`: .section's 2rem side padding leaves less room than
+       92vw on a phone, and an over-wide block can't auto-center — it
+       pinned to the left padding edge and overflowed to the right.
+       Equal (negative, when needed) margins split the difference so
+       the frame sits centered on the screen, not on the padding. */
+    margin-inline: calc((100% - min(92vw, 640px)) / 2);
     height: min(60vh, calc(100vw * 5 / 4));
     min-height: 360px;
   }
