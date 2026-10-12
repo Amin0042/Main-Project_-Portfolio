@@ -16,6 +16,7 @@ import { isWebglAvailable, isLikelySoftwareRenderer } from "./core/webgl-support
 import { createLoop } from "./core/loop.js";
 import { getDeviceTier, getQualityPreset } from "./core/device-tier.js";
 import { experiences, getDefaultExperience } from "./experiences/registry.js";
+import { pick, tr, onLanguageChange } from "./core/i18n.js";
 
 // A rolling watchdog for the case WebGL reports as available and isn't
 // software-rendered, yet the specific scene still can't hold a usable
@@ -49,6 +50,28 @@ function initAntiquarium() {
   const reduceMotion =
     typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Declared up here (not with the other scene state below) because the
+  // language listener needs it on the fallback path too, which returns
+  // before that state is ever set up.
+  let currentEntry = null;
+
+  // EN/پ switch: rewrite the selector labels and caption in place, so
+  // the current/disabled state of each button is left untouched.
+  onLanguageChange(() => {
+    experiences.forEach((entry) => {
+      const button = selectorEl.querySelector(`[data-experience-id="${entry.id}"]`);
+      if (!button) {
+        return;
+      }
+      button.querySelector(".antiquarium-selector-title").textContent = pick(entry, "title");
+      button.querySelector(".antiquarium-selector-status").textContent =
+        entry.status === "active" ? tr("Open", "گشوده") : tr("In Development", "در دست ساخت");
+    });
+    if (captionEl && currentEntry) {
+      captionEl.textContent = pick(currentEntry, "tagline");
+    }
+  });
 
   // WebGL missing entirely, or present but only as a software rasterizer
   // (some browsers report one as if it were real) — either way this
@@ -116,8 +139,9 @@ function initAntiquarium() {
       quality,
     });
 
+    currentEntry = entry;
     if (captionEl) {
-      captionEl.textContent = entry.tagline || "";
+      captionEl.textContent = pick(entry, "tagline");
     }
 
     if (!loop) {
@@ -226,12 +250,12 @@ function initAntiquarium() {
 
       const title = document.createElement("span");
       title.className = "antiquarium-selector-title";
-      title.textContent = entry.title;
+      title.textContent = pick(entry, "title");
       button.appendChild(title);
 
       const status = document.createElement("span");
       status.className = "antiquarium-selector-status";
-      status.textContent = isActive ? "Open" : "In Development";
+      status.textContent = isActive ? tr("Open", "گشوده") : tr("In Development", "در دست ساخت");
       button.appendChild(status);
 
       button.addEventListener("click", () => {

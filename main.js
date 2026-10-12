@@ -65,6 +65,14 @@ function applyLanguage(isPersian) {
       );
     });
   });
+
+  // Browser-tab title: looked up by the page's own English <title> as
+  // "title.<English title>", so no page needs a data-i18n on its <title>.
+  if (root.dataset.titleEn === undefined) {
+    root.dataset.titleEn = document.title;
+  }
+  const persianTitle = translations["title." + root.dataset.titleEn];
+  document.title = isPersian && persianTitle ? persianTitle : root.dataset.titleEn;
 }
 
 // Same gilded-glass round button as the theme toggle: "EN" and "پ"
@@ -151,14 +159,21 @@ function initializeThemeToggle() {
     }
   }
 
+  const labelThemeButton = function () {
+    const isLight = document.body.classList.contains("light");
+    const label = isLight
+      ? tr("Switch to dark mode", "رفتن به حالت تیره")
+      : tr("Switch to light mode", "رفتن به حالت روشن");
+    themeButton.setAttribute("aria-label", label);
+    themeButton.title = label;
+  };
+
+  document.addEventListener("languagechange", labelThemeButton);
+
   const setTheme = function (isLight) {
     document.body.classList.toggle("light", isLight);
     themeButton.setAttribute("aria-pressed", String(isLight));
-    themeButton.setAttribute(
-      "aria-label",
-      isLight ? "Switch to dark mode" : "Switch to light mode"
-    );
-    themeButton.title = isLight ? "Switch to dark mode" : "Switch to light mode";
+    labelThemeButton();
 
     try {
       window.localStorage.setItem(
@@ -1136,7 +1151,9 @@ function initializeReadMoreSections() {
     button.addEventListener("click", function () {
       const isExpanded = copy.classList.toggle("expanded");
       button.setAttribute("aria-expanded", String(isExpanded));
-      button.textContent = isExpanded ? "Read Less" : "Read More";
+      button.textContent = isExpanded
+        ? tr("Read Less", "کمتر بخوانید")
+        : tr("Read More", "بیشتر بخوانید");
     });
   });
 }
@@ -1520,10 +1537,19 @@ if (typeof document !== "undefined") {
 
       media.setAttribute("role", "link");
       media.setAttribute("tabindex", "0");
-      media.setAttribute(
-        "aria-label",
-        title ? `Read more: ${title.textContent.trim()}` : "Read more",
-      );
+
+      // Re-run on EN/پ so the label follows the title's own language.
+      const labelMedia = function () {
+        const titleText = title ? title.textContent.trim() : "";
+        media.setAttribute(
+          "aria-label",
+          titleText
+            ? tr(`Read more: ${titleText}`, `بیشتر بخوانید: ${titleText}`)
+            : tr("Read more", "بیشتر بخوانید"),
+        );
+      };
+      labelMedia();
+      document.addEventListener("languagechange", labelMedia);
 
       media.addEventListener("click", function () {
         readMore.click();
@@ -1766,7 +1792,14 @@ if (typeof document !== "undefined") {
   }
 
   function openImageModal(image) {
-    const imageTitle = image.alt || "Artwork preview";
+    const imageTitle = image.alt || tr("Artwork preview", "پیش‌نمایش اثر");
+    // Labels are set on every open (not once in createImageModal) so
+    // they follow the EN/پ switch.
+    imageModal.dialog.setAttribute("aria-label", tr("Artwork preview", "پیش‌نمایش اثر"));
+    imageModal.closeButton.setAttribute(
+      "aria-label",
+      tr("Close image preview", "بستن پیش‌نمایش تصویر"),
+    );
     const imageDescription =
       image.dataset.description || defaultImageModalDescription;
 
@@ -1784,8 +1817,12 @@ if (typeof document !== "undefined") {
       image.closest("#featured") || document.getElementById("personal-hero")
     );
     imageModal.modal.classList.toggle("is-static", isStatic);
-    imageModal.imageWrap.title = isStatic ? "" : "Scroll to zoom in and out";
-    imageModal.description.title = isStatic ? "" : "Scroll to read more";
+    imageModal.imageWrap.title = isStatic
+      ? ""
+      : tr("Scroll to zoom in and out", "برای بزرگ‌نمایی و کوچک‌نمایی بچرخانید");
+    imageModal.description.title = isStatic
+      ? ""
+      : tr("Scroll to read more", "برای خواندن ادامه بچرخانید");
     resetImageModalZoom();
     imageModal.modal.classList.add("is-open");
     imageModal.modal.setAttribute("aria-hidden", "false");
@@ -1967,6 +2004,21 @@ if (typeof document !== "undefined") {
       updateCarousel(true);
     });
 
+    // image.alt is itself swapped by the EN/پ switch (data-i18n-attr), so
+    // the label is rebuilt from it whenever the language changes.
+    function labelPreviewImage(image) {
+      image.setAttribute(
+        "aria-label",
+        image.alt
+          ? tr(`Open enlarged view of ${image.alt}`, `نمایش بزرگ‌تر ${image.alt}`)
+          : tr("Open enlarged view of artwork", "نمایش بزرگ‌تر اثر"),
+      );
+    }
+
+    document.addEventListener("languagechange", function () {
+      document.querySelectorAll(".previewable-image").forEach(labelPreviewImage);
+    });
+
     previewImages.forEach(function (image) {
       if (image.closest("a")) {
         return;
@@ -1975,10 +2027,7 @@ if (typeof document !== "undefined") {
       image.classList.add("previewable-image");
       image.tabIndex = 0;
       image.setAttribute("role", "button");
-      image.setAttribute(
-        "aria-label",
-        `Open enlarged view of ${image.alt || "artwork"}`,
-      );
+      labelPreviewImage(image);
 
       image.addEventListener("click", function () {
         openImageModal(image);
@@ -2111,6 +2160,10 @@ if (typeof document !== "undefined") {
     notesPanel.date.textContent = formatPostDate(post.date);
     notesPanel.title.textContent = post.title || tr("Untitled Note", "یادداشت بی‌نام");
     notesPanel.closeButton.textContent = tr("Close", "بستن");
+    notesPanel.closeButton.setAttribute("aria-label", tr("Close blog post", "بستن یادداشت"));
+    notesPanel.panel
+      .querySelector(".notes-panel-shell")
+      .setAttribute("aria-label", tr("Blog post", "یادداشت"));
     notesPanel.content.innerHTML = html;
     notesPanel.panel.classList.add("is-open");
     notesPanel.panel.setAttribute("aria-hidden", "false");
@@ -2170,7 +2223,10 @@ if (typeof document !== "undefined") {
     }
 
     if (typeof marked === "undefined") {
-      notesList.innerHTML = "<p>Markdown renderer is not available.</p>";
+      notesList.innerHTML = tr(
+        "<p>Markdown renderer is not available.</p>",
+        "<p>نمایشگر یادداشت‌ها در دسترس نیست.</p>"
+      );
       return;
     }
 
@@ -2184,7 +2240,10 @@ if (typeof document !== "undefined") {
       const posts = await response.json();
 
       if (!Array.isArray(posts) || posts.length === 0) {
-        notesList.innerHTML = "<p>No posts available yet.</p>";
+        notesList.innerHTML = tr(
+          "<p>No posts available yet.</p>",
+          "<p>هنوز یادداشتی در اینجا نیست.</p>"
+        );
         return;
       }
 
@@ -2374,7 +2433,10 @@ if (typeof document !== "undefined") {
       });
     } catch (error) {
       notesList.innerHTML =
-        "<p>Unable to load notes. If you are opening files directly, run a local server first.</p>";
+        tr(
+          "<p>Unable to load notes. If you are opening files directly, run a local server first.</p>",
+          "<p>اکنون نمی‌توان یادداشت‌ها را بارگذاری کرد. اگر فایل‌ها را مستقیم باز می‌کنید، نخست یک سرور محلی راه بیندازید.</p>"
+        );
     }
   }
 
@@ -2477,27 +2539,27 @@ if (typeof document !== "undefined") {
         };
 
         fragment.appendChild(
-          makeControl("Previous", currentPage - 1, {
+          makeControl(tr("Previous", "پیشین"), currentPage - 1, {
             className: "btn notes-page-nav",
             disabled: currentPage <= 1,
-            ariaLabel: "Go to previous page of projects",
+            ariaLabel: tr("Go to previous page of projects", "رفتن به برگ پیشین پروژه‌ها"),
           }),
         );
 
         for (let page = 1; page <= totalPages; page += 1) {
           fragment.appendChild(
-            makeControl(String(page), page, {
+            makeControl(tr(String(page), toPersianDigits(page)), page, {
               current: page === currentPage,
-              ariaLabel: `Go to page ${page}`,
+              ariaLabel: tr(`Go to page ${page}`, `رفتن به برگ ${toPersianDigits(page)}`),
             }),
           );
         }
 
         fragment.appendChild(
-          makeControl("Next", currentPage + 1, {
+          makeControl(tr("Next", "پسین"), currentPage + 1, {
             className: "btn notes-page-nav",
             disabled: currentPage >= totalPages,
-            ariaLabel: "Go to next page of projects",
+            ariaLabel: tr("Go to next page of projects", "رفتن به برگ پسین پروژه‌ها"),
           }),
         );
 
@@ -2529,6 +2591,9 @@ if (typeof document !== "undefined") {
       window.addEventListener("popstate", function () {
         renderPage(getPageFromQuery(), { skipHistory: true });
       });
+
+      // Rebuild the Previous/Next buttons in the other language on EN/پ.
+      document.addEventListener("languagechange", renderControls);
     });
   }
 
@@ -2559,7 +2624,8 @@ if (typeof document !== "undefined") {
         const iframe = document.createElement("iframe");
         iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
         iframe.title =
-          facade.getAttribute("data-video-title") || "YouTube video player";
+          facade.getAttribute("data-video-title") ||
+          tr("YouTube video player", "پخش‌کننده‌ی ویدیوی یوتیوب");
         iframe.setAttribute("frameborder", "0");
         iframe.setAttribute(
           "allow",

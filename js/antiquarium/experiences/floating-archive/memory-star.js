@@ -296,6 +296,8 @@ export function createMemoryStar(data, index, totalCount, placement, shared) {
   const star = {
     title: data.title || "Untitled",
     medium: data.medium || "",
+    // The full manifest entry, so the inspector can read its *_fa fields.
+    data,
     holder,
     tilt,
     frame,

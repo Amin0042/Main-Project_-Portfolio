@@ -15,14 +15,18 @@ export const experiences = [
   {
     id: "floating-archive",
     title: "The Floating Archive",
+    title_fa: "بایگانی شناور",
     tagline: "A suspended constellation of the collected work.",
+    tagline_fa: "صورت‌فلکی معلقی از آثار گردآمده.",
     status: "active",
     load: () => import("./floating-archive/index.js"),
   },
   {
     id: "cartography-of-memory",
     title: "Iran — Cartography of Memory",
+    title_fa: "ایران — نقشه‌نگاری حافظه",
     tagline: "A holographic geography, held up to the light.",
+    tagline_fa: "جغرافیایی هولوگرافیک، که رو به نور گرفته شده است.",
     status: "active",
     load: () => import("./cartography-of-memory.js"),
   },

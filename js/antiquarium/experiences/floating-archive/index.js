@@ -40,6 +40,7 @@ import { createStarfieldBackdrop } from "./starfield-backdrop.js";
 import { starPlacementFor } from "./constellation.js";
 import { getQualityPreset, getDeviceTier } from "../../core/device-tier.js";
 import { artworks } from "./data.js";
+import { pick, onLanguageChange } from "../../core/i18n.js";
 import { FOCUS_SCALE, RECEDE_SCALE, RECEDE_OPACITY, reduceMotion } from "./constants.js";
 
 export function createFloatingArchive(stage, context = {}) {
@@ -167,15 +168,18 @@ export function createFloatingArchive(stage, context = {}) {
     return stars.find((star) => star.basePlane === hits[0].object) || null;
   }
 
+  let inspectedStar = null;
+
   function showInspector(star) {
     if (!inspectorEl) {
       return;
     }
+    inspectedStar = star;
     if (inspectorTitleEl) {
-      inspectorTitleEl.textContent = star.title;
+      inspectorTitleEl.textContent = pick(star.data, "title") || star.title;
     }
     if (inspectorMetaEl) {
-      inspectorMetaEl.textContent = star.medium || "";
+      inspectorMetaEl.textContent = pick(star.data, "medium");
     }
     if (inspectorDescriptionEl) {
       inspectorDescriptionEl.hidden = true;
@@ -191,8 +195,16 @@ export function createFloatingArchive(stage, context = {}) {
     if (!inspectorEl) {
       return;
     }
+    inspectedStar = null;
     inspectorEl.classList.remove("is-visible");
   }
+
+  // EN/پ flipped while a label is open: rewrite it in the new language.
+  const stopLanguageListener = onLanguageChange(() => {
+    if (inspectedStar) {
+      showInspector(inspectedStar);
+    }
+  });
 
   const _focusWorldPos = new THREE.Vector3();
 
@@ -501,6 +513,7 @@ export function createFloatingArchive(stage, context = {}) {
       resetButtonEl.removeEventListener("click", resetView);
     }
     window.removeEventListener("keydown", onKeyDown);
+    stopLanguageListener();
     hideInspector();
     controls.dispose();
     atmosphereRig.restore();

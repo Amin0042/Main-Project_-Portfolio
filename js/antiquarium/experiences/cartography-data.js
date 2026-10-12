@@ -296,6 +296,10 @@ export const locations = [
   {
     id: "tehran",
     name: "Tehran",
+    name_fa: "تهران",
+    date_fa: "پایتخت از ۱۷۹۶ م. (دودمان قاجار)",
+    description_fa:
+      "پایتخت قاجاریان و خانه‌ی کاخ گلستان — تالارهای آینه‌کاری، کاشی‌های لعابی، و تخت طاووسِ گوهرنشان، که در ۱۷۳۹ م. از دهلیِ گورکانیان به ایران آورده شد.",
     type: "city",
     coordinates: [51.3890, 35.6892],
     date: "Capital since 1796 (Qajar dynasty)",
@@ -305,6 +309,10 @@ export const locations = [
   {
     id: "isfahan",
     name: "Isfahan",
+    name_fa: "اصفهان",
+    date_fa: "پایتخت صفویان، ۱۵۹۸–۱۷۲۲ م.",
+    description_fa:
+      "پایتخت شکوهمندی که شاه عباس یکم گرداگرد میدان نقش جهان برافراشت — یکی از بزرگ‌ترین میدان‌های همگانی جهان، در حلقه‌ای از گنبدهای کاشی‌پوش، کوشک‌های شاهی و بازاری طاق‌دار. ایرانیان هنوز آن را «نصف جهان» می‌خوانند.",
     type: "city",
     coordinates: [51.6680, 32.6546],
     date: "Safavid capital, 1598–1722",
@@ -314,6 +322,10 @@ export const locations = [
   {
     id: "shiraz",
     name: "Shiraz",
+    name_fa: "شیراز",
+    date_fa: "پایتخت زندیان، ۱۷۵۰–۱۷۹۴ م.",
+    description_fa:
+      "شهر حافظ و سعدی، که سروده‌هایشان هنوز در سراسر جهان پارسی‌زبان از بر می‌شود. باغ‌های گل سرخش و تالارهایی با شیشه‌های رنگین، که در سپیده‌دم از رنگ شعله‌ور می‌شوند، از نشانه‌های ماندگار طراحی ایرانی‌اند.",
     type: "city",
     coordinates: [52.5837, 29.5918],
     date: "Zand capital, 1750–1794",
@@ -323,6 +335,10 @@ export const locations = [
   {
     id: "tabriz",
     name: "Tabriz",
+    name_fa: "تبریز",
+    date_fa: "چهارراه جاده‌ی ابریشم؛ چندی پایتخت صفویان",
+    description_fa:
+      "بیش از هزار سال کانون بازرگانی جاده‌ی ابریشم، و چندی نخستین پایتخت دودمان صفوی. بازار سرپوشیده‌ی تاریخی‌اش — از کهن‌ترین و بزرگ‌ترین بازارهای خاورمیانه — امروز نیز همچنان پررونق است.",
     type: "city",
     coordinates: [46.2919, 38.0800],
     date: "Silk Road crossroads; briefly Safavid capital",
@@ -332,6 +348,10 @@ export const locations = [
   {
     id: "mashhad",
     name: "Mashhad",
+    name_fa: "مشهد",
+    date_fa: "از سده‌ی سیزدهم م. جای توسِ همسایه را گرفت",
+    description_fa:
+      "هنگامی برآمد که توسِ همسایه — زادگاه فردوسی، که شاهنامه‌اش حماسه و زبان پارسی را زنده نگاه داشت — به دست مغولان افتاد. سپس در سده‌ی هجدهم پایتخت نادرشاه شد؛ آرامگاه او هنوز در همین شهر برپاست.",
     type: "city",
     coordinates: [59.6168, 36.2605],
     date: "Eclipsed nearby Tus from the 13th century onward",
@@ -341,6 +361,10 @@ export const locations = [
   {
     id: "neyshabur",
     name: "Neyshabur",
+    name_fa: "نیشابور",
+    date_fa: "شکوفایی در سده‌های نهم تا دوازدهم م.",
+    description_fa:
+      "خانه‌ی عمر خیام، حکیم و ریاضی‌دانی که رباعیاتش اخترشناسی و شک را به یکی از پرترجمه‌ترین شعرهای جهان بدل کرد. آرامگاه کاشی‌کاری‌شده‌ی فیروزه‌فامش هنوز در شهری برپاست که در آن زاده شد، کار کرد و به خاک سپرده شد.",
     type: "city",
     coordinates: [58.7958, 36.2133],
     date: "Flourished 9th–12th centuries",
@@ -350,6 +374,10 @@ export const locations = [
   {
     id: "persepolis",
     name: "Persepolis",
+    name_fa: "تخت جمشید",
+    date_fa: "بنیاد حدود ۵۱۸ پ.م.، شاهنشاهی هخامنشی",
+    description_fa:
+      "پایتخت آیینی داریوش یکم. نگاره‌های پلکان آپادانا — ردیف‌های فرستادگانِ پیشکش‌آورِ بیست‌وسه سرزمینِ شاهنشاهی، کنده بر سنگی که هنوز امروز خواناست — از بهترین آثار به‌جامانده‌ی هنر هخامنشی‌اند؛ پیش از آنکه اسکندر مقدونی در ۳۳۰ پ.م. کاخ را به آتش بکشد.",
     type: "historical-site",
     coordinates: [52.8912, 29.9358],
     date: "Founded c. 518 BCE, Achaemenid Empire",
@@ -359,6 +387,10 @@ export const locations = [
   {
     id: "pasargadae",
     name: "Pasargadae",
+    name_fa: "پاسارگاد",
+    date_fa: "بنیاد حدود ۵۴۶ پ.م.",
+    description_fa:
+      "نخستین پایتخت کوروش بزرگ و جایگاه آرامگاه او — اتاقکی ساده از سنگ آهک با بامی شیب‌دار، چنان گرامی که اسکندر مقدونی، چون آن را تاراج‌شده یافت، فرمان به مرمتش داد و نگهبانانش را کیفر کرد.",
     type: "historical-site",
     coordinates: [53.1753, 30.1928],
     date: "Founded c. 546 BCE",
@@ -368,6 +400,10 @@ export const locations = [
   {
     id: "naqsh-e-rostam",
     name: "Naqsh-e Rostam",
+    name_fa: "نقش رستم",
+    date_fa: "سده‌ی ششم پ.م. تا سده‌ی چهارم م.",
+    description_fa:
+      "گورستانی کنده در دل صخره‌ای نزدیک تخت جمشید، با آرامگاه‌های سنگ‌تراشِ چهار شاه هخامنشی بر فراز نگاره‌های باشکوه ساسانی — از جمله پیروزیِ کنده‌کاری‌شده‌ی شاپور یکم بر والرین، امپراتور اسیرِ روم.",
     type: "historical-site",
     coordinates: [52.8756, 29.9891],
     date: "6th century BCE – 4th century CE",
@@ -377,6 +413,10 @@ export const locations = [
   {
     id: "chogha-zanbil",
     name: "Chogha Zanbil",
+    name_fa: "چغازنبیل",
+    date_fa: "ساخته‌شده حدود ۱۲۵۰ پ.م.",
+    description_fa:
+      "زیگوراتی ایلامی برافراشته برای ایزد اینشوشیناک — سالم‌ترین پرستشگاه پلکانی از گونه‌ی خود در سراسر زمین، و از کهن‌ترین زیگورات‌های برجای‌مانده، که نزدیک به هزار سال پیش از تخت جمشید ساخته شد.",
     type: "historical-site",
     coordinates: [48.5175, 32.0008],
     date: "Built c. 1250 BCE",
@@ -386,6 +426,10 @@ export const locations = [
   {
     id: "bam-citadel",
     name: "Bam Citadel",
+    name_fa: "ارگ بم",
+    date_fa: "ریشه در روزگار ساسانی، شکوفا تا سده‌ی نوزدهم م.",
+    description_fa:
+      "ارگ بم — بزرگ‌ترین بنای خشتی جهان، شهری بارودار بر جاده‌ی ابریشم با باروها، بازارها و برج‌های ارگ، که پس از زمین‌لرزه‌ی ویرانگر ۱۳۸۲ (۲۰۰۳ م.)، که آن را تقریباً با خاک یکسان کرد، با شکیبایی بسیار بازسازی شد.",
     type: "historical-site",
     coordinates: [58.3570, 29.1080],
     date: "Sasanian origins, flourished to the 19th century",

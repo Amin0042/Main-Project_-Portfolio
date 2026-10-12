@@ -16,6 +16,7 @@ import { createGalleryControls } from "../core/gallery-controls.js";
 import { createProjector } from "../core/geo-projection.js";
 import { getQualityPreset } from "../core/device-tier.js";
 import { iranBoundary, mapCenter, locations } from "./cartography-data.js";
+import { pick, onLanguageChange } from "../core/i18n.js";
 
 const GOLD = 0xc6a85a;
 const MUTED_GOLD = 0x8f7a3e;
@@ -247,12 +248,15 @@ export function createCartographyOfMemory(stage, context = {}) {
     return markers.find((marker) => marker.core === hits[0].object) || null;
   }
 
+  let inspectedMarker = null;
+
   function showInspector(marker) {
     if (!inspectorEl) {
       return;
     }
+    inspectedMarker = marker;
     if (inspectorTitleEl) {
-      inspectorTitleEl.textContent = marker.data.name;
+      inspectorTitleEl.textContent = pick(marker.data, "name");
     }
     if (inspectorMetaEl) {
       // Was `[date, description].join(" — ")` all on one uppercase
@@ -260,11 +264,11 @@ export function createCartographyOfMemory(stage, context = {}) {
       // grew into an actual sentence or two of history/art context. The
       // meta line now carries just the era/date; the real note goes to
       // its own paragraph element below.
-      inspectorMetaEl.textContent = marker.data.date || marker.data.type || "";
+      inspectorMetaEl.textContent = pick(marker.data, "date") || marker.data.type || "";
     }
     if (inspectorDescriptionEl) {
       if (marker.data.description) {
-        inspectorDescriptionEl.textContent = marker.data.description;
+        inspectorDescriptionEl.textContent = pick(marker.data, "description");
         inspectorDescriptionEl.hidden = false;
       } else {
         inspectorDescriptionEl.hidden = true;
@@ -279,8 +283,16 @@ export function createCartographyOfMemory(stage, context = {}) {
     if (!inspectorEl) {
       return;
     }
+    inspectedMarker = null;
     inspectorEl.classList.remove("is-visible");
   }
+
+  // EN/پ flipped while a label is open: rewrite it in the new language.
+  const stopLanguageListener = onLanguageChange(() => {
+    if (inspectedMarker) {
+      showInspector(inspectedMarker);
+    }
+  });
 
   function selectMarker(marker) {
     selectedMarker = marker;
@@ -401,6 +413,7 @@ export function createCartographyOfMemory(stage, context = {}) {
       resetButtonEl.removeEventListener("click", resetView);
     }
     window.removeEventListener("keydown", onKeyDown);
+    stopLanguageListener();
     hideInspector();
     controls.dispose();
 
