@@ -3,36 +3,50 @@
     "title": "The Value Of Silence",
     "date": "2026-06-15",
     "summary": "A short reflection on solitude, attention, and creative discipline.",
-    "file": "the-value-of-silence.md"
+    "file": "the-value-of-silence.md",
+    "title_fa": "ارزش خاموشی",
+    "summary_fa": "تأملی کوتاه در تنهایی، توجه و انضباط آفرینشگرانه."
   },
   {
     "title": "The Weight Of Dawn",
     "date": "2026-06-22",
     "summary": "A meditation on early hours, ritual, and beginning before doubt arrives.",
-    "file": "the-weight-of-dawn.md"
+    "file": "the-weight-of-dawn.md",
+    "title_fa": "سنگینی سپیده‌دم",
+    "summary_fa": "درنگی در ساعت‌های آغازین، آیین، و آغاز کردن پیش از آنکه تردید از راه برسد."
   },
   {
     "title": "On Making With Patience",
     "date": "2026-07-01",
     "summary": "A short note on slow revision, restraint, and respecting the pace of good work.",
-    "file": "on-making-with-patience.md"
+    "file": "on-making-with-patience.md",
+    "title_fa": "در باب آفریدن با شکیبایی",
+    "summary_fa": "یادداشتی کوتاه درباره‌ی بازنگری آرام، خویشتن‌داری، و پاس داشتن آهنگ کار نیکو."
   },
   {
     "title": "The Discipline Of Return",
     "date": "2026-07-10",
     "summary": "A reflection on consistency, endurance, and returning to unfinished work.",
-    "file": "the-discipline-of-return.md"
+    "file": "the-discipline-of-return.md",
+    "title_fa": "انضباط بازگشت",
+    "summary_fa": "تأملی در پایداری، شکیبایی، و بازگشتن به کارهای ناتمام."
   },
   {
     "title": "Dreams",
     "date": "2026-07-20",
     "summary": "A reflection on consistency, endurance, and returning to unfinished work.",
-    "file": "Dreams Vault.md"
+    "file": "Dreams Vault.md",
+    "title_fa": "رویاها",
+    "summary_fa": "تأملی در پایداری، شکیبایی، و بازگشتن به کارهای ناتمام.",
+    "file_fa": "Dreams Vault.fa.md"
   },
   {
     "title": "Dreamers",
     "date": "2026-07-20",
     "summary": "A reflection on consistency, endurance, and returning to unfinished work.",
-    "file": "Dreamers Vault.md"
+    "file": "Dreamers Vault.md",
+    "title_fa": "رویاپردازان",
+    "summary_fa": "تأملی در پایداری، شکیبایی، و بازگشتن به کارهای ناتمام.",
+    "file_fa": "Dreamers Vault.fa.md"
   }
 ]

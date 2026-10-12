@@ -1,3 +1,117 @@
+
+const PERSIAN_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
+
+function toPersianDigits(text) {
+  return String(text).replace(/[0-9]/g, function (digit) {
+    return PERSIAN_DIGITS[Number(digit)];
+  });
+}
+
+function isPersianActive() {
+  return typeof document !== "undefined" && document.body.classList.contains("lang-fa");
+}
+
+// For text built in JavaScript (form messages, notes cards…): picks the
+// Persian wording while the پ switch is on.
+function tr(english, persian) {
+  return isPersianActive() ? persian : english;
+}
+
+function getPersianTranslations() {
+  return (typeof window !== "undefined" && window.PERSIAN_TRANSLATIONS) || {};
+}
+
+function applyLanguage(isPersian) {
+  const translations = getPersianTranslations();
+  const root = document.documentElement;
+  root.lang = isPersian ? "fa" : "en";
+  root.dir = isPersian ? "rtl" : "ltr";
+  document.body.classList.toggle("lang-fa", isPersian);
+
+  document.querySelectorAll("[data-i18n]").forEach(function (element) {
+    if (element.dataset.i18nEn === undefined) {
+      element.dataset.i18nEn = element.innerHTML;
+    }
+
+    const persian = translations[element.dataset.i18n];
+
+    if (isPersian && persian) {
+      element.innerHTML = toPersianDigits(persian);
+    } else {
+      element.innerHTML = element.dataset.i18nEn;
+    }
+  });
+
+  // Attribute translations: data-i18n-attr="alt:key;data-description:key2".
+  // Artwork titles (alt) and pop-up texts (data-description) are read when a
+  // popup opens, so swapping them here is enough for the popups to follow.
+  document.querySelectorAll("[data-i18n-attr]").forEach(function (element) {
+    element.dataset.i18nAttr.split(";").forEach(function (pair) {
+      const separator = pair.indexOf(":");
+      const name = pair.slice(0, separator);
+      const key = pair.slice(separator + 1);
+      const store = "i18nEn" + name.replace(/(^|-)([a-z])/g, function (_, dash, letter) {
+        return letter.toUpperCase();
+      });
+
+      if (element.dataset[store] === undefined) {
+        element.dataset[store] = element.getAttribute(name) || "";
+      }
+
+      const persian = translations[key];
+      element.setAttribute(
+        name,
+        isPersian && persian ? toPersianDigits(persian) : element.dataset[store]
+      );
+    });
+  });
+}
+
+// Same gilded-glass round button as the theme toggle: "EN" and "پ"
+// cross-fade exactly like the sun/moon icons.
+function initializeLanguageToggle(themeButton) {
+  const languageButton = document.createElement("button");
+  languageButton.type = "button";
+  languageButton.className = "theme-toggle-btn lang-toggle-btn";
+  languageButton.innerHTML = `
+    <span class="theme-toggle-icon lang-label lang-label-en" aria-hidden="true">EN</span>
+    <span class="theme-toggle-icon lang-label lang-label-fa" aria-hidden="true">پ</span>
+  `;
+
+  // Shares the theme button's own nav item, so the pair stays side by
+  // side in every layout, including the stacked mobile/tablet menu.
+  themeButton.parentNode.insertBefore(languageButton, themeButton);
+
+  const setLanguage = function (isPersian) {
+    applyLanguage(isPersian);
+    document.dispatchEvent(new CustomEvent("languagechange"));
+    languageButton.setAttribute("aria-pressed", String(isPersian));
+    const label = isPersian ? "Switch to English" : "تغییر به فارسی";
+    languageButton.setAttribute("aria-label", label);
+    languageButton.title = label;
+
+    try {
+      window.localStorage.setItem("january8th-lang", isPersian ? "fa" : "en");
+    } catch (error) {
+      // Ignore storage access failures (private browsing, disabled cookies, etc.).
+    }
+  };
+
+  let prefersPersian = false;
+
+  try {
+    prefersPersian = window.localStorage.getItem("january8th-lang") === "fa";
+  } catch (error) {
+    prefersPersian = false;
+  }
+
+  setLanguage(prefersPersian);
+
+  languageButton.addEventListener("click", function () {
+    setLanguage(!document.body.classList.contains("lang-fa"));
+  });
+}
+
 function initializeThemeToggle() {
   if (typeof document === "undefined") {
     return;
@@ -78,6 +192,8 @@ function initializeThemeToggle() {
     const nextTheme = !document.body.classList.contains("light");
     setTheme(nextTheme);
   });
+
+  initializeLanguageToggle(themeButton);
 }
 
 function initializeContactHints() {
@@ -155,7 +271,7 @@ function initializeContactForm() {
     if (submitButton) {
       submitButton.disabled = true;
     }
-    setStatus("Sending your message...", null);
+    setStatus(tr("Sending your message...", "در حال فرستادن پیام شما..."), null);
 
     const formData = new FormData(form);
 
@@ -182,13 +298,19 @@ function initializeContactForm() {
         }
         form.reset();
         setStatus(
-          "Message sent — thank you. I'll get back to you soon.",
+          tr(
+            "Message sent — thank you. I'll get back to you soon.",
+            "پیام فرستاده شد؛ سپاسگزارم. به‌زودی پاسخ خواهم داد."
+          ),
           "is-success"
         );
       })
       .catch(function () {
         setStatus(
-          "Something went wrong sending that. Please try again, or email amini.kave95@gmail.com directly.",
+          tr(
+            "Something went wrong sending that. Please try again, or email amini.kave95@gmail.com directly.",
+            "فرستادن پیام با مشکلی روبه‌رو شد. لطفاً دوباره بکوشید، یا مستقیم به amini.kave95@gmail.com ایمیل بزنید."
+          ),
           "is-error"
         );
       })
@@ -483,7 +605,7 @@ function initializeWordHoverEffect() {
     // Only fragment plain-text paragraphs. Paragraphs that already contain
     // elements (links, icons, etc.) are left alone so we never break markup.
     // Also skips anything explicitly opted out via data-no-word-hover — the
-    // manifesto's opening paragraph uses this: wrapping every word in its
+    // mission's opening paragraph uses this: wrapping every word in its
     // own inline-block .word span (see the CSS) breaks CSS ::first-letter's
     // ability to reach in from the <p> for its illuminated drop cap, since
     // ::first-letter can't see through an inline-block descendant.
@@ -540,7 +662,7 @@ function initializeWordHoverEffect() {
   wrapParagraphsWithin(document.body);
 
   // Keep wrapping paragraphs that get added later (notes cards, the notes
-  // popup panel, the manifesto popup, etc.) so the hover effect stays
+  // popup panel, the mission popup, etc.) so the hover effect stays
   // consistent across the whole site, not just the initial page load.
   if (typeof MutationObserver !== "undefined") {
     const observer = new MutationObserver(function (mutations) {
@@ -1036,9 +1158,9 @@ if (typeof module !== "undefined") {
 }
 
 if (typeof document !== "undefined") {
-  const openButton = document.querySelector(".manifesto-open");
+  const openButton = document.querySelector(".mission-open");
   const closeButton = document.querySelector(".popup-close");
-  const popup = document.querySelector(".manifesto-popup");
+  const popup = document.querySelector(".mission-popup");
 
   initializeThemeToggle();
   initializeContactHints();
@@ -1197,11 +1319,11 @@ if (typeof document !== "undefined") {
       const linkHash = url.hash;
 
       if (linkHash) {
-        if (linkHash === "#manifesto") {
-          const isManifestoPage =
-            currentPath === "/" && currentHash === "#manifesto";
+        if (linkHash === "#mission") {
+          const isMissionPage =
+            currentPath === "/" && currentHash === "#mission";
 
-          if (isManifestoPage) {
+          if (isMissionPage) {
             activeLink = link;
           }
         } else if (linkPath === currentPath && linkHash === currentHash) {
@@ -1276,8 +1398,12 @@ if (typeof document !== "undefined") {
       );
     }
 
+    // The link the pill currently sits on, so it can be re-fitted in place.
+    let currentLink = null;
+
     function placeIndicator(link, options) {
       const opts = options || {};
+      currentLink = link;
 
       if (!link) {
         indicator.classList.remove("is-visible", "is-current");
@@ -1345,6 +1471,28 @@ if (typeof document !== "undefined") {
     window.addEventListener("resize", function () {
       settleOnActive({ instant: true });
     });
+
+    // Re-fit whenever a link's own box changes — the web font finishing
+    // loading after first paint, or the EN/پ switch swapping "Mission" for
+    // "آرمان" — otherwise the pill keeps the stale size and position.
+    function refit() {
+      if (currentLink) {
+        placeIndicator(currentLink, { current: true, instant: true });
+      }
+    }
+
+    if (typeof ResizeObserver !== "undefined") {
+      const observer = new ResizeObserver(refit);
+      links.forEach(function (link) {
+        observer.observe(link);
+      });
+    }
+
+    document.addEventListener("languagechange", refit);
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(refit);
+    }
   }
 
   initializeNavPillIndicator(".navbar .navbar-nav");
@@ -1870,7 +2018,7 @@ if (typeof document !== "undefined") {
       return fallback;
     }
 
-    return parsed.toLocaleDateString("en-CA", {
+    return parsed.toLocaleDateString(isPersianActive() ? "fa-IR" : "en-CA", {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -1886,7 +2034,7 @@ if (typeof document !== "undefined") {
     const article = document.createElement("article");
     article.className = "notes-post";
 
-    const title = post.title || "Untitled Note";
+    const title = post.title || tr("Untitled Note", "یادداشت بی‌نام");
     const thumbMarkup = post.image
       ? `<img class="post-thumb-img" src="${post.image}" alt="" />`
       : `<img class="post-thumb-img logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg" alt="" />
@@ -1899,9 +2047,9 @@ if (typeof document !== "undefined") {
       <div class="post-info">
         <h3 class="post-title">${title}</h3>
         <p class="info-body">${post.summary || ""}</p>
-        <button class="btn info-btn" type="button">Read More</button>
+        <button class="btn info-btn" type="button">${tr("Read More", "بیشتر بخوانید")}</button>
       </div>
-      <a class="post-thumb${post.image ? "" : " post-thumb-mark"}" href="#" aria-label="Open full note: ${title}">
+      <a class="post-thumb${post.image ? "" : " post-thumb-mark"}" href="#" aria-label="${tr("Open full note", "گشودن کامل یادداشت")}: ${title}">
         ${thumbMarkup}
       </a>
     `;
@@ -1961,7 +2109,8 @@ if (typeof document !== "undefined") {
 
   function openNotesPanel(post, html) {
     notesPanel.date.textContent = formatPostDate(post.date);
-    notesPanel.title.textContent = post.title || "Untitled Note";
+    notesPanel.title.textContent = post.title || tr("Untitled Note", "یادداشت بی‌نام");
+    notesPanel.closeButton.textContent = tr("Close", "بستن");
     notesPanel.content.innerHTML = html;
     notesPanel.panel.classList.add("is-open");
     notesPanel.panel.setAttribute("aria-hidden", "false");
@@ -2096,27 +2245,27 @@ if (typeof document !== "undefined") {
         };
 
         fragment.appendChild(
-          makePageControl("Previous", currentPage - 1, {
+          makePageControl(tr("Previous", "پیشین"), currentPage - 1, {
             className: "btn notes-page-nav",
             disabled: currentPage <= 1,
-            ariaLabel: "Go to previous page of notes",
+            ariaLabel: tr("Go to previous page of notes", "رفتن به برگ پیشین یادداشت‌ها"),
           }),
         );
 
         for (let page = 1; page <= totalPages; page += 1) {
           fragment.appendChild(
-            makePageControl(String(page), page, {
+            makePageControl(tr(String(page), toPersianDigits(page)), page, {
               current: page === currentPage,
-              ariaLabel: `Go to notes page ${page}`,
+              ariaLabel: tr(`Go to notes page ${page}`, `رفتن به برگ ${toPersianDigits(page)} یادداشت‌ها`),
             }),
           );
         }
 
         fragment.appendChild(
-          makePageControl("Next", currentPage + 1, {
+          makePageControl(tr("Next", "پسین"), currentPage + 1, {
             className: "btn notes-page-nav",
             disabled: currentPage >= totalPages,
-            ariaLabel: "Go to next page of notes",
+            ariaLabel: tr("Go to next page of notes", "رفتن به برگ پسین یادداشت‌ها"),
           }),
         );
 
@@ -2132,7 +2281,17 @@ if (typeof document !== "undefined") {
 
         notesList.innerHTML = "";
 
-        pagePosts.forEach(function (post) {
+        pagePosts.forEach(function (sourcePost) {
+          // Persian mode reads the post's *_fa fields from posts/index.json
+          // when it has them, and falls back to the English ones.
+          const post = isPersianActive()
+            ? {
+                ...sourcePost,
+                title: sourcePost.title_fa || sourcePost.title,
+                summary: sourcePost.summary_fa || sourcePost.summary,
+                file: sourcePost.file_fa || sourcePost.file,
+              }
+            : sourcePost;
           const article = createNotesPostElement(post);
           const button = article.querySelector(".info-btn");
           const thumb = article.querySelector(".post-thumb");
@@ -2161,16 +2320,22 @@ if (typeof document !== "undefined") {
 
               openNotesPanel(post, renderedHtml);
             } catch (error) {
-              openNotesPanel(post, "<p>Unable to load this post right now.</p>");
+              openNotesPanel(
+                post,
+                tr(
+                  "<p>Unable to load this post right now.</p>",
+                  "<p>اکنون نمی‌توان این یادداشت را بارگذاری کرد.</p>"
+                )
+              );
             }
           }
 
           button.addEventListener("click", async function () {
             button.disabled = true;
-            button.textContent = "Loading...";
+            button.textContent = tr("Loading...", "در حال بارگذاری...");
             await openThisPost();
             button.disabled = false;
-            button.textContent = "Read More";
+            button.textContent = tr("Read More", "بیشتر بخوانید");
           });
 
           if (thumb) {
@@ -2201,6 +2366,11 @@ if (typeof document !== "undefined") {
 
       window.addEventListener("popstate", function () {
         renderNotesPage(getNotesPageFromQuery(), { skipHistory: true });
+      });
+
+      // Rebuild the cards in the other language when EN/پ is switched.
+      document.addEventListener("languagechange", function () {
+        renderNotesPage(currentPage, { skipHistory: true });
       });
     } catch (error) {
       notesList.innerHTML =

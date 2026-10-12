@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400..700;1,400..600&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400..700;1,400..600&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Vazirmatn:wght@100..900&display=swap"
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -61,38 +61,38 @@
                         <span class="brand-flag-band brand-flag-band--tail"></span>
                       </span>
                     </span>
-                    <span>
+                    <span data-i18n="brand.name">
                         January8th
                     </span>
-                    <span class="brand-role"><span>Born Twice ·</span> <span>A Witness Far From Home</span></span>
+                    <span class="brand-role" data-i18n="brand.role"><span>Born Twice ·</span> <span>A Witness Far From Home</span></span>
                 </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                <button data-i18n-attr="aria-label:t.6c7195551d" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                            <a class="nav-link active" aria-current="page" href="/" data-i18n="nav.home">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/pages/about.html">About</a>
+                            <a class="nav-link" href="/pages/about.html" data-i18n="nav.about">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/#manifesto">Manifesto</a>
+                            <a class="nav-link" data-i18n="nav.mission" href="/#mission">Mission</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/pages/archive.html">Archive</a>
+                            <a class="nav-link" href="/pages/archive.html" data-i18n="nav.archive">Archive</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/pages/notes.html">Notes</a>
+                            <a class="nav-link" href="/pages/notes.html" data-i18n="nav.notes">Notes</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/pages/antiquarium.html">Antiquarium</a>
+                            <a class="nav-link" href="/pages/antiquarium.html" data-i18n="nav.antiquarium">Antiquarium</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/pages/contact.html">Contact</a>
+                            <a class="nav-link" href="/pages/contact.html" data-i18n="nav.contact">Contact</a>
                         </li>
                     </ul>
                 </div>
@@ -154,8 +154,8 @@
         </svg>
         <section class="section about-hero" id="about-hero">
             <div class="about-container">
-                <h2>About</h2>
-                <p>I do not know precisely how to describe the image that takes shape before me in the mirror and
+                <h2 data-i18n="nav.about">About</h2>
+                <p data-i18n="about.intro">I do not know precisely how to describe the image that takes shape before me in the mirror and
                     trembles back toward my
                     gaze.
                     It is not the portrait that held Dorian Gray—or the ill-fated Oscar Wilde himself—spellbound, until
@@ -184,7 +184,7 @@
              conformal conic projection and simplified. The gold line from
              Ottawa up to the portrait is drawn by initializeAboutConnector()
              in main.js. -->
-        <section class="section about-map" aria-label="Ottawa, Canada">
+        <section data-i18n-attr="aria-label:t.d3352c9731" class="section about-map" aria-label="Ottawa, Canada">
             <figure class="about-map-figure">
                 <div class="about-map-canvas">
                     <svg class="about-map-svg" viewBox="0 0 1048.0 909.3" role="img"
@@ -198,55 +198,55 @@
                         <use class="about-map-land" href="#canada-outline" />
                     </svg>
                     <span class="about-map-marker" style="left: 70.038%; top: 86.352%" aria-hidden="true"></span>
-                    <span class="about-map-label" style="left: 70.038%; top: 86.352%" aria-hidden="true">Ottawa</span>
+                    <span data-i18n="t.aeee33366b" class="about-map-label" style="left: 70.038%; top: 86.352%" aria-hidden="true">Ottawa</span>
                 </div>
-                <figcaption class="about-map-caption">Ottawa, Canada — where this archive is made.</figcaption>
+                <figcaption data-i18n="t.aa112d8ddd" class="about-map-caption">Ottawa, Canada — where this archive is made.</figcaption>
             </figure>
         </section>
         <section class="section about-background arch" id="">
-            <h2>Background</h2>
-            <nav class="background-jumpnav" aria-label="Jump to a background section">
-                <a class="btn" href="#education">Education</a>
-                <a class="btn" href="#focus">Focus</a>
-                <a class="btn" href="#influence">Influence</a>
-                <a class="btn" href="#approach">Approach</a>
+            <h2 data-i18n="t.a9ded1e5ce">Background</h2>
+            <nav data-i18n-attr="aria-label:t.c90302d347" class="background-jumpnav" aria-label="Jump to a background section">
+                <a data-i18n="t.de7a22a0c9" class="btn" href="#education">Education</a>
+                <a data-i18n="t.e24ee24878" class="btn" href="#focus">Focus</a>
+                <a data-i18n="t.d35a98028c" class="btn" href="#influence">Influence</a>
+                <a data-i18n="t.40a68b5da4" class="btn" href="#approach">Approach</a>
             </nav>
             <div class="background">
                 <div class="background-section" id="education">
                     <div class="background-icon">
                         <img src="../Assets/Icons/Education Icon.svg" alt="" class="">
-                        <h4 class="">Education</h4>
+                        <h4 data-i18n="t.de7a22a0c9" class="">Education</h4>
                     </div>
                     <div class="background-copy">
-                        <p class="education-intro">
+                        <p data-i18n="t.7c4ea083a9" class="education-intro">
                             As an independent visual artist, I have spent a considerable part of my life searching for
                             the most direct path toward building a sustainable life of my own—from pursuing different
                             fields of study to experiencing life in different lands. A brief account of my educational
                             journey and achievements is as follows:
                         </p>
                         <ul class="education-list">
-                            <li>High School Diploma — Medical Science School</li>
-                            <li>Hotel Management Diploma</li>
-                            <li>Academic Study of Foreign Languages — German, French, and Turkish, in Iran</li>
-                            <li>English for Academic Purposes (EAP) — Algonquin College, with Honours</li>
-                            <li>Design Foundation Certificate — Algonquin College, with Honours</li>
-                            <li>Graphic Design Diploma — Algonquin College (forthcoming)</li>
+                            <li data-i18n="t.3a241e867d">High School Diploma — Medical Science School</li>
+                            <li data-i18n="t.e1857214b3">Hotel Management Diploma</li>
+                            <li data-i18n="t.f36dda4a61">Academic Study of Foreign Languages — German, French, and Turkish, in Iran</li>
+                            <li data-i18n="t.3099554655">English for Academic Purposes (EAP) — Algonquin College, with Honours</li>
+                            <li data-i18n="t.a1c7109b7a">Design Foundation Certificate — Algonquin College, with Honours</li>
+                            <li data-i18n="t.c74265f1ce">Graphic Design Diploma — Algonquin College (forthcoming)</li>
                         </ul>
                     </div>
                 </div>
                 <div class="background-section" id="focus">
                     <div class="background-icon">
                         <img src="../Assets/Icons/Focus Icon.svg" alt="" class="">
-                        <h4 class="">Focus</h4>
+                        <h4 data-i18n="t.e24ee24878" class="">Focus</h4>
                     </div>
                     <div class="background-copy">
-                        <p>My focus lies upon an ocean of turbulent waves—composed of infinitesimally small particles
+                        <p data-i18n="t.67dc021c0b">My focus lies upon an ocean of turbulent waves—composed of infinitesimally small particles
                             that surround the world we inhabit, yet remain hidden from the sight of us humans, confined
                             as we are within the limits of perception, for an indescribable eternity. These are
                             precisely the places where God dwells, calling us toward Himself, to be drawn ever deeper
                             into His life, and, in time, to become partakers of His divine nature, co-creators rather
                             than successors.</p>
-                        <p>My primary specialization is the creation of entirely imagined visual compositions.
+                        <p data-i18n="t.f9f93fc9aa">My primary specialization is the creation of entirely imagined visual compositions.
                             Consequently, the principal digital tools I work with are Adobe Illustrator and Adobe After
                             Effects. I also possess a solid command of traditional drawing practices rooted in the
                             methods of earlier generations, as well as entirely digital approaches built upon
@@ -258,32 +258,32 @@
                 <div class="background-section" id="influence">
                     <div class="background-icon">
                         <img src="../Assets/Icons/Influence Icon.svg" alt="" class="">
-                        <h4 class="">Influence</h4>
+                        <h4 data-i18n="t.d35a98028c" class="">Influence</h4>
                     </div>
                     <div class="background-copy">
-                        <p>As a questioning artist, throughout the relatively brief span of my life, I have found
+                        <p data-i18n="t.0857733bb4">As a questioning artist, throughout the relatively brief span of my life, I have found
                             myself under the influence of countless ideas and schools of thought. Among them, within
                             the realm of modern painting, I can name Cubism and Surrealism. Yet it should hardly come
                             as a surprise that, before any other artistic inclination, I—like so many others—became
                             captivated by my encounters with the art of Classical and Renaissance European painting.</p>
-                        <p>One cannot speak of painting while entirely overlooking the art of sculpture, nor can one
+                        <p data-i18n="t.d5d5fc62af">One cannot speak of painting while entirely overlooking the art of sculpture, nor can one
                             speak of sculpture without invoking the great sculptors who gave form to the astonishing
                             and tangible image of the human being. Michelangelo and Rodin, to my mind, stand among the
                             most renowned and unforgettable names in the brief history of humanity.</p>
-                        <p>Within the vast realm of literature into which I have ventured thus far, I can point to
+                        <p data-i18n="t.91d95a40dc">Within the vast realm of literature into which I have ventured thus far, I can point to
                             Russian Realism, and to masters such as Dostoevsky and Tolstoy—figures who opened before
                             me a world at once profoundly terrifying and filled with profound moral lessons.</p>
-                        <p>Yet this particular literary tradition constitutes only a small fragment of the worlds
+                        <p data-i18n="t.3a49136d34">Yet this particular literary tradition constitutes only a small fragment of the worlds
                             discovered by my curious eyes. It would be impossible to overlook the tremendous blows
                             delivered by the turbulent waves unleashed through the volcanic eruptions of the inner
                             worlds of such figures as Franz Kafka, Sadegh Hedayat, Gabriel García Márquez, Orhan Pamuk,
                             Yukio Mishima, and so many other influential literary voices whose worlds have crashed
                             upon me with formidable force.</p>
-                        <p>I must then turn to the philosophers and profound thinkers who, more than any others,
+                        <p data-i18n="t.7bc8d80d87">I must then turn to the philosophers and profound thinkers who, more than any others,
                             challenged my identity and intellectual foundations, only to reconstruct them anew:
                             Socrates, Omar Khayyam, Niccolò Machiavelli, Friedrich Nietzsche, Søren Kierkegaard,
                             Dietrich Bonhoeffer, Pierre Teilhard de Chardin, Albert Camus, and Yuval Noah Harari.</p>
-                        <p>And finally, almost as a litany of names, I must acknowledge those wise human beings who
+                        <p data-i18n="t.7c396a6530">And finally, almost as a litany of names, I must acknowledge those wise human beings who
                             illuminated my world with the boundlessness of their knowledge: great minds such as
                             Sigmund Freud, Émile Durkheim, and Carl Jung.</p>
                     </div>
@@ -291,10 +291,10 @@
                 <div class="background-section" id="approach">
                     <div class="background-icon">
                         <img src="../Assets/Icons/Approach Icon.svg" alt="" class="">
-                        <h4 class="">Approach</h4>
+                        <h4 data-i18n="t.40a68b5da4" class="">Approach</h4>
                     </div>
                     <div class="background-copy">
-                        <p>Approach
+                        <p data-i18n="t.b837dec62b">Approach
 
                             When it comes to the creation of an artwork, regardless of the artistic medium in which I
                             choose to enter the arena of
@@ -329,16 +329,16 @@
         </section>
         <section class="section about-craft arch" id="">
             <div class="craft-info">
-                <h2>Tools & Crafts</h2>
+                <h2 data-i18n="t.d95a6b5aa0">Tools & Crafts</h2>
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi molestias labore itaque fugiat unde
                     cupiditate asperiores pariatur, ex reprehenderit excepturi necessitatibus debitis fuga vitae ea odit
                     quis iure eius natus?</p>
             </div>
             <div class="craft-grid">
-                <img src="../Assets/Icons/Adobe Aftereffect Icon.svg" alt="After Effects" class="">
-                <img src="../Assets/Icons/Adobe Illustrator Icon.svg" alt="Illustrator" class="">
-                <img src="../Assets/Icons/Creative Writing.svg" alt="Creative Writing" class="">
-                <img src="../Assets/Icons/Ai language Models.svg" alt="AI Language Models" class="">
+                <img data-i18n-attr="alt:t.569248c23e" src="../Assets/Icons/Adobe Aftereffect Icon.svg" alt="After Effects" class="">
+                <img data-i18n-attr="alt:t.b177945168" src="../Assets/Icons/Adobe Illustrator Icon.svg" alt="Illustrator" class="">
+                <img data-i18n-attr="alt:t.0387ec6a47" src="../Assets/Icons/Creative Writing.svg" alt="Creative Writing" class="">
+                <img data-i18n-attr="alt:t.7f44a4369d" src="../Assets/Icons/Ai language Models.svg" alt="AI Language Models" class="">
                 <img src="../Assets/Icons/Approach Icon.svg" alt="" class="">
                 <img src="../Assets/Icons/Approach Icon.svg" alt="" class="">
 
@@ -353,46 +353,46 @@
                     <img class="logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg"
                         alt="">
                     <img class="logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg" alt="">
-                    <h3>January8th</h3>
+                    <h3 data-i18n="brand.name">January8th</h3>
                 </a>
             </div>
             <div class="line"></div>
             <div class="footer-navigation">
-                <h4>NAVIGATION</h4>
+                <h4 data-i18n="footer.navigation">NAVIGATION</h4>
                 <ul>
                     <li class="">
-                        <a class="" href="/">Home</a>
+                        <a class="" href="/" data-i18n="nav.home">Home</a>
                     </li>
                     <li class="">
-                        <a class="" href="/pages/about.html">About</a>
+                        <a class="" href="/pages/about.html" data-i18n="nav.about">About</a>
                     </li>
                     <li class="">
-                        <a class="" href="/#manifesto">Manifesto</a>
+                        <a class="" data-i18n="nav.mission" href="/#mission">Mission</a>
                     </li>
                     <li class="">
-                        <a class="" href="/pages/archive.html">Archive</a>
+                        <a class="" href="/pages/archive.html" data-i18n="nav.archive">Archive</a>
                     </li>
                     <li class="">
-                        <a class="" href="/pages/notes.html">Notes</a>
+                        <a class="" href="/pages/notes.html" data-i18n="nav.notes">Notes</a>
                     </li>
                     <li class="">
-                        <a class="" href="/pages/antiquarium.html">Antiquarium</a>
+                        <a class="" href="/pages/antiquarium.html" data-i18n="nav.antiquarium">Antiquarium</a>
                     </li>
                     <li class="">
-                        <a class="" href="/pages/contact.html">Contact</a>
+                        <a class="" href="/pages/contact.html" data-i18n="nav.contact">Contact</a>
                     </li>
                 </ul>
 
             </div>
             <div class="line"></div>
             <div class="footer-contact">
-                <h4>CONTACT</h4>
+                <h4 data-i18n="footer.contact">CONTACT</h4>
                 <ul>
                     <li class=""><a href="https://www.instagram.com/january8thproject/
-" class="">Instagram</a></li>
+" class="" data-i18n="social.instagram">Instagram</a></li>
                     <li class=""><a href="https://www.linkedin.com/in/kave-amini-khanimani-10127b2b0/"
-                            class="">LinkedIn</a></li>
-                    <li class=""><a href="https://www.youtube.com/@January8thProject" class="">YouTube</a></li>
+                            class="" data-i18n="social.linkedin">LinkedIn</a></li>
+                    <li class=""><a href="https://www.youtube.com/@January8thProject" class="" data-i18n="social.youtube">YouTube</a></li>
                 </ul>
             </div>
         </div>
@@ -401,6 +401,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
+    <script src="../translations-fa.js"></script>
     <script src="../main.js"></script>
 </body>
 

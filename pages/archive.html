@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
   <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400..700;1,400..600&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400..700;1,400..600&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Vazirmatn:wght@100..900&display=swap"
     rel="stylesheet" />
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -68,11 +68,11 @@
               <span class="brand-flag-band brand-flag-band--tail"></span>
             </span>
           </span>
-          <span>January8th</span>
-          <span class="brand-role"><span>Born Twice ·</span> <span>A Witness Far From Home</span></span>
+          <span data-i18n="brand.name">January8th</span>
+          <span class="brand-role" data-i18n="brand.role"><span>Born Twice ·</span> <span>A Witness Far From Home</span></span>
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        <button data-i18n-attr="aria-label:t.6c7195551d" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -80,31 +80,31 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" href="/">Home</a>
+              <a class="nav-link" href="/" data-i18n="nav.home">Home</a>
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="/pages/about.html">About</a>
+              <a class="nav-link" href="/pages/about.html" data-i18n="nav.about">About</a>
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="/#manifesto">Manifesto</a>
+              <a class="nav-link" data-i18n="nav.mission" href="/#mission">Mission</a>
             </li>
 
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/pages/archive.html">Archive</a>
+              <a class="nav-link active" aria-current="page" href="/pages/archive.html" data-i18n="nav.archive">Archive</a>
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="/pages/notes.html">Notes</a>
+              <a class="nav-link" href="/pages/notes.html" data-i18n="nav.notes">Notes</a>
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="/pages/antiquarium.html">Antiquarium</a>
+              <a class="nav-link" href="/pages/antiquarium.html" data-i18n="nav.antiquarium">Antiquarium</a>
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="/pages/contact.html">Contact</a>
+              <a class="nav-link" href="/pages/contact.html" data-i18n="nav.contact">Contact</a>
             </li>
           </ul>
         </div>
@@ -117,9 +117,9 @@
 
     <section class="section archive-hero" id="archive-hero">
       <div class="archive-container">
-        <h2>Archive</h2>
+        <h2 data-i18n="nav.archive">Archive</h2>
 
-        <p>
+        <p data-i18n="archive.intro">
           What has been gathered here is a fragment of my visual identity. It
           is a fragment of my shadow, cast behind me upon the uneven and
           endless road I have walked for many years. These works are the
@@ -132,9 +132,9 @@
     </section>
 
     <section class="section featured" id="chronological-archive">
-      <h2>Chronological Archive</h2>
+      <h2 data-i18n="archive.chronological">Chronological Archive</h2>
 
-      <p class="archive-section-intro">
+      <p class="archive-section-intro" data-i18n="archive.chronologicalIntro">
         Here the works are laid out like the rooms of a Persian garden,
         each path leading to its own discipline. Choose Typography,
         Graphic Design, Motion Graphics or Computer Graphics, and walk
@@ -145,29 +145,29 @@
       <div class="archive-options-grid">
         <article>
           <a class="archive-category-link" href="/pages/typography.html">
-            <img src="../Assets/Icons/Typography symbol.svg" alt="Typography" />
-            <span>Typography</span>
+            <img data-i18n-attr="alt:t.603850e072" src="../Assets/Icons/Typography symbol.svg" alt="Typography" />
+            <span data-i18n="archive.typography">Typography</span>
           </a>
         </article>
 
         <article>
           <a class="archive-category-link" href="/pages/graphic-design.html">
-            <img src="../Assets/Icons/Graphic Design Symbol.svg" alt="Graphic Design" />
-            <span>Graphic Design</span>
+            <img data-i18n-attr="alt:t.f36a773a60" src="../Assets/Icons/Graphic Design Symbol.svg" alt="Graphic Design" />
+            <span data-i18n="archive.graphicDesign">Graphic Design</span>
           </a>
         </article>
 
         <article>
           <a class="archive-category-link" href="/pages/motion-graphics.html">
-            <img src="../Assets/Icons/Motion Graphics Symbol.svg" alt="Motion Graphics" />
-            <span>Motion Graphics</span>
+            <img data-i18n-attr="alt:t.50233aa369" src="../Assets/Icons/Motion Graphics Symbol.svg" alt="Motion Graphics" />
+            <span data-i18n="archive.motionGraphics">Motion Graphics</span>
           </a>
         </article>
 
         <article>
           <a class="archive-category-link" href="/pages/computer-graphics.html">
-            <img src="../Assets/Icons/Computer Graphics symbol.svg" alt="Computer Graphics" />
-            <span>Computer Graphics</span>
+            <img data-i18n-attr="alt:t.b0c11e4372" src="../Assets/Icons/Computer Graphics symbol.svg" alt="Computer Graphics" />
+            <span data-i18n="archive.computerGraphics">Computer Graphics</span>
           </a>
         </article>
       </div>
@@ -175,9 +175,9 @@
 
     <section class="section archive-personal" id="personal-vault">
       <div class="archive-copy">
-        <h2 class="header-left">Personal Vault</h2>
+        <h2 class="header-left" data-i18n="personalVault.title">Personal Vault</h2>
 
-        <p>
+        <p data-i18n="personalVault.short">
           What awaits you within this endless labyrinth is divided into three
           domains: Traditional, Digitized, and Posthuman. Each serves as a
           gateway into an unknown and boundless territory. Together, they form
@@ -187,11 +187,11 @@
           ultimately posthuman—truth.
         </p>
 
-        <a href="/pages/Personl_Vault.html" class="btn">Read More</a>
+        <a href="/pages/Personl_Vault.html" class="btn" data-i18n="common.readMore">Read More</a>
       </div>
 
       <div class="archive-media">
-        <a class="archive-media-link" href="/pages/Personl_Vault.html" aria-label="Open Personal Vault">
+        <a data-i18n-attr="aria-label:t.709003c6ca" class="archive-media-link" href="/pages/Personl_Vault.html" aria-label="Open Personal Vault">
           <img class="archive-img" src="../Assets/Webp/WebP Background images/Webp version Of September 2026 Hero Images/Personal Vault - Vakil Columns.webp"
             alt="" loading="lazy" decoding="async" />
         </a>
@@ -200,19 +200,19 @@
 
     <section class="section archive-personal" id="inspirations-vault">
       <div class="archive-copy">
-        <h2 class="header-left">Inspirations Vault</h2>
+        <h2 class="header-left" data-i18n="inspirationVault.title">Inspirations Vault</h2>
 
-        <p>
+        <p data-i18n="inspirationVault.short">
           The Sea of Fertility of my life is composed of two parts.
           The first is the collection of recurring dreams that have surrounded me throughout the vast ocean of life,
           suspended like ethereal fragments of mist—visions that continually take shape, dissolve, and return.
         </p>
 
-        <a href="/pages/Inspiration_Vault.html" class="btn">Read More</a>
+        <a href="/pages/Inspiration_Vault.html" class="btn" data-i18n="common.readMore">Read More</a>
       </div>
 
       <div class="archive-media">
-        <a class="archive-media-link" href="/pages/Inspiration_Vault.html" aria-label="Open Inspirations Vault">
+        <a data-i18n-attr="aria-label:t.1dc7d0e5c5" class="archive-media-link" href="/pages/Inspiration_Vault.html" aria-label="Open Inspirations Vault">
           <img class="archive-img" src="../Assets/Webp/WebP Background images/Webp version Of September 2026 Hero Images/Inspirations Vault - Tomb of Khayyam.webp" alt=""
             loading="lazy" decoding="async" />
         </a>
@@ -221,9 +221,9 @@
 
     <section class="section archive-personal" id="motion-vault">
       <div class="archive-copy">
-        <h2 class="header-left">Motion Vault</h2>
+        <h2 class="header-left" data-i18n="motionVault.title">Motion Vault</h2>
 
-        <p>
+        <p data-i18n="motionVault.short">
           This is no ordinary gateway.
 
           These are the gates of the Inferno—the Inferno that takes shape upon entering this endless chamber,
@@ -231,11 +231,11 @@
           heart that gives life to the myth known as “I.”
         </p>
 
-        <a href="/pages/Motion_Vault.html" class="btn">Read More</a>
+        <a href="/pages/Motion_Vault.html" class="btn" data-i18n="common.readMore">Read More</a>
       </div>
 
       <div class="archive-media">
-        <a class="archive-media-link" href="/pages/Motion_Vault.html" aria-label="Open Motion Vault">
+        <a data-i18n-attr="aria-label:t.f0c3bee972" class="archive-media-link" href="/pages/Motion_Vault.html" aria-label="Open Motion Vault">
           <img class="archive-img" src="../Assets/Webp/WebP Background images/Webp version Of September 2026 Hero Images/Motion Vault - Taq-e Bostan.webp"
             alt="" loading="lazy" decoding="async" />
         </a>
@@ -243,9 +243,9 @@
     </section>
 
     <section class="section featured" id="portfolio-vaults">
-      <h2>Portfolio Vaults</h2>
+      <h2 data-i18n="archive.portfolioVaults">Portfolio Vaults</h2>
 
-      <p class="archive-section-intro">
+      <p class="archive-section-intro" data-i18n="archive.portfolioVaultsIntro">
         Like the old Persian chests where a family kept its finest
         carpets and heirlooms, each vault below holds a complete
         portfolio, bound and ready to be carried away. Choose a vault to
@@ -255,28 +255,28 @@
 
       <div class="archive-options-grid">
         <article>
-          <a class="archive-category-link" href="../Assets/Portfolio I .pdf" download
+          <a data-i18n-attr="aria-label:t.d37aed3de8" class="archive-category-link" href="../Assets/Portfolio I .pdf" download
             aria-label="Download Portfolio I">
-            <img src="../Assets/Icons/Portfolio I .svg" alt="Portfolio I" />
+            <img data-i18n-attr="alt:t.0da78d4679" src="../Assets/Icons/Portfolio I .svg" alt="Portfolio I" />
           </a>
         </article>
 
         <article>
-          <a class="archive-category-link" href="../Assets/Portfolio II .pdf" download
+          <a data-i18n-attr="aria-label:t.f864259a23" class="archive-category-link" href="../Assets/Portfolio II .pdf" download
             aria-label="Download Portfolio II">
-            <img src="../Assets/Icons/Portfolio II .svg" alt="Portfolio II" />
+            <img data-i18n-attr="alt:t.1ab1c6ffc8" src="../Assets/Icons/Portfolio II .svg" alt="Portfolio II" />
           </a>
         </article>
 
         <article>
-          <a class="archive-category-link" href="#" aria-label="Open Portfolio III">
-            <img src="../Assets/Icons/Portfolio III .svg" alt="Portfolio III" />
+          <a data-i18n-attr="aria-label:t.f3b6216375" class="archive-category-link" href="#" aria-label="Open Portfolio III">
+            <img data-i18n-attr="alt:t.2fd61fcb42" src="../Assets/Icons/Portfolio III .svg" alt="Portfolio III" />
           </a>
         </article>
 
         <article>
-          <a class="archive-category-link" href="#" aria-label="Open Portfolio IV">
-            <img src="../Assets/Icons/Portfolio IV .svg" alt="Portfolio IV" />
+          <a data-i18n-attr="aria-label:t.643ffdfaa0" class="archive-category-link" href="#" aria-label="Open Portfolio IV">
+            <img data-i18n-attr="alt:t.8d1d1cd2e5" src="../Assets/Icons/Portfolio IV .svg" alt="Portfolio IV" />
           </a>
         </article>
       </div>
@@ -289,36 +289,36 @@
         <a href="/">
           <img class="logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg" alt="">
           <img class="logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg" alt="">
-          <h3>January8th</h3>
+          <h3 data-i18n="brand.name">January8th</h3>
         </a>
       </div>
 
       <div class="line"></div>
 
       <div class="footer-navigation">
-        <h4>NAVIGATION</h4>
+        <h4 data-i18n="footer.navigation">NAVIGATION</h4>
 
         <ul>
           <li>
-            <a href="/">Home</a>
+            <a href="/" data-i18n="nav.home">Home</a>
           </li>
           <li>
-            <a href="/pages/about.html">About</a>
+            <a href="/pages/about.html" data-i18n="nav.about">About</a>
           </li>
           <li>
-            <a href="/#manifesto">Manifesto</a>
+            <a data-i18n="nav.mission" href="/#mission">Mission</a>
           </li>
           <li>
-            <a href="/pages/archive.html">Archive</a>
+            <a href="/pages/archive.html" data-i18n="nav.archive">Archive</a>
           </li>
           <li>
-            <a href="/pages/notes.html">Notes</a>
+            <a href="/pages/notes.html" data-i18n="nav.notes">Notes</a>
           </li>
           <li>
-            <a href="/pages/antiquarium.html">Antiquarium</a>
+            <a href="/pages/antiquarium.html" data-i18n="nav.antiquarium">Antiquarium</a>
           </li>
           <li>
-            <a href="/pages/contact.html">Contact</a>
+            <a href="/pages/contact.html" data-i18n="nav.contact">Contact</a>
           </li>
         </ul>
       </div>
@@ -326,24 +326,24 @@
       <div class="line"></div>
 
       <div class="footer-contact">
-        <h4>CONTACT</h4>
+        <h4 data-i18n="footer.contact">CONTACT</h4>
 
         <ul>
           <li>
-            <a href="https://www.instagram.com/january8thproject/">
+            <a href="https://www.instagram.com/january8thproject/" data-i18n="social.instagram">
               Instagram
             </a>
           </li>
 
           <li>
-            <a href="https://www.linkedin.com/in/kave-amini-khanimani-10127b2b0/">
+            <a href="https://www.linkedin.com/in/kave-amini-khanimani-10127b2b0/" data-i18n="social.linkedin">
               LinkedIn
             </a>
           </li>
 
 
           <li>
-            <a href="https://www.youtube.com/@January8thProject"> YouTube </a>
+            <a href="https://www.youtube.com/@January8thProject" data-i18n="social.youtube"> YouTube </a>
           </li>
         </ul>
       </div>
@@ -354,6 +354,7 @@
     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
     crossorigin="anonymous"></script>
 
+  <script src="../translations-fa.js"></script>
   <script src="../main.js"></script>
 </body>
 

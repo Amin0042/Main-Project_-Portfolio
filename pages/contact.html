@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400..700;1,400..600&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400..700;1,400..600&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Vazirmatn:wght@100..900&display=swap"
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -61,38 +61,38 @@
                         <span class="brand-flag-band brand-flag-band--tail"></span>
                       </span>
                     </span>
-                    <span>
+                    <span data-i18n="brand.name">
                         January8th
                     </span>
-                    <span class="brand-role"><span>Born Twice ·</span> <span>A Witness Far From Home</span></span>
+                    <span class="brand-role" data-i18n="brand.role"><span>Born Twice ·</span> <span>A Witness Far From Home</span></span>
                 </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                <button data-i18n-attr="aria-label:t.6c7195551d" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                            <a class="nav-link active" aria-current="page" href="/" data-i18n="nav.home">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/pages/about.html">About</a>
+                            <a class="nav-link" href="/pages/about.html" data-i18n="nav.about">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/#manifesto">Manifesto</a>
+                            <a class="nav-link" data-i18n="nav.mission" href="/#mission">Mission</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/pages/archive.html">Archive</a>
+                            <a class="nav-link" href="/pages/archive.html" data-i18n="nav.archive">Archive</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/pages/notes.html">Notes</a>
+                            <a class="nav-link" href="/pages/notes.html" data-i18n="nav.notes">Notes</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/pages/antiquarium.html">Antiquarium</a>
+                            <a class="nav-link" href="/pages/antiquarium.html" data-i18n="nav.antiquarium">Antiquarium</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/pages/contact.html">Contact</a>
+                            <a class="nav-link" href="/pages/contact.html" data-i18n="nav.contact">Contact</a>
                         </li>
                     </ul>
                 </div>
@@ -103,8 +103,8 @@
         <section class="section contact-image" id=""></section>
         <section class="section contact-hero" id="contact-hero">
             <div class="contact-container">
-                <h2>Contact</h2>
-                <p>Precisely above our heads, upon the ceiling, where the ancient figures converge, two index fingers
+                <h2 data-i18n="nav.contact">Contact</h2>
+                <p data-i18n="contact.intro">Precisely above our heads, upon the ceiling, where the ancient figures converge, two index fingers
                     reach toward one
                     another. Yet according to certain interpretations, it is believed that the human finger in question
                     shows little desire
@@ -133,7 +133,7 @@
             <div class="contacts-grid">
 
                 <div class="contact-social">
-                    <h2 class="">Get In Touch</h2>
+                    <h2 class="" data-i18n="contact.getInTouch">Get In Touch</h2>
                     <ul class="contact-icon">
                         <!-- <wbr> marks the ONE place each label is allowed to
                              wrap if its column ever runs short — "January8th" /
@@ -145,22 +145,21 @@
                              e.g. "JANUARY8THPROJ/ECT" — exactly the bug this
                              page had before. This holds regardless of exactly
                              how wide the column ends up at a given viewport. -->
-                        <li class=""><img src="../Assets/Icons/Instagram Icon.svg" alt="Instagram" class=""><a
+                        <li class=""><img data-i18n-attr="alt:t.55f015a0c5" src="../Assets/Icons/Instagram Icon.svg" alt="Instagram" class=""><a
                                 href="https://www.instagram.com/january8thproject/" class="">January8th<wbr>project</a>
                         </li>
-                        <li class=""><img src="../Assets/Icons/Youtube Icon.svg" alt="YouTube" class=""><a
+                        <li class=""><img data-i18n-attr="alt:t.8dd1bae8da" src="../Assets/Icons/Youtube Icon.svg" alt="YouTube" class=""><a
                                 href="https://www.youtube.com/@January8thProject" class="">January8th<wbr>project</a>
                         </li>
 
-                        <li class=""><img src="../Assets/Icons/Linkedin Icon.svg" alt="LinkedIn" class=""><a
+                        <li class=""><img data-i18n-attr="alt:t.e884c507c5" src="../Assets/Icons/Linkedin Icon.svg" alt="LinkedIn" class=""><a
                                 href="https://www.linkedin.com/in/kave-amini-khanimani-10127b2b0/?skipRedirect=true"
-                                class="">LinkedIn</a>
+                                class="" data-i18n="social.linkedin">LinkedIn</a>
                         </li>
-                        <li class=""><img src="../Assets/Icons/Website Icon.svg" alt="Website" class=""><a
+                        <li class=""><img data-i18n-attr="alt:t.15bbb9d0bb" src="../Assets/Icons/Website Icon.svg" alt="Website" class=""><a
                                 href="https://kave-amini-khanimani.ca" target="_blank" rel="noopener"
                                 class="">kave-amini-<wbr>khanimani.ca</a></li>
-                        <li class=""><img src="../Assets/Icons/Location Icon.svg" alt="Location" class="">Ottawa,
-                            Ontario, Canada</li>
+                        <li class=""><img data-i18n-attr="alt:t.ce5bf55137" src="../Assets/Icons/Location Icon.svg" alt="Location" class=""><span data-i18n="contact.location">Ottawa, Ontario, Canada</span></li>
                     </ul>
 
                 </div>
@@ -189,34 +188,34 @@
                         <input type="text" name="_honey" class="contact-honeypot" tabindex="-1" autocomplete="off">
 
                         <div class="mb-3 contact-field" data-field="name">
-                            <label for="name" class="form-label">Name</label>
+                            <label for="name" class="form-label" data-i18n="contact.name">Name</label>
                             <input type="text" class="form-control" id="name" name="Name" required
                                 aria-describedby="name-hint">
-                            <div id="name-hint" class="form-text contact-hint" aria-hidden="true">Please write down your
+                            <div data-i18n="t.d39f86620f" id="name-hint" class="form-text contact-hint" aria-hidden="true">Please write down your
                                 name!</div>
                         </div>
                         <div class="mb-3 contact-field" data-field="email">
-                            <label for="exampleInputEmail1" class="form-label">Email address</label>
+                            <label for="exampleInputEmail1" class="form-label" data-i18n="contact.email">Email address</label>
                             <input type="email" class="form-control" id="exampleInputEmail1" name="Email" required
                                 aria-describedby="email-hint">
-                            <div id="email-hint" class="form-text contact-hint" aria-hidden="true">We'll never share
+                            <div data-i18n="t.8ad18513dc" id="email-hint" class="form-text contact-hint" aria-hidden="true">We'll never share
                                 your email with anyone else.</div>
                         </div>
                         <div class="mb-3 contact-field" data-field="subject">
-                            <label for="subject" class="form-label">Subject</label>
+                            <label for="subject" class="form-label" data-i18n="contact.subject">Subject</label>
                             <input type="text" class="form-control" id="subject" name="Subject"
                                 aria-describedby="subject-hint">
-                            <div id="subject-hint" class="form-text contact-hint" aria-hidden="true">Subject line</div>
+                            <div data-i18n="t.0d02b5a081" id="subject-hint" class="form-text contact-hint" aria-hidden="true">Subject line</div>
                         </div>
                         <div class="mb-3 contact-field" data-field="message">
-                            <label for="message" class="form-label">Message</label>
+                            <label for="message" class="form-label" data-i18n="contact.message">Message</label>
                             <textarea class="form-control contact-message" id="message" name="Message" rows="6" required
                                 aria-describedby="message-hint"></textarea>
-                            <div id="message-hint" class="form-text contact-hint" aria-hidden="true">Please write down
+                            <div data-i18n="t.2cf54e8fe0" id="message-hint" class="form-text contact-hint" aria-hidden="true">Please write down
                                 your message!</div>
                         </div>
 
-                        <button type="submit" class="">Submit</button>
+                        <button type="submit" class="" data-i18n="contact.submit">Submit</button>
                         <p class="contact-form-status" id="contact-form-status" role="status" aria-live="polite"></p>
                     </form>
                 </div>
@@ -231,47 +230,47 @@
                     <img class="logo-dark" src="../Assets/Icons/Yellow Lion logo of january8th website b&amp;w.svg"
                         alt="">
                     <img class="logo-light" src="../Assets/Icons/Lion logo of january8th website b&amp;w.svg" alt="">
-                    <h3>January8th</h3>
+                    <h3 data-i18n="brand.name">January8th</h3>
                 </a>
             </div>
             <div class="line"></div>
             <div class="footer-navigation">
-                <h4>NAVIGATION</h4>
+                <h4 data-i18n="footer.navigation">NAVIGATION</h4>
                 <ul>
                     <li class="">
-                        <a class="" href="/">Home</a>
+                        <a class="" href="/" data-i18n="nav.home">Home</a>
                     </li>
                     <li class="">
-                        <a class="" href="/pages/about.html">About</a>
+                        <a class="" href="/pages/about.html" data-i18n="nav.about">About</a>
                     </li>
                     <li class="">
-                        <a class="" href="/#manifesto">Manifesto</a>
+                        <a class="" data-i18n="nav.mission" href="/#mission">Mission</a>
                     </li>
                     <li class="">
-                        <a class="" href="/pages/archive.html">Archive</a>
+                        <a class="" href="/pages/archive.html" data-i18n="nav.archive">Archive</a>
                     </li>
                     <li class="">
-                        <a class="" href="/pages/notes.html">Notes</a>
+                        <a class="" href="/pages/notes.html" data-i18n="nav.notes">Notes</a>
                     </li>
                     <li class="">
-                        <a class="" href="/pages/antiquarium.html">Antiquarium</a>
+                        <a class="" href="/pages/antiquarium.html" data-i18n="nav.antiquarium">Antiquarium</a>
                     </li>
                     <li class="">
-                        <a class="" href="/pages/contact.html">Contact</a>
+                        <a class="" href="/pages/contact.html" data-i18n="nav.contact">Contact</a>
                     </li>
                 </ul>
 
             </div>
             <div class="line"></div>
             <div class="footer-contact">
-                <h4>CONTACT</h4>
+                <h4 data-i18n="footer.contact">CONTACT</h4>
                 <ul>
                     <li class=""><a href="https://www.instagram.com/january8thproject/
-" class="">Instagram</a></li>
+" class="" data-i18n="social.instagram">Instagram</a></li>
                     <li class=""><a href="https://www.linkedin.com/in/kave-amini-khanimani-10127b2b0/
-" class="">LinkedIn</a></li>
+" class="" data-i18n="social.linkedin">LinkedIn</a></li>
                     <li class=""><a href="https://www.youtube.com/@January8thProject
-" class="">YouTube</a></li>
+" class="" data-i18n="social.youtube">YouTube</a></li>
                 </ul>
             </div>
         </div>
@@ -280,6 +279,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
+    <script src="../translations-fa.js"></script>
     <script src="../main.js"></script>
 </body>
 
