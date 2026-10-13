@@ -6,8 +6,8 @@
 window.PERSIAN_TRANSLATIONS = {
   "contact.location": "اتاوا، انتاریو، کانادا",
   "brand.name": "هجده دی",
-  "title.Kave Amini Khanimani": "کاوه امینی خانیمانی",
-  "title.Antiquarium — Kave Amini Khanimani": "عتیقه خانه — کاوه امینی خانیمانی",
+  "title.Kave Amini Khanimani": "کاوه امینی خانیمنی",
+  "title.Antiquarium — Kave Amini Khanimani": "عتیقه خانه — کاوه امینی خانیمنی",
   "title.Personal Vault": "گنجینه‌ی شخصی",
   "title.Inspiration Vault": "گنجینه‌ی الهام",
   "title.Motion Vault": "گنجینه‌ی متحرک",
