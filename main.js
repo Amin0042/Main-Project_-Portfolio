@@ -1971,7 +1971,11 @@ if (typeof document !== "undefined") {
 
       currentSlide = Math.min(currentSlide, maximumSlide);
 
-      track.style.transform = `translateX(-${currentSlide * distance}px)`;
+      // In Persian (RTL) the flex track lines up from the right edge and
+      // its later cards overflow to the left, so it has to slide the
+      // other way — rightwards — to bring them into view.
+      const direction = getComputedStyle(track).direction === "rtl" ? 1 : -1;
+      track.style.transform = `translateX(${direction * currentSlide * distance}px)`;
 
       if (shouldAnimate) {
         markCarouselMoving();
@@ -2055,6 +2059,12 @@ if (typeof document !== "undefined") {
     });
 
     window.addEventListener("resize", updateCarousel);
+
+    // EN/پ flips the layout direction, so the current slide's offset has
+    // to be recomputed for the new side.
+    document.addEventListener("languagechange", function () {
+      updateCarousel();
+    });
 
     updateCarousel();
   });
