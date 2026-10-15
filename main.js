@@ -1809,12 +1809,14 @@ if (typeof document !== "undefined") {
     imageModal.image.alt = imageTitle;
     imageModal.title.textContent = imageTitle;
     imageModal.description.textContent = imageDescription;
-    // Featured Artworks cards and every artwork on the Personal Vault page
-    // (the only page with #personal-hero) open as a still plate: no zoom,
-    // and the dialog grows to show the whole introduction instead of a
-    // scroll box (see .image-modal.is-static in style.css).
+    // Featured Artworks cards, every artwork on the Personal Vault page
+    // (the only page with #personal-hero) and the Inspiration Vault's
+    // Dreams and Dreamers open as a still plate: no zoom, and the dialog
+    // grows to show the whole introduction instead of a scroll box (see
+    // .image-modal.is-static in style.css).
     const isStatic = Boolean(
-      image.closest("#featured") || document.getElementById("personal-hero")
+      image.closest("#featured, #dreams, #dreamers") ||
+        document.getElementById("personal-hero")
     );
     imageModal.modal.classList.toggle("is-static", isStatic);
     imageModal.imageWrap.title = isStatic
