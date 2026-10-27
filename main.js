@@ -1127,6 +1127,370 @@ function initializeAboutConnector() {
   }
 }
 
+// About page: the Human / Digital switch above the portrait. "Digital"
+// rebuilds the photo as a field of gold pixels on a canvas. The photo is
+// sampled on a coarse grid; the cool grey studio backdrop drops out, and
+// every remaining cell becomes a square whose size and gold follow the
+// photo's light. Brightness is judged against each cell's surroundings
+// rather than the whole picture, so the face keeps its features beside
+// the much brighter shirt. Pixels near the cursor (or a tap) are pushed
+// aside and spring back home; the canvas only animates while something
+// is still moving, and is only built the first time "Digital" is chosen.
+function initializeDigitalPortrait() {
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    return;
+  }
+
+  const toggle = document.querySelector(".portrait-toggle");
+  const portrait = document.querySelector(".about-portrait");
+  const photo = portrait && portrait.querySelector(".about-portrait-img");
+  const canvas =
+    portrait && portrait.querySelector(".about-portrait-digital canvas");
+
+  if (!toggle || !photo || !canvas || !canvas.getContext) {
+    return;
+  }
+
+  const context = canvas.getContext("2d");
+  const buttons = toggle.querySelectorAll("[data-portrait-mode]");
+  const reduceMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Grid pitch and the cursor's reach, both in CSS pixels.
+  const CELL = 5;
+  const RADIUS = 64;
+  const PUSH = 3.2;
+  const SPRING = 0.07;
+  const DAMPING = 0.8;
+  // Dark bronze → brand gold → hot gold → warm white, in 16 steps so the
+  // whole field is drawn with 16 fill colours instead of one per pixel.
+  const RAMP = [
+    [70, 52, 22],
+    [170, 135, 62],
+    [232, 192, 105],
+    [255, 226, 160],
+    [255, 248, 228],
+  ];
+  const LEVELS = 16;
+  const palette = [];
+
+  for (let level = 0; level < LEVELS; level++) {
+    const position = (level / (LEVELS - 1)) * (RAMP.length - 1);
+    const index = Math.min(Math.floor(position), RAMP.length - 2);
+    const mix = position - index;
+    palette.push(
+      "rgb(" +
+        RAMP[index]
+          .map(function (channel, c) {
+            return Math.round(channel + (RAMP[index + 1][c] - channel) * mix);
+          })
+          .join(",") +
+        ")"
+    );
+  }
+
+  let field = null;
+  let builtWidth = 0;
+  let pointer = null;
+  let frame = 0;
+  let tapTimer = 0;
+
+  function luminance(data, i) {
+    return (0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]) / 255;
+  }
+
+  // One square per kept cell, in typed arrays: home (hx, hy), position,
+  // velocity and size, grouped by colour level for drawing.
+  function build() {
+    const width = portrait.clientWidth;
+    const height = portrait.clientHeight;
+
+    if (!width || !height || !photo.naturalWidth) {
+      return false;
+    }
+
+    // Up to 3x, so the squares stay razor-edged on high-density phones.
+    const ratio = Math.min(window.devicePixelRatio || 1, 3);
+    canvas.width = Math.round(width * ratio);
+    canvas.height = Math.round(height * ratio);
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+    const cols = Math.floor(width / CELL);
+    const rows = Math.floor(height / CELL);
+    const offsetX = (width - cols * CELL) / 2 + CELL / 2;
+    const offsetY = (height - rows * CELL) / 2 + CELL / 2;
+
+    // Same crop as the <img>: object-fit cover, anchored to the top.
+    const sample = document.createElement("canvas");
+    sample.width = cols;
+    sample.height = rows;
+    const sampleContext = sample.getContext("2d", { willReadFrequently: true });
+    const scale = Math.max(cols / photo.naturalWidth, rows / photo.naturalHeight);
+    const drawWidth = photo.naturalWidth * scale;
+    sampleContext.drawImage(
+      photo,
+      (cols - drawWidth) / 2,
+      0,
+      drawWidth,
+      photo.naturalHeight * scale
+    );
+
+    // Each cell's surroundings: the grid shrunk sixfold and stretched
+    // back with smoothing, i.e. a cheap blur.
+    const blurred = document.createElement("canvas");
+    blurred.width = Math.max(1, Math.round(cols / 6));
+    blurred.height = Math.max(1, Math.round(rows / 6));
+    blurred.getContext("2d").drawImage(sample, 0, 0, blurred.width, blurred.height);
+    const surround = document.createElement("canvas");
+    surround.width = cols;
+    surround.height = rows;
+    const surroundContext = surround.getContext("2d", { willReadFrequently: true });
+    surroundContext.imageSmoothingQuality = "high";
+    surroundContext.drawImage(blurred, 0, 0, cols, rows);
+
+    let pixels;
+    let means;
+
+    try {
+      pixels = sampleContext.getImageData(0, 0, cols, rows).data;
+      means = surroundContext.getImageData(0, 0, cols, rows).data;
+    } catch (error) {
+      // A cross-origin or file:// photo can't be read back; stay human.
+      return false;
+    }
+
+    const kept = [];
+
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const i = (row * cols + col) * 4;
+        const light = luminance(pixels, i);
+        const warmth = pixels[i] - pixels[i + 2];
+
+        // The backdrop is a dim, slightly blue grey: skin, tie and shirt
+        // are all either warmer than it or much brighter.
+        if (light <= 0.42 && !(warmth > 10 && light > 0.16)) {
+          continue;
+        }
+
+        const mean = luminance(means, i);
+        const tone = Math.min(
+          1,
+          Math.max(0, 0.56 + 0.5 * (mean - 0.55) + 2.4 * (light - mean))
+        );
+        kept.push(col, row, tone);
+      }
+    }
+
+    const count = kept.length / 3;
+    const byLevel = [];
+
+    for (let level = 0; level < LEVELS; level++) {
+      byLevel.push([]);
+    }
+
+    field = {
+      count: count,
+      ratio: ratio,
+      width: width,
+      height: height,
+      hx: new Float32Array(count),
+      hy: new Float32Array(count),
+      x: new Float32Array(count),
+      y: new Float32Array(count),
+      vx: new Float32Array(count),
+      vy: new Float32Array(count),
+      size: new Float32Array(count),
+      levels: null,
+    };
+
+    for (let n = 0; n < count; n++) {
+      const tone = kept[n * 3 + 2];
+      field.hx[n] = field.x[n] = offsetX + kept[n * 3] * CELL;
+      field.hy[n] = field.y[n] = offsetY + kept[n * 3 + 1] * CELL;
+      // Whole device pixels wide, so no square has a blurred edge.
+      field.size[n] =
+        Math.max(1, Math.round(CELL * (0.2 + 0.6 * tone) * ratio)) / ratio;
+      byLevel[Math.round(tone * (LEVELS - 1))].push(n);
+    }
+
+    field.levels = byLevel.map(function (list) {
+      return Uint32Array.from(list);
+    });
+    builtWidth = width;
+    return true;
+  }
+
+  // Each square's corner is snapped to the device-pixel grid as well.
+  function draw() {
+    const ratio = field.ratio;
+    context.clearRect(0, 0, field.width, field.height);
+
+    for (let level = 0; level < LEVELS; level++) {
+      const list = field.levels[level];
+      context.fillStyle = palette[level];
+
+      for (let k = 0; k < list.length; k++) {
+        const n = list[k];
+        const size = field.size[n];
+        context.fillRect(
+          Math.round((field.x[n] - size / 2) * ratio) / ratio,
+          Math.round((field.y[n] - size / 2) * ratio) / ratio,
+          size,
+          size
+        );
+      }
+    }
+  }
+
+  // Springs every square toward home, adds the cursor's push, and reports
+  // whether anything is still visibly moving.
+  function step() {
+    const { hx, hy, x, y, vx, vy } = field;
+    const reach = RADIUS * RADIUS;
+    let moving = false;
+
+    for (let n = 0; n < field.count; n++) {
+      let ax = (hx[n] - x[n]) * SPRING;
+      let ay = (hy[n] - y[n]) * SPRING;
+
+      if (pointer) {
+        const dx = x[n] - pointer.x;
+        const dy = y[n] - pointer.y;
+        const distance2 = dx * dx + dy * dy;
+
+        if (distance2 < reach && distance2 > 0.01) {
+          const distance = Math.sqrt(distance2);
+          const force = (1 - distance / RADIUS) * PUSH;
+          ax += (dx / distance) * force;
+          ay += (dy / distance) * force;
+        }
+      }
+
+      vx[n] = (vx[n] + ax) * DAMPING;
+      vy[n] = (vy[n] + ay) * DAMPING;
+      x[n] += vx[n];
+      y[n] += vy[n];
+
+      if (
+        !moving &&
+        (Math.abs(vx[n]) > 0.02 ||
+          Math.abs(vy[n]) > 0.02 ||
+          Math.abs(hx[n] - x[n]) > 0.05 ||
+          Math.abs(hy[n] - y[n]) > 0.05)
+      ) {
+        moving = true;
+      }
+    }
+
+    return moving;
+  }
+
+  function tick() {
+    frame = 0;
+    const moving = step();
+    draw();
+
+    if (moving) {
+      frame = window.requestAnimationFrame(tick);
+    }
+  }
+
+  function wake() {
+    if (!frame && field && !reduceMotion) {
+      frame = window.requestAnimationFrame(tick);
+    }
+  }
+
+  function setMode(mode) {
+    const digital = mode === "digital";
+
+    if (digital) {
+      if (!photo.complete || !photo.naturalWidth) {
+        photo.addEventListener(
+          "load",
+          function () {
+            setMode(mode);
+          },
+          { once: true }
+        );
+        return;
+      }
+
+      if ((!field || builtWidth !== portrait.clientWidth) && !build()) {
+        toggle.hidden = true;
+        return;
+      }
+
+      draw();
+    } else if (frame) {
+      window.cancelAnimationFrame(frame);
+      frame = 0;
+    }
+
+    portrait.classList.toggle("is-digital", digital);
+    toggle.dataset.mode = mode;
+    buttons.forEach(function (button) {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.portraitMode === mode)
+      );
+    });
+  }
+
+  function pointAt(event) {
+    const rect = canvas.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  }
+
+  canvas.addEventListener("pointermove", function (event) {
+    if (event.pointerType === "mouse") {
+      pointer = pointAt(event);
+      wake();
+    }
+  });
+
+  canvas.addEventListener("pointerleave", function () {
+    pointer = null;
+    wake();
+  });
+
+  // Touch has no hover: a tap pushes the pixels aside for a moment.
+  canvas.addEventListener("pointerdown", function (event) {
+    pointer = pointAt(event);
+    wake();
+    window.clearTimeout(tapTimer);
+    tapTimer = window.setTimeout(function () {
+      if (event.pointerType !== "mouse") {
+        pointer = null;
+      }
+    }, 220);
+  });
+
+  buttons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      setMode(button.dataset.portraitMode);
+    });
+  });
+
+  // The grid is built for the frame's width; rebuild when the layout
+  // changes it (two columns ↔ stacked), but only while it's on show.
+  if (typeof window.ResizeObserver === "function") {
+    new ResizeObserver(function () {
+      if (
+        field &&
+        portrait.classList.contains("is-digital") &&
+        builtWidth !== portrait.clientWidth &&
+        build()
+      ) {
+        draw();
+      }
+    }).observe(portrait);
+  }
+
+  toggle.hidden = false;
+}
+
 // About page — Background section: expands/collapses the truncated
 // "Influence" panel (the only column long enough to need a "Read More"
 // toggle; see .background-copy.collapsible in style.css, scoped to
@@ -1171,6 +1535,7 @@ if (typeof module !== "undefined") {
     initializeBrandFlag,
     initializeFooterFlag,
     initializeAboutConnector,
+    initializeDigitalPortrait,
   };
 }
 
@@ -1191,6 +1556,7 @@ if (typeof document !== "undefined") {
   initializeBrandFlag();
   initializeFooterFlag();
   initializeAboutConnector();
+  initializeDigitalPortrait();
 
   if (openButton) {
     const focusableSelector =

@@ -2581,13 +2581,244 @@ body.light .popup-container p::-webkit-scrollbar-thumb {
     inset 0 1px 0 rgba(var(--highlight-rgb), 0.32),
     inset 0 -10px 16px rgba(var(--ink-rgb), 0.32),
     0 8px 20px rgba(var(--ink-rgb), 0.3);
+  position: relative;
+  isolation: isolate;
 }
+/* Editorial grade: a touch more contrast, a touch less saturation, so the
+   photo sits in the site's gold-and-ink palette. It develops in from a
+   soft blur on load, like a print coming up in the tray. */
 .about-portrait-img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center top;
+  filter: contrast(1.05) saturate(0.9);
+  transform: scale(1.01);
+  transition:
+    transform 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.8s ease,
+    opacity 0.7s ease;
+  animation: about-portrait-develop 1.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+/* Gold light from the top left falling to ink at the bottom, plus a soft
+   vignette, laid over the photo in soft-light so skin tones stay true. */
+.about-portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 85% 70% at 50% 35%,
+      transparent 55%,
+      rgba(var(--ink-rgb), 0.55) 100%
+    ),
+    linear-gradient(
+      155deg,
+      rgba(var(--gold-rgb), 0.45) 0%,
+      transparent 45%,
+      rgba(var(--ink-rgb), 0.35) 100%
+    );
+  mix-blend-mode: soft-light;
+}
+/* The frame's glass rim (the figure's own inset shadows sit under the
+   photo, so they're repeated here on top) and a sheen that crosses the
+   glass once on hover. */
+.about-portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.45),
+    inset 0 0 0 1px rgba(var(--gold-rgb), 0.18),
+    inset 0 -24px 40px rgba(var(--ink-rgb), 0.35);
+  background: linear-gradient(
+      115deg,
+      transparent 40%,
+      rgba(var(--highlight-rgb), 0.22) 50%,
+      transparent 60%
+    )
+    no-repeat;
+  background-size: 250% 100%;
+  background-position: 120% 0;
+  transition: background-position 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.about-portrait:hover .about-portrait-img {
+  transform: scale(1.04);
+  filter: contrast(1.08) saturate(1);
+}
+.about-portrait:hover::after {
+  background-position: -20% 0;
+}
+@keyframes about-portrait-develop {
+  from {
+    opacity: 0;
+    filter: blur(8px) contrast(1.05) saturate(0.4);
+    transform: scale(1.06);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about-portrait-img,
+  .about-portrait::after {
+    animation: none;
+    transition: none;
+  }
+  .about-portrait:hover .about-portrait-img {
+    transform: scale(1.01);
+  }
+}
+/* Column that stacks the Human / Digital switch above the frame. */
+.about-portrait-column {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+}
+/* Human / Digital switch: the theme toggle's gilded glass stretched into
+   a pill, with a solid gold thumb that slides under the active side. */
+.portrait-toggle {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  border: 1px solid var(--gold-border-card);
+  border-radius: 999px;
+  background-color: rgba(var(--surface-rgb), 0.55);
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--gold-rgb), 0.3),
+    rgba(var(--surface-rgb), 0.16)
+  );
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--highlight-rgb), 0.35),
+    inset 0 -6px 10px rgba(var(--ink-rgb), 0.3);
+}
+/* Until main.js reveals it, the switch keeps its space (invisibly) so
+   the frame below never jumps down when it appears. */
+.portrait-toggle[hidden] {
+  visibility: hidden;
+}
+.portrait-toggle-thumb {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  inset-inline-start: 4px;
+  width: calc(50% - 4px);
+  border-radius: inherit;
+  background-image: linear-gradient(
+    155deg,
+    rgba(var(--highlight-rgb), 0.95),
+    rgba(var(--gold-rgb), 0.95)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 2px 10px rgba(var(--ink-rgb), 0.35);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.portrait-toggle[data-mode="digital"] .portrait-toggle-thumb {
+  transform: translateX(100%);
+}
+[dir="rtl"] .portrait-toggle[data-mode="digital"] .portrait-toggle-thumb {
+  transform: translateX(-100%);
+}
+.portrait-toggle-option {
+  position: relative;
+  z-index: 1;
+  min-width: 6.5rem;
+  padding: 0.5rem 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  font-weight: var(--fw-small);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--secondary-gold-colour);
+  cursor:
+    var(--gothic-cursor-url) 16 5,
+    pointer;
+  transition: color 0.3s ease;
+}
+[dir="rtl"] .portrait-toggle-option {
+  font-size: 0.85rem;
+  letter-spacing: 0;
+}
+.portrait-toggle-option[aria-pressed="true"] {
+  color: rgb(var(--ink-rgb));
+}
+.portrait-toggle-option:focus-visible {
+  outline: 2px solid rgba(var(--highlight-rgb), 0.9);
+  outline-offset: 2px;
+}
+/* The digital self: a canvas of gold pixels sampled from the photo
+   (initializeDigitalPortrait() in main.js) on its own deep-ink ground,
+   so it reads the same in light and dark themes. Faint scan lines sit on
+   top; the frame's grade, rim and sheen stay above both layers. */
+.about-portrait-digital {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse 80% 65% at 50% 30%,
+    rgb(28, 25, 19),
+    rgb(var(--ink-rgb)) 75%
+  );
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.7s ease,
+    visibility 0s linear 0.7s;
+}
+.about-portrait-digital canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 3px rgba(var(--highlight-rgb), 0.45));
+  /* Vertical swipes still scroll the page on phones. */
+  touch-action: pan-y;
+}
+.about-portrait-digital::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(var(--highlight-rgb), 0.05) 0 1px,
+    transparent 1px 3px
+  );
+}
+.about-portrait.is-digital .about-portrait-digital {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.7s ease;
+}
+/* The photo's grade and vignette are tuned for skin and cloth; at full
+   strength they would muddy the pixels, so they ease off here. */
+.about-portrait::before {
+  transition: opacity 0.7s ease;
+}
+.about-portrait.is-digital::before {
+  opacity: 0.45;
+}
+.about-portrait.is-digital .about-portrait-img {
+  opacity: 0;
+  filter: blur(6px) contrast(1.05) saturate(0.9);
+}
+@media (prefers-reduced-motion: reduce) {
+  .portrait-toggle-thumb,
+  .about-portrait-digital {
+    transition: none;
+  }
 }
 @media screen and (max-width: 820px) {
   .about-hero {

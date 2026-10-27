@@ -172,10 +172,31 @@
                     last hope—the last fruit of his life, his youngest son—storms into the hall of the Serpent-King with
                     righteous fury.</p>
             </div>
-            <!-- Portrait frame: drop the photo in as
-                 <img class="about-portrait-img" src="../Assets/..." alt="Portrait of Kave Amini Khanimani" />
-                 inside the figure and remove aria-hidden. -->
-            <figure class="about-portrait" aria-hidden="true"></figure>
+            <!-- Portrait: 4:5 crops at three widths so phones and retina
+                 desktops each pull the smallest file that stays sharp.
+                 The Human / Digital switch above it swaps the photo for
+                 the same face rebuilt as a field of gold pixels, drawn by
+                 initializeDigitalPortrait() in main.js (hidden until that
+                 script runs, since it does nothing without it). -->
+            <div class="about-portrait-column">
+                <div data-i18n-attr="aria-label:about.portrait.view" class="portrait-toggle" role="group" aria-label="Portrait view" hidden>
+                    <span class="portrait-toggle-thumb" aria-hidden="true"></span>
+                    <button data-i18n="about.portrait.human" type="button" class="portrait-toggle-option" data-portrait-mode="human" aria-pressed="true">Human</button>
+                    <button data-i18n="about.portrait.digital" type="button" class="portrait-toggle-option" data-portrait-mode="digital" aria-pressed="false">Digital</button>
+                </div>
+                <figure class="about-portrait">
+                    <img data-i18n-attr="alt:about.portrait" class="about-portrait-img"
+                         src="../Assets/Webp/portrait/kave-portrait-840.webp"
+                         srcset="../Assets/Webp/portrait/kave-portrait-480.webp 480w,
+                                 ../Assets/Webp/portrait/kave-portrait-840.webp 840w,
+                                 ../Assets/Webp/portrait/kave-portrait-1200.webp 1200w,
+                                 ../Assets/Webp/portrait/kave-portrait-1680.webp 1680w"
+                         sizes="(max-width: 820px) 360px, 420px"
+                         width="840" height="1050" decoding="async" fetchpriority="high"
+                         alt="Portrait of Kave Amini Khanimani in a white shirt and striped tie, arms crossed" />
+                    <div class="about-portrait-digital" aria-hidden="true"><canvas></canvas></div>
+                </figure>
+            </div>
         </section>
         <!-- Where the portrait comes from: Canada, with Ottawa marked in the
              same gold as the Antiquarium's Iran map. Explanatory only, not
