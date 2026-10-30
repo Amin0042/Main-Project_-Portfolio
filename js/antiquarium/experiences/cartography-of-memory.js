@@ -16,6 +16,7 @@ import { createGalleryControls } from "../core/gallery-controls.js";
 import { createProjector } from "../core/geo-projection.js";
 import { getQualityPreset } from "../core/device-tier.js";
 import { iranBoundary, mapCenter, locations } from "./cartography-data.js";
+import { createPixelWorld } from "./cartography-world.js";
 import { pick, onLanguageChange } from "../core/i18n.js";
 
 const GOLD = 0xc6a85a;
@@ -207,6 +208,27 @@ export function createCartographyOfMemory(stage, context = {}) {
   );
   room.add(dust);
 
+  // ---- The world around Iran -----------------------------------------
+  // A separate layer of interactive pixels (cartography-world.js) that
+  // reads the plate's outline to leave a hole for it and touches nothing
+  // above this line.
+  const world = createPixelWorld({
+    room,
+    camera,
+    renderer,
+    project,
+    iranRing: ringPoints,
+    pitch: quality.worldPixelPitch,
+    reduceMotion,
+    // With reduced motion the page draws a single frame and no loop runs,
+    // so a world that arrives after it has to ask for one more.
+    onReady: () => {
+      if (reduceMotion) {
+        renderer.render(scene, camera);
+      }
+    },
+  });
+
   // ---- Camera rig ---------------------------------------------------
   // A wider, higher-angle default than THE FLOATING ARCHIVE's gallery
   // orbit — this is a map meant to be looked down onto, not a room of
@@ -370,6 +392,7 @@ export function createCartographyOfMemory(stage, context = {}) {
   function update(delta) {
     elapsed += delta;
     controls.update(delta);
+    world.update(delta);
 
     if (!selectedMarker) {
       const hit = pickMarker();
@@ -416,6 +439,7 @@ export function createCartographyOfMemory(stage, context = {}) {
     stopLanguageListener();
     hideInspector();
     controls.dispose();
+    world.dispose();
 
     landGeometry.dispose();
     landMaterial.dispose();

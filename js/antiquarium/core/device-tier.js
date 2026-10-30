@@ -25,6 +25,9 @@ const PRESETS = {
     ambientDust: 12,
     targetFps: 30,
     rotateSpeedScale: 0.85,
+    // Scene units between the map world's pixels (Cartography of Memory):
+    // larger means fewer pixels, at the square of the ratio.
+    worldPixelPitch: 0.13,
   },
   phone: {
     pixelRatioCap: 1.75,
@@ -33,6 +36,7 @@ const PRESETS = {
     ambientDust: 20,
     targetFps: 30,
     rotateSpeedScale: 0.9,
+    worldPixelPitch: 0.12,
   },
   tablet: {
     pixelRatioCap: 2,
@@ -41,6 +45,7 @@ const PRESETS = {
     ambientDust: 28,
     targetFps: null,
     rotateSpeedScale: 1,
+    worldPixelPitch: 0.095,
   },
   desktop: {
     pixelRatioCap: 2,
@@ -49,6 +54,7 @@ const PRESETS = {
     ambientDust: 34,
     targetFps: null,
     rotateSpeedScale: 1,
+    worldPixelPitch: 0.08,
   },
 };
 
