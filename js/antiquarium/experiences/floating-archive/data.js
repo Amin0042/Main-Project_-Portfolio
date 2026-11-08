@@ -43,8 +43,8 @@
 
 export const artworks = [
   {
-    title: "French Divinity",
-    title_fa: "الوهیت فرانسوی",
+    title: "The Revolution’s Children",
+    title_fa: "فرزندان انقلاب",
     image: "../../Assets/Webp/WEBP of Traditional works/French Divinity _result.webp",
     medium: "Traditional composition",
     medium_fa: "ترکیب‌بندی سنتی",
