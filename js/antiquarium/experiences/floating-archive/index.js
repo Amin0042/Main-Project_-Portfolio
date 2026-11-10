@@ -40,8 +40,15 @@ import { createStarfieldBackdrop } from "./starfield-backdrop.js";
 import { starPlacementFor } from "./constellation.js";
 import { getQualityPreset, getDeviceTier } from "../../core/device-tier.js";
 import { artworks } from "./data.js";
-import { pick, onLanguageChange } from "../../core/i18n.js";
 import { FOCUS_SCALE, RECEDE_SCALE, RECEDE_OPACITY, reduceMotion } from "./constants.js";
+import { pick, tr, isPersian, onLanguageChange } from "../../core/i18n.js";
+
+// Visitor-facing words built in JavaScript, in whichever language the
+// EN/پ switch is on (core/i18n.js). kave-amini-khanimani.ca's copy of
+// this file defines English-only versions of these same three helpers.
+const label = (english, persian) => tr(english, persian);
+const titleOf = (star) => pick(star.data, "title") || star.title;
+const formatNumber = (value) => (isPersian() ? Number(value).toLocaleString("fa-IR") : String(value));
 
 export function createFloatingArchive(stage, context = {}) {
   const { scene, camera, renderer } = stage;
@@ -73,7 +80,8 @@ export function createFloatingArchive(stage, context = {}) {
   scene.add(starfield.points);
 
   // ---- Memory Stars ---------------------------------------------------
-  const { starGeometry, haloGeometry, ringGeometry } = createSharedGeometry();
+  const { starGeometry, haloGeometry, ringGeometry, revealGeometry, revealFrameGeometry } =
+    createSharedGeometry();
   const stars = [];
   const basePlanes = [];
   const pendingLoads = [];
@@ -87,6 +95,8 @@ export function createFloatingArchive(stage, context = {}) {
       starGeometry,
       haloGeometry,
       ringGeometry,
+      revealGeometry,
+      revealFrameGeometry,
       quality,
       disposedRef,
     });
@@ -192,21 +202,28 @@ export function createFloatingArchive(stage, context = {}) {
   }
 
   function hideInspector() {
+    inspectedStar = null;
     if (!inspectorEl) {
       return;
     }
-    inspectedStar = null;
     inspectorEl.classList.remove("is-visible");
   }
 
-  // EN/پ flipped while a label is open: rewrite it in the new language.
+  // EN/پ flipped while a label is open: rewrite it in the new language,
+  // along with the journey controls and the hover card.
   const stopLanguageListener = onLanguageChange(() => {
     if (inspectedStar) {
       showInspector(inspectedStar);
     }
+    updateJourney();
+    if (hoverLabelStar) {
+      hoverTitleEl.textContent = titleOf(hoverLabelStar);
+    }
   });
 
   const _focusWorldPos = new THREE.Vector3();
+  const _focusQuaternion = new THREE.Quaternion();
+  const _focusNormal = new THREE.Vector3();
 
   function setFocus(star) {
     focusedStar = star;
@@ -217,9 +234,21 @@ export function createFloatingArchive(stage, context = {}) {
     // so the point navigation.js dollies toward has to be this star's
     // live WORLD position, not its room-local basePosition.
     star.holder.getWorldPosition(_focusWorldPos);
-    controls.focusOn(_focusWorldPos);
+    // The room's idle "breathing" scale eases back to exactly 1 once a
+    // star is focused; aim at where the star will be then, not where it
+    // is mid-breath, so the flight lands dead-centre.
+    _focusWorldPos.divideScalar(room.scale.x || 1);
+    star.basePlane.getWorldQuaternion(_focusQuaternion);
+    _focusNormal.set(0, 0, 1).applyQuaternion(_focusQuaternion);
+    // Frame the revealed artwork (its full rectangle, at focus scale),
+    // fitting whichever of its width/height is tighter on this screen.
+    const frameScale = FOCUS_SCALE * 1.35;
+    const size =
+      Math.max(star.revealSize.height, star.revealSize.width / Math.max(camera.aspect, 0.4)) * frameScale;
+    controls.focusOn(_focusWorldPos, { normal: _focusNormal, size });
     applyFocusTargets();
     showInspector(star);
+    updateJourney();
   }
 
   function clearFocus() {
@@ -231,6 +260,7 @@ export function createFloatingArchive(stage, context = {}) {
     controls.clearFocus();
     applyFocusTargets();
     hideInspector();
+    setAutoplay(false);
   }
 
   function resetView() {
@@ -265,6 +295,181 @@ export function createFloatingArchive(stage, context = {}) {
       }
     });
   }
+
+  // ---- The journey: travel the constellation, piece by piece ----------
+  // Stars are numbered in data.js order, which is also their order along
+  // the infinity path — so "next" is always the neighbour on the curve
+  // and every step is a short, readable flight, never a jump across the
+  // whole sky. Three ways in: ‹ › buttons and the arrow keys while a
+  // piece is open, and "Begin the journey", a guided tour that flies
+  // from piece to piece on its own, lingering on each one.
+  const AUTOPLAY_DWELL = reduceMotion ? 9 : 6.5; // seconds on each piece, once revealed
+  const SPOTLIGHT_DIM = 0.86; // how far the other stars fade while a piece is open
+  let autoplay = false;
+  let autoplayDwell = 0;
+
+  const stageEl = renderer.domElement.parentElement;
+  const stageFrameEl = (resetButtonEl && resetButtonEl.parentElement) || (stageEl && stageEl.parentElement);
+
+  const journeyEl = document.createElement("div");
+  journeyEl.className = "antiquarium-journey";
+  journeyEl.dir = "ltr";
+  journeyEl.innerHTML =
+    '<button type="button" class="antiquarium-journey-button" data-journey="prev">&#8249;</button>' +
+    '<span class="antiquarium-journey-count"></span>' +
+    '<button type="button" class="antiquarium-journey-button antiquarium-journey-play" data-journey="play"></button>' +
+    '<button type="button" class="antiquarium-journey-button" data-journey="next">&#8250;</button>';
+  const journeyPrevEl = journeyEl.querySelector('[data-journey="prev"]');
+  const journeyNextEl = journeyEl.querySelector('[data-journey="next"]');
+  const journeyPlayEl = journeyEl.querySelector('[data-journey="play"]');
+  const journeyCountEl = journeyEl.querySelector(".antiquarium-journey-count");
+  if (inspectorEl) {
+    const hintEl = inspectorEl.querySelector(".antiquarium-inspector-hint");
+    inspectorEl.insertBefore(journeyEl, hintEl || null);
+  }
+
+  const beginButtonEl = document.createElement("button");
+  beginButtonEl.type = "button";
+  beginButtonEl.className = "antiquarium-reset-button antiquarium-journey-begin";
+  stageFrameEl?.appendChild(beginButtonEl);
+
+  // A small title card that follows the star under the pointer, so a
+  // visitor can read what each star is, and learn that it opens, before
+  // committing to a click.
+  const hoverLabelEl = document.createElement("div");
+  hoverLabelEl.className = "antiquarium-hover-label";
+  hoverLabelEl.setAttribute("aria-hidden", "true");
+  hoverLabelEl.innerHTML =
+    '<span class="antiquarium-hover-label-title"></span><span class="antiquarium-hover-label-cta"></span>';
+  const hoverTitleEl = hoverLabelEl.querySelector(".antiquarium-hover-label-title");
+  const hoverCtaEl = hoverLabelEl.querySelector(".antiquarium-hover-label-cta");
+  stageEl?.appendChild(hoverLabelEl);
+  let hoverLabelStar = null;
+
+  function updateJourney() {
+    const index = focusedStar ? stars.indexOf(focusedStar) : -1;
+    // Out of the tab order (and the accessibility tree) while the label
+    // it lives in is faded out.
+    journeyEl.inert = index < 0;
+    journeyCountEl.textContent =
+      index >= 0 ? `${formatNumber(index + 1)} / ${formatNumber(stars.length)}` : "";
+    journeyPrevEl.setAttribute("aria-label", label("Previous artwork", "اثر پیشین"));
+    journeyNextEl.setAttribute("aria-label", label("Next artwork", "اثر بعدی"));
+    journeyPlayEl.innerHTML = autoplay ? "&#10074;&#10074;" : "&#9654;";
+    journeyPlayEl.setAttribute(
+      "aria-label",
+      autoplay ? label("Pause the journey", "توقف سفر") : label("Play the journey", "ادامه‌ی سفر")
+    );
+    journeyPlayEl.setAttribute("aria-pressed", autoplay ? "true" : "false");
+    beginButtonEl.textContent = autoplay
+      ? label("Pause the journey", "توقف سفر")
+      : label("Begin the journey", "آغاز سفر");
+    beginButtonEl.setAttribute("aria-pressed", autoplay ? "true" : "false");
+    hoverCtaEl.textContent = label("Click to view", "برای دیدن کلیک کنید");
+  }
+
+  function stepJourney(direction) {
+    if (!stars.length) {
+      return;
+    }
+    const current = focusedStar ? stars.indexOf(focusedStar) : -1;
+    const next =
+      current < 0
+        ? direction > 0
+          ? 0
+          : stars.length - 1
+        : (current + direction + stars.length) % stars.length;
+    setFocus(stars[next]);
+  }
+
+  function setAutoplay(on) {
+    autoplay = on;
+    autoplayDwell = 0;
+    if (on && !focusedStar) {
+      stepJourney(1);
+    }
+    updateJourney();
+  }
+
+  function onJourneyClick(event) {
+    const button = event.target.closest("[data-journey]");
+    if (!button) {
+      return;
+    }
+    const action = button.dataset.journey;
+    if (action === "play") {
+      setAutoplay(!autoplay);
+      return;
+    }
+    // Taking the wheel by hand pauses the guided tour.
+    setAutoplay(false);
+    stepJourney(action === "next" ? 1 : -1);
+  }
+
+  function onBeginClick() {
+    setAutoplay(!autoplay);
+  }
+
+  journeyEl.addEventListener("click", onJourneyClick);
+  beginButtonEl.addEventListener("click", onBeginClick);
+
+  const _labelPos = new THREE.Vector3();
+  const _labelEdge = new THREE.Vector3();
+  const _cameraUp = new THREE.Vector3();
+
+  function updateHoverLabel() {
+    const star = !focusedStar && hoveredStar && hoveredStar.hoverAmount > 0.3 ? hoveredStar : null;
+    if (!star || !stageEl) {
+      if (hoverLabelStar) {
+        hoverLabelEl.classList.remove("is-visible");
+        hoverLabelStar = null;
+      }
+      return;
+    }
+    if (star !== hoverLabelStar) {
+      hoverTitleEl.textContent = titleOf(star);
+      hoverLabelStar = star;
+      hoverLabelEl.classList.add("is-visible");
+    }
+    // Pin the card just above the star's rim, wherever it is on screen.
+    star.holder.getWorldPosition(_labelPos);
+    _cameraUp.set(0, 1, 0).applyQuaternion(camera.quaternion);
+    const radius = star.basePlane.scale.x * star.frame.scale.x * 0.5;
+    _labelEdge.copy(_labelPos).addScaledVector(_cameraUp, radius);
+    _labelEdge.project(camera);
+    const width = stageEl.clientWidth;
+    const height = stageEl.clientHeight;
+    const x = (_labelEdge.x * 0.5 + 0.5) * width;
+    const y = (-_labelEdge.y * 0.5 + 0.5) * height;
+    // Kept wholly inside the stage: never above its top edge, never
+    // past either side.
+    const cardWidth = hoverLabelEl.offsetWidth;
+    const cardHeight = hoverLabelEl.offsetHeight;
+    const left = Math.min(Math.max(x - cardWidth / 2, 12), Math.max(12, width - cardWidth - 12));
+    const top = Math.max(y - cardHeight - 8, 12);
+    hoverLabelEl.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+  }
+
+  function updateCursor() {
+    let cursor = "";
+    if (pointerNdc.x <= 1 && pointerNdc.x >= -1) {
+      const hit = pickStar();
+      if (hit && hit !== focusedStar) {
+        cursor = "pointer";
+      } else if (hit && hit === focusedStar) {
+        cursor = rotateDragActive ? "grabbing" : "grab";
+      }
+    }
+    if (renderer.domElement.style.cursor !== cursor) {
+      renderer.domElement.style.cursor = cursor;
+    }
+  }
+
+  function onPointerLeave() {
+    pointerNdc.set(10, 10);
+  }
+
+  updateJourney();
 
   // ---- Rotate the inspected artwork -----------------------------------
   // Once a star is focused, the whole canvas becomes "turn this piece
@@ -325,7 +530,10 @@ export function createFloatingArchive(stage, context = {}) {
     const hit = pickStar();
 
     if (hit) {
-      setFocus(hit);
+      if (hit !== focusedStar) {
+        setAutoplay(false);
+        setFocus(hit);
+      }
     } else if (focusedStar) {
       clearFocus();
     }
@@ -334,12 +542,25 @@ export function createFloatingArchive(stage, context = {}) {
   function onKeyDown(event) {
     if (event.key === "Escape" && focusedStar) {
       clearFocus();
+      return;
+    }
+    // Arrow keys travel only while a piece is open, so they never
+    // hijack the page for a visitor who is just scrolling past.
+    if (focusedStar && (event.key === "ArrowRight" || event.key === "ArrowLeft")) {
+      const target = event.target;
+      if (target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))) {
+        return;
+      }
+      event.preventDefault();
+      setAutoplay(false);
+      stepJourney(event.key === "ArrowRight" ? 1 : -1);
     }
   }
 
   renderer.domElement.addEventListener("pointerdown", onPointerDownRotate);
   renderer.domElement.addEventListener("pointermove", onPointerMoveHover);
   renderer.domElement.addEventListener("pointerup", onPointerUp);
+  renderer.domElement.addEventListener("pointerleave", onPointerLeave);
   if (resetButtonEl) {
     resetButtonEl.addEventListener("click", resetView);
   }
@@ -381,6 +602,23 @@ export function createFloatingArchive(stage, context = {}) {
         star.hoverAmountTarget = 0;
       });
     }
+    updateHoverLabel();
+    updateCursor();
+
+    // The guided tour: once the camera has arrived and the piece is
+    // fully revealed, linger, then fly on to the next one.
+    if (autoplay && focusedStar && !controls.isFlying() && focusedStar.revealAmount > 0.95) {
+      autoplayDwell += delta;
+      if (autoplayDwell > AUTOPLAY_DWELL) {
+        autoplayDwell = 0;
+        stepJourney(1);
+      }
+    }
+
+    // How open the focused piece currently is, shared by every star's
+    // spotlight dimming below.
+    const focusReveal = focusedStar ? focusedStar.revealAmount : 0;
+    const spotlight = focusReveal * focusReveal * (3 - 2 * focusReveal);
 
     stars.forEach((star) => {
       // STAGE 3/4 — continuous lifecycle. A pure function of elapsed
@@ -467,19 +705,47 @@ export function createFloatingArchive(stage, context = {}) {
       // The artwork circle should remain fully visible at every distance in
       // the room. The scene should not rely on a close camera approach to
       // reveal each piece; the image itself should read at full opacity.
-      const opacityTarget = 1;
-      star.baseMaterial.opacity += (opacityTarget - star.baseMaterial.opacity) * t;
-
-      if (!reduceMotion) {
-        star.baseMaterial.opacity = 1;
+      //
+      // THE REVEAL (see memory-star.js) — the circle stays fully opaque
+      // except on the one focused star, and only once the camera has
+      // arrived: then it hands over to the whole artwork, which grows
+      // out of it; leaving (or flying on) folds it back.
+      star.revealTarget = focusedStar === star && !controls.isFlying() ? 1 : 0;
+      star.revealAmount +=
+        (star.revealTarget - star.revealAmount) * Math.min(1, delta * (reduceMotion ? 12 : 2.6));
+      if (Math.abs(star.revealTarget - star.revealAmount) < 0.0005) {
+        star.revealAmount = star.revealTarget;
       }
+      const reveal = star.revealAmount * star.revealAmount * (3 - 2 * star.revealAmount);
+      // Every other star steps back into the dark while a piece is open
+      // (a spotlight, not a blackout: a faint trace of the sky remains),
+      // so nothing floats in front of the artwork being looked at.
+      const circleOpacity = star === focusedStar ? 1 - reveal : 1 - SPOTLIGHT_DIM * spotlight;
 
-      const edgeOpacityTarget = 1;
-      star.edgesMaterial.opacity += (edgeOpacityTarget - star.edgesMaterial.opacity) * t;
-
-      const overlayOpacityTarget = 1;
+      star.baseMaterial.opacity = circleOpacity;
+      star.baseMaterial.depthWrite = circleOpacity > 0.99;
+      star.edgesMaterial.opacity += (circleOpacity - star.edgesMaterial.opacity) * t;
       star.overlayMaterial.uniforms.uOpacity.value +=
-        (overlayOpacityTarget - star.overlayMaterial.uniforms.uOpacity.value) * t;
+        (circleOpacity - star.overlayMaterial.uniforms.uOpacity.value) * t;
+      // Fully faded means fully gone — not a near-invisible plate whose
+      // rim still traces a dark circle across the revealed artwork.
+      const circleVisible = circleOpacity > 0.01;
+      star.basePlane.visible = circleVisible;
+
+      const revealVisible = reveal > 0.002;
+      star.revealPlane.visible = revealVisible;
+      star.revealFrame.visible = revealVisible;
+      if (revealVisible) {
+        const grow = 0.86 + 0.14 * reveal;
+        star.revealPlane.scale.set(star.revealSize.width * grow, star.revealSize.height * grow, 1);
+        star.revealFrame.scale.set(
+          star.revealSize.width * grow * 1.012,
+          star.revealSize.height * grow + star.revealSize.width * grow * 0.012,
+          1
+        );
+        star.revealMaterial.opacity = reveal;
+        star.revealFrameMaterial.opacity = reveal * 0.9;
+      }
       star.overlayMaterial.uniforms.uFocus.value +=
         (star.focusAmountTarget - star.overlayMaterial.uniforms.uFocus.value) * t;
       star.overlayMaterial.uniforms.uHover.value +=
@@ -504,16 +770,25 @@ export function createFloatingArchive(stage, context = {}) {
 
   function dispose() {
     disposedRef.current = true;
+    stopLanguageListener();
     pendingLoads.forEach((pending) => pending.cancel());
 
     renderer.domElement.removeEventListener("pointerdown", onPointerDownRotate);
     renderer.domElement.removeEventListener("pointermove", onPointerMoveHover);
     renderer.domElement.removeEventListener("pointerup", onPointerUp);
+    renderer.domElement.removeEventListener("pointerleave", onPointerLeave);
+    renderer.domElement.style.cursor = "";
     if (resetButtonEl) {
       resetButtonEl.removeEventListener("click", resetView);
     }
     window.removeEventListener("keydown", onKeyDown);
-    stopLanguageListener();
+    journeyEl.removeEventListener("click", onJourneyClick);
+    beginButtonEl.removeEventListener("click", onBeginClick);
+    // The inspector is shared with the other installation; take back
+    // only what this one added to it and to the stage.
+    journeyEl.remove();
+    beginButtonEl.remove();
+    hoverLabelEl.remove();
     hideInspector();
     controls.dispose();
     atmosphereRig.restore();
@@ -521,6 +796,8 @@ export function createFloatingArchive(stage, context = {}) {
     starGeometry.dispose();
     haloGeometry.dispose();
     ringGeometry.dispose();
+    revealGeometry.dispose();
+    revealFrameGeometry.dispose();
     particleField.dispose();
     scene.remove(starfield.points);
     starfield.dispose();
@@ -530,6 +807,9 @@ export function createFloatingArchive(stage, context = {}) {
       star.baseMaterial.dispose();
       star.edgesMaterial.dispose();
       star.overlayMaterial.dispose();
+      star.revealMaterial.map?.dispose();
+      star.revealMaterial.dispose();
+      star.revealFrameMaterial.dispose();
     });
 
     scene.remove(room);

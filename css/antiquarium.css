@@ -482,3 +482,117 @@ body.light .antiquarium-selector-item.is-reserved .antiquarium-selector-status {
     min-width: 100%;
   }
 }
+
+/* ---- The journey (THE FLOATING ARCHIVE) ------------------------------
+   Built and removed by experiences/floating-archive/index.js, so none of
+   this exists while Cartography of Memory is mounted. Plain fills and
+   text-shadows only — no backdrop-filter or blend modes over the WebGL
+   canvas, which Safari composites badly. */
+
+/* "Begin the journey": the Reset button's twin, in the opposite corner. */
+.antiquarium-journey-begin {
+  right: auto;
+  left: 1.5rem;
+}
+
+@media (max-width: 700px) {
+  .antiquarium-journey-begin {
+    right: auto;
+    left: 1.1rem;
+  }
+}
+
+/* ‹ count ▶ › — inside the wall-label, the one part of it that takes
+   clicks (the label itself stays click-through). */
+.antiquarium-journey {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.55rem;
+}
+
+.antiquarium-inspector.is-visible .antiquarium-journey {
+  pointer-events: auto;
+}
+
+.antiquarium-journey-button {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0 0.6rem;
+  border-radius: 999px;
+  font-family: "Inter", sans-serif;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.antiquarium-journey-play {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.antiquarium-journey-count {
+  min-width: 4.5em;
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(197, 174, 112, 0.9);
+}
+
+/* Title card that follows the star under the pointer. Positioned every
+   frame from JS (transform only, so it never triggers layout). */
+.antiquarium-hover-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  max-width: 18rem;
+  padding: 0.45rem 0.85rem 0.5rem;
+  border: 1px solid rgba(198, 168, 90, 0.55);
+  border-radius: 0.75rem;
+  background: rgba(10, 10, 11, 0.78);
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  will-change: transform;
+}
+
+.antiquarium-hover-label.is-visible {
+  opacity: 1;
+}
+
+.antiquarium-hover-label-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #c6a85a;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+}
+
+.antiquarium-hover-label-cta {
+  font-family: "Inter", sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(244, 238, 222, 0.75);
+}
+
+@media (hover: none) {
+  /* Touch screens have no hover; the card would only flash on tap. */
+  .antiquarium-hover-label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .antiquarium-hover-label {
+    transition: none;
+  }
+}

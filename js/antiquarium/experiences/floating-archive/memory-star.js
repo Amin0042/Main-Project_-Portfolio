@@ -105,8 +105,28 @@ export function createSharedGeometry() {
   }
   const ringGeometry = new THREE.BufferGeometry().setFromPoints(ringPoints);
 
-  return { starGeometry, haloGeometry, ringGeometry };
+  // The full, uncropped artwork revealed on focus (see "THE REVEAL"
+  // below): a unit plane plus a unit-square hairline frame, both scaled
+  // per star to that artwork's own proportions.
+  const revealGeometry = new THREE.PlaneGeometry(1, 1);
+  const revealFrameGeometry = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-0.5, -0.5, 0),
+    new THREE.Vector3(0.5, -0.5, 0),
+    new THREE.Vector3(0.5, 0.5, 0),
+    new THREE.Vector3(-0.5, 0.5, 0),
+  ]);
+
+  return { starGeometry, haloGeometry, ringGeometry, revealGeometry, revealFrameGeometry };
 }
+
+// THE REVEAL — the circle is only a star's resting face. Once the camera
+// arrives at a focused star, index.js eases `revealAmount` toward 1: the
+// circle (and its rim/halo) fades while the whole artwork, uncropped and
+// at its true proportions, grows out of it inside a gold hairline frame;
+// leaving folds it back into the circle. Sized to fit a square
+// REVEAL_FIT times the circle's diameter, so no piece is ever smaller
+// than the circle it came from.
+const REVEAL_FIT = 1.3;
 
 function createOverlayMaterial() {
   return new THREE.ShaderMaterial({
@@ -227,7 +247,8 @@ function createOverlayMaterial() {
  * @returns the star's runtime object, plus `pendingLoad` (cancel handle).
  */
 export function createMemoryStar(data, index, totalCount, placement, shared) {
-  const { starGeometry, haloGeometry, ringGeometry, quality, disposedRef } = shared;
+  const { starGeometry, haloGeometry, ringGeometry, revealGeometry, revealFrameGeometry, quality, disposedRef } =
+    shared;
 
   const holder = new THREE.Group();
   const basePosition = new THREE.Vector3(
@@ -286,6 +307,39 @@ export function createMemoryStar(data, index, totalCount, placement, shared) {
   // mesh itself.
   basePlane.scale.set(STAR_DIAMETER * scaleMultiplier, STAR_DIAMETER * scaleMultiplier, 1);
 
+  // The reveal: hidden until index.js raises revealAmount. Sits a hair
+  // in front of the circle, inside `frame`, so hover/focus scale and the
+  // visitor's inspect-tilt drag carry it exactly like the circle.
+  // Drawn last and without a depth test: whatever else drifts in front
+  // of an opened artwork (the dimmed stars, their rims) can never cut
+  // across it — the piece being looked at is always whole.
+  const revealMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+    depthTest: false,
+  });
+  const revealPlane = new THREE.Mesh(revealGeometry, revealMaterial);
+  revealPlane.position.z = 0.01;
+  revealPlane.renderOrder = 10;
+  revealPlane.visible = false;
+  frame.add(revealPlane);
+
+  const revealFrameMaterial = new THREE.LineBasicMaterial({
+    color: GOLD,
+    transparent: true,
+    opacity: 0,
+    depthWrite: false,
+    depthTest: false,
+  });
+  const revealFrame = new THREE.LineLoop(revealFrameGeometry, revealFrameMaterial);
+  revealFrame.position.z = 0.012;
+  revealFrame.renderOrder = 11;
+  revealFrame.visible = false;
+  frame.add(revealFrame);
+
   const lifecycle = createLifecycle(index, totalCount);
 
   // Declared before applyTexture/pendingLoad below (rather than after,
@@ -294,10 +348,10 @@ export function createMemoryStar(data, index, totalCount, placement, shared) {
   // applyTexture needs `star` to already exist to record the image's
   // aspect ratio onto it.
   const star = {
-    title: data.title || "Untitled",
-    medium: data.medium || "",
     // The full manifest entry, so the inspector can read its *_fa fields.
     data,
+    title: data.title || "Untitled",
+    medium: data.medium || "",
     holder,
     tilt,
     frame,
@@ -344,6 +398,15 @@ export function createMemoryStar(data, index, totalCount, placement, shared) {
     lifecycle,
     coherence: 1,
     pulse: 0,
+    // THE REVEAL — see REVEAL_FIT above. revealSize is the full
+    // artwork's width/height in frame space, set once the image loads.
+    revealPlane,
+    revealMaterial,
+    revealFrame,
+    revealFrameMaterial,
+    revealAmount: 0,
+    revealTarget: 0,
+    revealSize: { width: STAR_DIAMETER * scaleMultiplier, height: STAR_DIAMETER * scaleMultiplier },
   };
 
   const applyTexture = (texture) => {
@@ -378,6 +441,21 @@ export function createMemoryStar(data, index, totalCount, placement, shared) {
     baseMaterial.map = texture;
     baseMaterial.needsUpdate = true;
     basePlane.material = baseMaterial;
+
+    // The same image, uncropped, for the reveal. A clone shares the
+    // source image (uploaded to the GPU once) but has its own UV
+    // transform, so the circle's crop doesn't touch it.
+    const fullTexture = texture.clone();
+    fullTexture.repeat.set(1, 1);
+    fullTexture.offset.set(0, 0);
+    fullTexture.needsUpdate = true;
+    revealMaterial.map?.dispose();
+    revealMaterial.map = fullTexture;
+    revealMaterial.needsUpdate = true;
+
+    const fit = STAR_DIAMETER * scaleMultiplier * REVEAL_FIT;
+    star.revealSize =
+      aspect >= 1 ? { width: fit, height: fit / aspect } : { width: fit * aspect, height: fit };
   };
 
   let pendingLoad = null;

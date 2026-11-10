@@ -177,6 +177,77 @@ export const artworks = [
     medium_fa: "ترکیب‌بندی سنتی",
     scale: 1.2,
   },
+
+  // ---- Third wave (added November 2026) ------------------------------
+  // Eight more pieces from the Personal Vault (Traditional and Cyborg),
+  // carrying the same threads further: Persian heritage (Lamassu, The
+  // Guardian, Nowruz, Father), faith (Bonhoeffer, The Cathedral, The
+  // Caravaggio Composition) and the quieter, stranger side of the
+  // archive (Mysticism In Cats).
+  {
+    title: "Lamassu",
+    title_fa: "لاماسو",
+    image: "../../Assets/Webp/WEBP of Digital works/Lamasu _result.webp",
+    medium: "Digital composition",
+    medium_fa: "ترکیب‌بندی دیجیتال",
+    scale: 1.25,
+  },
+  {
+    title: "The Guardian",
+    title_fa: "نگهبان",
+    image: "../../Assets/Webp/WEBP of Digital works/January8th composition .webp",
+    medium: "Digital composition",
+    medium_fa: "ترکیب‌بندی دیجیتال",
+    scale: 1.1,
+  },
+  {
+    title: "Nowruz Composition",
+    title_fa: "ترکیب‌بندی نوروز",
+    image: "../../Assets/Webp/WEBP of Ink made works/Nowruz Edition .webp",
+    medium: "Traditional composition",
+    medium_fa: "ترکیب‌بندی سنتی",
+    scale: 0.95,
+  },
+  {
+    title: "Bonhoeffer",
+    title_fa: "بونهوفر",
+    image: "../../Assets/Webp/WEBP of Digital works/Webp Second Round/Bonhoffer Bio .webp",
+    medium: "Digital composition",
+    medium_fa: "ترکیب‌بندی دیجیتال",
+    scale: 1.0,
+  },
+  {
+    title: "The Cathedral",
+    title_fa: "کلیسای جامع",
+    image: "../../Assets/Webp/WEBP of Ink made works/Cathedral of Hope .webp",
+    medium: "Traditional composition",
+    medium_fa: "ترکیب‌بندی سنتی",
+    scale: 1.15,
+  },
+  {
+    title: "The Caravaggio Composition",
+    title_fa: "ترکیب‌بندی کاراواجو",
+    image: "../../Assets/Webp/WEBP of Digital works/caravaggio Inflated .webp",
+    medium: "Digital composition",
+    medium_fa: "ترکیب‌بندی دیجیتال",
+    scale: 1.2,
+  },
+  {
+    title: "Father",
+    title_fa: "پدر",
+    image: "../../Assets/Webp/WEBP of Digital works/Webp Second Round/Shah Bio II .webp",
+    medium: "Digital composition",
+    medium_fa: "ترکیب‌بندی دیجیتال",
+    scale: 1.05,
+  },
+  {
+    title: "Mysticism In Cats",
+    title_fa: "عرفان در گربه‌ها",
+    image: "../../Assets/Webp/WEBP of Digital works/Cat .webp",
+    medium: "Digital composition",
+    medium_fa: "ترکیب‌بندی دیجیتال",
+    scale: 0.9,
+  },
 ];
 
 // New original work for this installation (as opposed to pieces already

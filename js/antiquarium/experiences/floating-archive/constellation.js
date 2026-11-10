@@ -36,6 +36,21 @@
 
 const LOOP_A = 26; // half-width of the infinity sign, in world units
 const LOOP_B = 15; // depth of each lobe
+// The two lobes are lifted/dipped in opposite directions (y = H·sin t),
+// so the infinity sign's own crossing at the origin is no longer a
+// single point: the two passes through it sit 2H apart vertically.
+// Without this, any count that puts a star on both passes (e.g. 24)
+// stacks two stars on top of each other at the center.
+const LOOP_H = 4;
+
+// The loop grows gently with the collection so adding artworks keeps
+// the same breathing room between stars instead of crowding the curve:
+// unchanged up to 18 stars, then scaled by sqrt(count / 18).
+const BASE_COUNT = 18;
+let loopScale = 1;
+export function loopScaleFor(totalCount) {
+  return Math.max(1, Math.sqrt(Math.max(totalCount, 1) / BASE_COUNT));
+}
 
 // Central-difference epsilon for the tangent estimate in forwardAt() —
 // t is now a plain angle in [0, 2π), so this only needs to be small
@@ -60,9 +75,48 @@ function hashRandom(seed) {
  * @returns {{ x: number, y: number, z: number }}
  */
 export function positionAt(t) {
-  const x = LOOP_A * Math.cos(t);
-  const z = LOOP_B * Math.sin(t) * Math.cos(t);
-  return { x, y: 0, z };
+  const x = LOOP_A * loopScale * Math.cos(t);
+  const y = LOOP_H * loopScale * Math.sin(t);
+  const z = LOOP_B * loopScale * Math.sin(t) * Math.cos(t);
+  return { x, y, z };
+}
+
+// Arc-length lookup: equal slots along the curve's real length, not
+// equal steps of its angle `t` (equal angles bunch stars up near the
+// lobes' tips and spread them out along the straight runs). Uniform
+// scaling doesn't change the fraction-to-t mapping, so it's built once.
+const ARC_SAMPLES = 2048;
+let arcTable = null;
+function tAtArcFraction(fraction) {
+  if (!arcTable) {
+    const saved = loopScale;
+    loopScale = 1;
+    arcTable = new Float64Array(ARC_SAMPLES + 1);
+    let previous = positionAt(0);
+    for (let i = 1; i <= ARC_SAMPLES; i += 1) {
+      const point = positionAt((i / ARC_SAMPLES) * Math.PI * 2);
+      arcTable[i] =
+        arcTable[i - 1] +
+        Math.hypot(point.x - previous.x, point.y - previous.y, point.z - previous.z);
+      previous = point;
+    }
+    loopScale = saved;
+  }
+  const goal = (((fraction % 1) + 1) % 1) * arcTable[ARC_SAMPLES];
+  let low = 0;
+  let high = ARC_SAMPLES;
+  while (low < high) {
+    const mid = (low + high) >> 1;
+    if (arcTable[mid] < goal) {
+      low = mid + 1;
+    } else {
+      high = mid;
+    }
+  }
+  const before = arcTable[Math.max(low - 1, 0)];
+  const span = arcTable[low] - before || 1;
+  const sample = Math.max(low - 1, 0) + (goal - before) / span;
+  return (sample / ARC_SAMPLES) * Math.PI * 2;
 }
 
 /**
@@ -136,16 +190,23 @@ const DEPTH_JITTER = 1.6;
 export function starPlacementFor(index, totalCount) {
   const rand = hashRandom(index * 7919 + 17);
   const count = Math.max(totalCount, 1);
+  // Set before anything samples the spine; particle-field.js reads the
+  // same positionAt() afterwards (index.js builds every star first), so
+  // the dust and the stars always share one loop size.
+  loopScale = loopScaleFor(count);
 
-  const slot = (Math.PI * 2) / count;
+  const slot = 1 / count;
   const jitter = (rand() - 0.5) * slot * 0.4;
-  const t = index * slot + jitter;
+  const t = tAtArcFraction(index * slot + jitter);
 
   const center = positionAt(t);
   const { right, up, forward } = frameAt(t);
 
   const lateral = (rand() - 0.5) * 2 * LATERAL_RANGE;
-  const vertical = (rand() - 0.5) * 2 * VERTICAL_RANGE;
+  // Neighbours alternate above and below the spine (each still at its
+  // own random height within that half), so two consecutive stars can
+  // never both drift to the same height and overlap.
+  const vertical = (index % 2 ? 1 : -1) * VERTICAL_RANGE * (0.45 + 0.55 * rand());
   const depth = (rand() - 0.5) * 2 * DEPTH_JITTER;
 
   const position = {
