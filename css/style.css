@@ -5156,6 +5156,27 @@ body.light .notes-panel-close:hover {
      buffer is the only fix that doesn't fight that.) 1rem clears the
      largest card's ~2% growth on every breakpoint with room to spare. */
   padding-block: 1rem;
+  /* Vertical scrolling and pinch-zoom stay native; a horizontal flick
+     is handed to main.js, which turns it into a Previous/Next step. */
+  touch-action: pan-y pinch-zoom;
+}
+
+/* "3 / 47" under each carousel (added by main.js, hidden when every card
+   already fits; Persian digits in Persian mode): small spaced figures,
+   tabular so the line doesn't jitter as the numbers change. */
+.carousel-counter {
+  margin: 1.25rem auto 0;
+  text-align: center;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--secondary-gold-colour);
+  opacity: 0.85;
+}
+
+.carousel-counter[hidden] {
+  display: none;
 }
 
 .carousel-track {
@@ -5360,6 +5381,7 @@ button:disabled {
   position: relative;
   width: min(1100px, 100%);
   max-height: calc(100vh - 4rem);
+  max-height: calc(100dvh - 4rem);
   padding: 1rem;
   border: 1px solid transparent;
   border-radius: 24px;
@@ -5569,6 +5591,7 @@ button:disabled {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 4rem);
+    height: calc(100dvh - 4rem);
   }
 
   .image-modal.is-static .image-modal-figure {
@@ -6054,11 +6077,13 @@ body.modal-open {
   .image-modal-dialog {
     width: 100%;
     max-height: calc(100vh - 2rem);
+    max-height: calc(100dvh - 2rem);
     padding: 0.85rem;
     border-radius: 18px;
   }
   .image-modal-image {
     max-height: calc(100vh - 7rem);
+    max-height: calc(100dvh - 7rem);
   }
   .footer,
   .footer-title,

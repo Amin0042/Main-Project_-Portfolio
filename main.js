@@ -2352,6 +2352,7 @@ if (typeof document !== "undefined") {
       const hasMultipleSlides = maximumSlide > 0;
       previousButton.disabled = !hasMultipleSlides;
       nextButton.disabled = !hasMultipleSlides;
+      renderCarouselCounter(maximumSlide);
     }
 
     nextButton.addEventListener("click", function () {
@@ -2424,6 +2425,170 @@ if (typeof document !== "undefined") {
           openImageModal(image);
         }
       });
+    });
+
+    // ---- Position counter ----
+    // On a phone the carousel shows one card at a time, so a quiet
+    // "3 / 47" under the controls tells the visitor where they are and
+    // how far the gallery runs. Hidden when every card already fits.
+    const carouselCounter = document.createElement("p");
+    carouselCounter.className = "carousel-counter";
+    carouselCounter.dir = "ltr";
+    carouselCounter.setAttribute("aria-live", "polite");
+    // A position readout, not prose: keep the word-hover ripple off it.
+    carouselCounter.setAttribute("data-no-word-hover", "");
+    carousel.appendChild(carouselCounter);
+
+    function formatCarouselNumber(value) {
+      return typeof isPersianActive === "function" && isPersianActive()
+        ? value.toLocaleString("fa-IR")
+        : String(value);
+    }
+
+    function renderCarouselCounter(maximumSlide) {
+      if (maximumSlide === 0) {
+        carouselCounter.hidden = true;
+        return;
+      }
+
+      const total = items.length;
+      const visible = total - maximumSlide;
+      const first = formatCarouselNumber(currentSlide + 1);
+      const position =
+        visible > 1
+          ? `${first}–${formatCarouselNumber(currentSlide + visible)}`
+          : first;
+
+      carouselCounter.hidden = false;
+      carouselCounter.textContent = `${position} / ${formatCarouselNumber(total)}`;
+    }
+
+    // Moves by `delta` cards without wrapping (swipes and focus stop at
+    // the ends; only the Previous/Next buttons loop around).
+    function stepCarousel(delta) {
+      const { maximumSlide } = getMeasurements();
+      const target = Math.min(maximumSlide, Math.max(0, currentSlide + delta));
+
+      if (target !== currentSlide) {
+        currentSlide = target;
+        updateCarousel(true);
+      }
+    }
+
+    function isCarouselRtl() {
+      return getComputedStyle(track).direction === "rtl";
+    }
+
+    // ---- Touch swipe ----
+    // .car-window has `touch-action: pan-y pinch-zoom` (style.css), so the
+    // page still scrolls vertically and zooms natively while a horizontal
+    // flick is left to this handler. Mouse users keep the buttons.
+    let swipeStart = null;
+    let suppressClickUntil = 0;
+
+    carouselWindow.addEventListener("pointerdown", function (event) {
+      if (event.pointerType === "mouse" || !event.isPrimary) {
+        return;
+      }
+
+      swipeStart = { x: event.clientX, y: event.clientY };
+    });
+
+    carouselWindow.addEventListener("pointercancel", function () {
+      swipeStart = null;
+    });
+
+    carouselWindow.addEventListener("pointerup", function (event) {
+      if (!swipeStart) {
+        return;
+      }
+
+      const dx = event.clientX - swipeStart.x;
+      const dy = event.clientY - swipeStart.y;
+      swipeStart = null;
+
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.2) {
+        return;
+      }
+
+      // A swipe must not also open the artwork or follow a card's link.
+      suppressClickUntil = Date.now() + 400;
+
+      // Content follows the finger: in LTR the later cards wait to the
+      // right, so a leftward flick moves forward; RTL mirrors it.
+      const forward = isCarouselRtl() ? dx > 0 : dx < 0;
+      stepCarousel(forward ? 1 : -1);
+    });
+
+    carouselWindow.addEventListener(
+      "click",
+      function (event) {
+        if (Date.now() < suppressClickUntil) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      },
+      true,
+    );
+
+    // ---- Keyboard and focus ----
+    // Arrow keys walk from artwork to artwork, and whichever card receives
+    // focus (by arrow or Tab) is slid into view. Without this, tabbing to
+    // a hidden card made the browser scroll the clipped window itself,
+    // knocking the cards out of step with the transform-driven paging.
+    const content = carousel.querySelector(".carousel-content");
+
+    [carouselWindow, content].forEach(function (clip) {
+      if (!clip) {
+        return;
+      }
+
+      clip.addEventListener("scroll", function () {
+        if (clip.scrollLeft !== 0) {
+          clip.scrollLeft = 0;
+        }
+      });
+    });
+
+    carousel.addEventListener("keydown", function (event) {
+      if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") {
+        return;
+      }
+
+      const focusables = Array.from(
+        track.querySelectorAll(".previewable-image, a[href]"),
+      );
+      const index = focusables.indexOf(event.target);
+
+      if (index === -1) {
+        return;
+      }
+
+      const forward = (event.key === "ArrowRight") !== isCarouselRtl();
+      const next = focusables[index + (forward ? 1 : -1)];
+
+      if (next) {
+        event.preventDefault();
+        next.focus({ preventScroll: true });
+      }
+    });
+
+    carousel.addEventListener("focusin", function (event) {
+      const item = event.target.closest(".car-item");
+
+      if (!item || !track.contains(item)) {
+        return;
+      }
+
+      const index = Array.prototype.indexOf.call(items, item);
+      const { maximumSlide } = getMeasurements();
+      const visible = items.length - maximumSlide;
+
+      if (index < currentSlide) {
+        stepCarousel(index - currentSlide);
+      } else if (index > currentSlide + visible - 1) {
+        stepCarousel(index - (currentSlide + visible - 1));
+      }
     });
 
     window.addEventListener("resize", updateCarousel);
