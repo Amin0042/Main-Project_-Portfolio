@@ -4765,7 +4765,7 @@ body.light .notes-panel-close:hover {
   align-items: center;
   width: 100vw;
 }
-/* Aftereffects / Cyborg Vault cards (inside Motion Vault): same
+/* Handmade / Cyborg Vault cards (inside Motion Vault): same
    gilded-glass "iOS26" treatment as the Archive page's Personal /
    Inspirations / Motion Vault cards (.archive-personal /
    .archive-media-link) — identical tokens, blur/gloss recipe and
@@ -4945,14 +4945,14 @@ body.light .notes-panel-close:hover {
   min-height: 80vh;
 }
 /*==================== Afftereffects Vault ====================*/
-.aftereffects-image {
+.handmade-image {
   background:
     linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    url("../Assets/Webp/WebP Background images/Webp version Of September 2026 Hero Images/Aftereffects Vault - Persepolis Stairway.webp")
+    url("../Assets/Webp/WebP Background images/Webp version Of September 2026 Hero Images/Handmade Vault - Persepolis Stairway.webp")
       no-repeat center center / cover;
   min-height: 80vh;
 }
-/* Aftereffects/Cyborg Vault: unlike every other vault page (Personal/
+/* Handmade/Cyborg Vault: unlike every other vault page (Personal/
    Inspiration/Motion), these two had no page heading at all — a
    visitor lands straight on a bare grid of video thumbnails with
    nothing identifying what they're looking at, which reads as broken
@@ -4960,7 +4960,7 @@ body.light .notes-panel-close:hover {
    phone where the grid is a single full-width column and there's no
    surrounding layout to give it context. Gives both the same title
    treatment the rest of the site already uses. */
-#aftereffects-vault h2,
+#handmade-vault h2,
 #cyborg-vault h2 {
   margin-bottom: 2.5rem;
 }
@@ -6385,7 +6385,7 @@ body.modal-open {
    for the same tablets held in landscape (~1280px, well outside this
    band). Every other view stays exactly as-is.
 
-   The one real gap this closes: .effects-card (Aftereffects/Cyborg
+   The one real gap this closes: .effects-card (Handmade/Cyborg
    inside Motion Vault) is a fixed 1fr/3fr row at every width with no
    narrower breakpoint of its own — unlike its sibling .archive-personal,
    which already stacks to one column by 820px. At a ~800px portrait
