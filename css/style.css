@@ -651,6 +651,14 @@ p {
   color: var(--body-copy-colour);
 }
 
+/* Hard-hyphen compounds ("hand-drawn", "10-second") are wrapped in
+   .nobr in the HTML: browsers will otherwise break a line right after
+   the hyphen, which reads exactly like the mid-word hyphenation the
+   body rule forbids. The compound moves down as one word. */
+.nobr {
+  white-space: nowrap;
+}
+
 /* Word-by-word hover: main.js wraps each word of every plain paragraph in
    a .word span so individual words can react on hover, independent of the
    rest of the sentence. */
@@ -6653,4 +6661,85 @@ body.modal-open {
 }
 .case-study .btn {
   margin-top: 2rem;
+}
+
+/*==================== Phone typesetting ====================*/
+/* Phones (iPhone 15 Pro is 393px wide): every paragraph is set centred,
+   English and Persian alike. Kept as one block at the end of the sheet,
+   so it overrides the flush-left rules scattered through the page
+   sections without editing each of them, and desktop keeps its
+   flush-left book setting.
+   Orphans: the HTML (and translations-fa.js) ties the last two words of
+   every paragraph with a non-breaking space, and text-wrap: pretty (set
+   on p above) evens the rag. No hyphenation: body's hyphens: none still
+   applies. Lists and forms stay flush-left: centred bullets and labels
+   lose their alignment edge. */
+@media (max-width: 750px) {
+  body {
+    /* 2.05 reads loose on a narrow centred column; 1.8 keeps each
+       paragraph together as one block. */
+    --body-line-height: 1.8;
+  }
+
+  p:not(form p),
+  .image-modal-description,
+  .notes-panel-content,
+  .archive-copy,
+  .post-info,
+  .effects-card-info,
+  .background-copy,
+  .traditional-intro,
+  .category-project-copy,
+  .header-left,
+  .popup-container h2,
+  .notes-post .post-title,
+  .post-date,
+  .notes-panel-title,
+  .notes-panel-content :is(h1, h2, h3, h4),
+  .category-project-copy h3,
+  .case-study .archive-detail-shell > h3 {
+    text-align: center !important;
+  }
+
+  p:not(form p),
+  .image-modal-description {
+    line-height: 1.8 !important;
+    /* Hanging punctuation pulls the first/last mark into the margin,
+       which knocks a centred line off its axis. */
+    hanging-punctuation: none;
+  }
+
+  .archive-copy,
+  .post-info,
+  .effects-card-info,
+  .background-copy {
+    align-items: center;
+  }
+
+  .notes-panel-content :is(ul, ol),
+  .case-study .archive-detail-shell > ul,
+  .education-list {
+    text-align: left !important;
+  }
+
+  /* Raised initial: a sunken three-line drop cap pins to the left edge
+     while the centred lines beside it drift, so on phones the gilded
+     capital stands on the first line instead, at about two and a half
+     times the text size. */
+  .drop-cap::first-letter {
+    float: none;
+    -webkit-initial-letter: normal;
+    initial-letter: normal;
+    font-size: 2.5em;
+    line-height: 1;
+    margin: 0 0.03em 0 0;
+  }
+
+  /* Same for the Manifesto pop-up's illuminated capital. */
+  .popup-container p:first-of-type::first-letter {
+    float: none;
+    font-size: 2.5em;
+    line-height: 1;
+    padding: 0 0.03em 0 0;
+  }
 }
