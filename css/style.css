@@ -2195,9 +2195,12 @@ body.light .nav-link[aria-current="page"] {
     gap: 0.25rem;
   }
 
+  /* The gilded pill (.nav-pill-indicator) is sized from the link's own
+     box, so this padding is the breathing room between its stroke and
+     the page name. 0.1rem left the stroke touching the letters. */
   .nav-link {
     font-size: 1rem;
-    padding: 0.62rem 0.1rem !important;
+    padding: 0.7rem 1.15rem !important;
   }
 
   .theme-toggle-item {
